@@ -1,0 +1,132 @@
+@page
+@model LamisaMart.Web.Pages.Admin.IndexModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
+    Layout = "_AdminLayout"; // We will create this specific layout
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold m-0">Dashboard Overview</h3>
+    <div class="d-flex gap-2">
+        <button class="btn btn-outline-secondary btn-sm"><i class="bi bi-download me-1"></i> Export Report</button>
+        <button class="btn btn-primary btn-sm"><i class="bi bi-plus-lg me-1"></i> Add Vendor</button>
+    </div>
+</div>
+
+<!-- Stats Row -->
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 bg-white p-3 h-100 border-start border-4 border-primary">
+            <div class="text-muted small fw-medium mb-1">TOTAL REVENUE (PLATFORM)</div>
+            <h3 class="fw-bold m-0">৳ 1,24,500</h3>
+            <div class="text-success small mt-2"><i class="bi bi-arrow-up-right"></i> +12.5% from last month</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 bg-white p-3 h-100 border-start border-4 border-success">
+            <div class="text-muted small fw-medium mb-1">TOTAL ORDERS</div>
+            <h3 class="fw-bold m-0">1,284</h3>
+            <div class="text-success small mt-2"><i class="bi bi-arrow-up-right"></i> +5.2% from last month</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 bg-white p-3 h-100 border-start border-4 border-warning">
+            <div class="text-muted small fw-medium mb-1">ACTIVE VENDORS</div>
+            <h3 class="fw-bold m-0">142</h3>
+            <div class="text-success small mt-2"><i class="bi bi-arrow-up-right"></i> +3 new this week</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 bg-white p-3 h-100 border-start border-4 border-danger">
+            <div class="text-muted small fw-medium mb-1">PENDING PAYOUTS</div>
+            <h3 class="fw-bold m-0">৳ 450,200</h3>
+            <div class="text-muted small mt-2">To 28 vendors</div>
+        </div>
+    </div>
+</div>
+
+<!-- Recent Orders & Vendor Status -->
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-header bg-white border-0 pt-4 pb-0 d-flex justify-content-between align-items-center">
+                <h6 class="fw-bold m-0">Recent Platform Orders</h6>
+                <a href="#" class="text-decoration-none small text-primary">View All</a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="text-muted small">
+                            <tr>
+                                <th>Order ID</th>
+                                <th>Customer</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="fw-medium">#ORD-5892</td>
+                                <td>Farhana Islam</td>
+                                <td>Oct 24, 2023</td>
+                                <td><span class="badge bg-warning text-dark">Processing</span></td>
+                                <td class="fw-bold">৳ 6,200</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-medium">#ORD-5891</td>
+                                <td>Nusrat Jahan</td>
+                                <td>Oct 23, 2023</td>
+                                <td><span class="badge bg-success">Delivered</span></td>
+                                <td class="fw-bold">৳ 3,450</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-medium">#ORD-5890</td>
+                                <td>Tania Akter</td>
+                                <td>Oct 23, 2023</td>
+                                <td><span class="badge bg-success">Delivered</span></td>
+                                <td class="fw-bold">৳ 12,800</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-header bg-white border-0 pt-4 pb-0">
+                <h6 class="fw-bold m-0">Quick Actions</h6>
+            </div>
+            <div class="card-body">
+                <a href="/Admin/PageBuilder" class="d-flex align-items-center p-3 rounded-3 mb-2 text-decoration-none bg-light text-dark shadow-sm hover-bg-gray">
+                    <div class="bg-primary text-white rounded p-2 me-3"><i class="bi bi-layout-wtf"></i></div>
+                    <div>
+                        <div class="fw-bold">Page Builder CMS</div>
+                        <div class="small text-muted">Customize Home & UI Layouts</div>
+                    </div>
+                    <i class="bi bi-chevron-right ms-auto text-muted"></i>
+                </a>
+                
+                <a href="#" class="d-flex align-items-center p-3 rounded-3 mb-2 text-decoration-none bg-light text-dark shadow-sm">
+                    <div class="bg-success text-white rounded p-2 me-3"><i class="bi bi-shop"></i></div>
+                    <div>
+                        <div class="fw-bold">Vendor Approvals</div>
+                        <div class="small text-danger fw-medium">5 Pending Requests</div>
+                    </div>
+                    <i class="bi bi-chevron-right ms-auto text-muted"></i>
+                </a>
+                
+                <a href="#" class="d-flex align-items-center p-3 rounded-3 text-decoration-none bg-light text-dark shadow-sm">
+                    <div class="bg-info text-white rounded p-2 me-3"><i class="bi bi-calculator"></i></div>
+                    <div>
+                        <div class="fw-bold">Accounting Ledger</div>
+                        <div class="small text-muted">Manage payouts & commissions</div>
+                    </div>
+                    <i class="bi bi-chevron-right ms-auto text-muted"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

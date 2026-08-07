@@ -1,0 +1,112 @@
+@page
+@model CartModel
+@{
+    ViewData["Title"] = "Your Cart";
+}
+
+<div class="container my-5 py-3">
+    <h2 class="fw-bold mb-4">Shopping Cart <span class="text-muted fs-5 fw-normal">(2 Items)</span></h2>
+
+    <div class="row gx-5">
+        <!-- Cart Items -->
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-body p-4">
+                    
+                    <!-- Vendor Shop Grouping -->
+                    <div class="d-flex align-items-center mb-3 pb-2 border-bottom">
+                        <i class="bi bi-shop text-primary me-2 fs-5"></i>
+                        <span class="fw-bold">Nusrat Boutique</span>
+                    </div>
+
+                    <!-- Item 1 -->
+                    <div class="row align-items-center mb-4">
+                        <div class="col-2 col-md-2">
+                            <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=150&q=80" class="img-fluid rounded-3 object-fit-cover" style="height: 90px; width: 90px;" />
+                        </div>
+                        <div class="col-5 col-md-5 ps-3">
+                            <h6 class="fw-bold mb-1">Premium Jamdani Silk Saree</h6>
+                            <div class="text-muted small mb-2">Variant: Maroon</div>
+                            <div class="fw-bold text-danger">৳ 3,650</div>
+                        </div>
+                        <div class="col-3 col-md-3">
+                            <div class="input-group input-group-sm w-75">
+                                <button class="btn btn-outline-secondary px-2" type="button">-</button>
+                                <input type="text" class="form-control text-center px-1" value="1" readonly>
+                                <button class="btn btn-outline-secondary px-2" type="button">+</button>
+                            </div>
+                        </div>
+                        <div class="col-2 col-md-2 text-end">
+                            <div class="fw-bold mb-2">৳ 3,650</div>
+                            <button class="btn btn-link text-muted p-0 border-0"><i class="bi bi-trash3"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- Item 2 -->
+                    <div class="row align-items-center">
+                        <div class="col-2 col-md-2">
+                            <img src="https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=150&q=80" class="img-fluid rounded-3 object-fit-cover" style="height: 90px; width: 90px;" />
+                        </div>
+                        <div class="col-5 col-md-5 ps-3">
+                            <h6 class="fw-bold mb-1">Leather Handbag Designer</h6>
+                            <div class="text-muted small mb-2">Variant: Black</div>
+                            <div class="fw-bold text-danger">৳ 1,200</div>
+                        </div>
+                        <div class="col-3 col-md-3">
+                            <div class="input-group input-group-sm w-75">
+                                <button class="btn btn-outline-secondary px-2" type="button">-</button>
+                                <input type="text" class="form-control text-center px-1" value="2" readonly>
+                                <button class="btn btn-outline-secondary px-2" type="button">+</button>
+                            </div>
+                        </div>
+                        <div class="col-2 col-md-2 text-end">
+                            <div class="fw-bold mb-2">৳ 2,400</div>
+                            <button class="btn btn-link text-muted p-0 border-0"><i class="bi bi-trash3"></i></button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            
+            <a href="/" class="text-decoration-none text-dark fw-medium"><i class="bi bi-arrow-left me-1"></i> Continue Shopping</a>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="col-lg-4 mt-4 mt-lg-0">
+            <div class="card border-0 shadow-sm rounded-4" style="background-color: #FAF7F2;">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-4">Order Summary</h5>
+                    
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-muted">Subtotal</span>
+                        <span class="fw-medium">৳ 6,050</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3">
+                        <span class="text-muted">Shipping (Estimated)</span>
+                        <span class="fw-medium">৳ 150</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-4">
+                        <span class="text-muted">Discount</span>
+                        <span class="text-success fw-medium">- ৳ 0</span>
+                    </div>
+                    
+                    <hr class="text-muted opacity-25 mb-4" />
+                    
+                    <div class="d-flex justify-content-between mb-4">
+                        <span class="fw-bold fs-5">Total</span>
+                        <span class="fw-bold fs-5 text-danger">৳ 6,200</span>
+                    </div>
+                    
+                    <a href="/Checkout" class="lm-btn-primary w-100 py-3 text-center d-block">
+                        PROCEED TO CHECKOUT
+                    </a>
+                    
+                    <div class="mt-4 text-center">
+                        <div class="small text-muted mb-2">Secure checkout via SSLCommerz</div>
+                        <img src="/images/sslcommerz-logo.png" alt="SSLCommerz" style="height: 30px; opacity: 0.7;" onerror="this.style.display='none'" />
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

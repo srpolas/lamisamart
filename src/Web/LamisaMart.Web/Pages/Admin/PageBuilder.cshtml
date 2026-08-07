@@ -1,0 +1,109 @@
+@page
+@model LamisaMart.Web.Pages.Admin.PageBuilderModel
+@{
+    ViewData["Title"] = "CMS Page Builder";
+    Layout = "_AdminLayout";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold m-0">Dynamic Page Builder</h3>
+    <button class="btn btn-success px-4"><i class="bi bi-floppy me-2"></i> Publish Changes</button>
+</div>
+
+<div class="row gx-4">
+    <!-- Left Sidebar: Layout Settings -->
+    <div class="col-lg-3">
+        <div class="card border-0 shadow-sm rounded-4 mb-4">
+            <div class="card-body">
+                <h6 class="fw-bold border-bottom pb-2 mb-3">Page Settings</h6>
+                <div class="mb-3">
+                    <label class="form-label small fw-medium">Route Path</label>
+                    <input type="text" class="form-control bg-light" value="/" readonly />
+                    <div class="form-text" style="font-size: 11px;">Editing the Home Page</div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label small fw-medium">Page Title</label>
+                    <input type="text" class="form-control" value="Main Home Page v1" />
+                </div>
+                <div class="mb-3 form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="isActive" checked>
+                    <label class="form-check-label small fw-medium" for="isActive">Is Active</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-body">
+                <h6 class="fw-bold border-bottom pb-2 mb-3">Add Section</h6>
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-primary text-start"><i class="bi bi-image me-2"></i> Hero Banner</button>
+                    <button class="btn btn-outline-primary text-start"><i class="bi bi-grid me-2"></i> Category Grid</button>
+                    <button class="btn btn-outline-primary text-start"><i class="bi bi-tags me-2"></i> Promotional Row</button>
+                    <button class="btn btn-outline-primary text-start"><i class="bi bi-collection me-2"></i> Product Carousel</button>
+                    <button class="btn btn-outline-primary text-start"><i class="bi bi-star me-2"></i> Testimonials</button>
+                    <button class="btn btn-outline-primary text-start"><i class="bi bi-shield-check me-2"></i> Trust Badges</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Side: Sections Editor -->
+    <div class="col-lg-9">
+        <div class="bg-white rounded-4 shadow-sm p-4" style="min-height: 600px; background-color: #fcfcfc;">
+            
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="fw-bold m-0 text-muted">Active Sections (Drag to reorder)</h5>
+            </div>
+
+            <!-- Section Item 1 -->
+            <div class="card border mb-3 shadow-sm rounded-3">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center cursor-move border-0 py-3">
+                    <div class="fw-bold text-dark"><i class="bi bi-arrows-move text-muted me-2 cursor-grab"></i> 1. HeroBanner</div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i> Edit JSON</button>
+                        <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                    </div>
+                </div>
+                <div class="card-body bg-white border-top">
+                    <pre class="bg-dark text-white p-3 rounded-3 small mb-0 font-monospace">
+{
+  "title": "প্রতিদিনের সাজে, লমিসা মার্ট।",
+  "subtitle": "Everyday Elegance, Every Moment.",
+  "buttonText": "SHOP NOW",
+  "buttonLink": "/category/saree",
+  "badgeText": "✨ New Collection 2026",
+  "imageUrl": "/images/LamisaMart_design_concept.png"
+}</pre>
+                </div>
+            </div>
+
+            <!-- Section Item 2 -->
+            <div class="card border mb-3 shadow-sm rounded-3">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center cursor-move border-0 py-3">
+                    <div class="fw-bold text-dark"><i class="bi bi-arrows-move text-muted me-2 cursor-grab"></i> 2. TrustBadges</div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i> Edit JSON</button>
+                        <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Section Item 3 -->
+            <div class="card border mb-3 shadow-sm rounded-3">
+                <div class="card-header bg-light d-flex justify-content-between align-items-center cursor-move border-0 py-3">
+                    <div class="fw-bold text-dark"><i class="bi bi-arrows-move text-muted me-2 cursor-grab"></i> 3. CategoryGrid</div>
+                    <div class="d-flex gap-2">
+                        <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i> Edit JSON</button>
+                        <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                    </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+<style>
+    .cursor-grab { cursor: grab; }
+    .cursor-grab:active { cursor: grabbing; }
+</style>

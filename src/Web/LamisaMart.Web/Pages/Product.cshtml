@@ -1,0 +1,105 @@
+@page "{slug?}"
+@model ProductModel
+@{
+    ViewData["Title"] = "Product Details";
+}
+
+<div class="container my-5 py-4">
+    <div class="row gx-lg-5">
+        <!-- Product Images -->
+        <div class="col-lg-6 mb-4 mb-lg-0">
+            <div class="position-relative bg-light rounded-4 overflow-hidden shadow-sm" style="height: 600px;">
+                <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=800&q=80" alt="Premium Silk Saree" class="img-fluid w-100 h-100 object-fit-cover" id="mainImage" />
+                <button class="btn btn-light position-absolute top-0 end-0 m-3 rounded-circle shadow-sm" style="width:40px;height:40px;"><i class="bi bi-heart text-danger"></i></button>
+            </div>
+            <!-- Thumbnails -->
+            <div class="d-flex gap-3 mt-3 overflow-auto pb-2">
+                <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=150&q=80" class="rounded-3 border border-2 border-danger shadow-sm cursor-pointer" style="width: 80px; height: 80px; object-fit: cover;" />
+                <img src="https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=150&q=80" class="rounded-3 border border-1 cursor-pointer opacity-75 hover-opacity-100" style="width: 80px; height: 80px; object-fit: cover;" />
+                <img src="https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=150&q=80" class="rounded-3 border border-1 cursor-pointer opacity-75 hover-opacity-100" style="width: 80px; height: 80px; object-fit: cover;" />
+            </div>
+        </div>
+
+        <!-- Product Info -->
+        <div class="col-lg-6">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb fs-sm">
+                    <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-muted">Home</a></li>
+                    <li class="breadcrumb-item"><a href="/category/saree" class="text-decoration-none text-muted">Saree</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Premium Silk Saree</li>
+                </ol>
+            </nav>
+
+            <h1 class="display-6 fw-bold mb-2 text-dark" style="font-family: 'Hind Siliguri', sans-serif;">Premium Jamdani Silk Saree</h1>
+            
+            <div class="d-flex align-items-center mb-3">
+                <div class="text-warning me-2">
+                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i>
+                </div>
+                <span class="text-muted small">(128 Reviews)</span>
+                <span class="mx-2 text-muted">|</span>
+                <span class="text-success small fw-medium"><i class="bi bi-check-circle me-1"></i> In Stock</span>
+            </div>
+
+            <div class="mb-4">
+                <span class="fs-3 fw-bold text-danger me-2">৳ 3,650</span>
+                <span class="text-muted text-decoration-line-through fs-5">৳ 4,500</span>
+                <span class="badge bg-danger ms-2 px-2 py-1 align-top">Save 19%</span>
+            </div>
+
+            <p class="text-secondary mb-4" style="line-height: 1.7;">
+                Exclusive premium Jamdani silk saree perfect for weddings and festive occasions. Comes with an unstitched blouse piece. Woven with pure golden zari thread directly by artisans in Narayanganj.
+            </p>
+
+            <hr class="text-muted opacity-25 my-4" />
+
+            <!-- Variants (Color/Size) -->
+            <div class="mb-4">
+                <label class="fw-semibold mb-2">Color:</label>
+                <div class="d-flex gap-2">
+                    <div class="rounded-circle border border-2 border-danger p-1 cursor-pointer">
+                        <div class="rounded-circle" style="width:24px; height:24px; background-color: #B83256;"></div>
+                    </div>
+                    <div class="rounded-circle border border-1 p-1 cursor-pointer">
+                        <div class="rounded-circle" style="width:24px; height:24px; background-color: #1A365D;"></div>
+                    </div>
+                    <div class="rounded-circle border border-1 p-1 cursor-pointer">
+                        <div class="rounded-circle" style="width:24px; height:24px; background-color: #047857;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add to Cart Action -->
+            <div class="d-flex gap-3 mb-4 mt-5">
+                <div class="input-group" style="width: 130px;">
+                    <button class="btn btn-outline-secondary px-3 bg-light" type="button">-</button>
+                    <input type="text" class="form-control text-center fw-bold bg-light" value="1" readonly>
+                    <button class="btn btn-outline-secondary px-3 bg-light" type="button">+</button>
+                </div>
+                <button class="lm-btn-primary flex-grow-1 fs-6">
+                    <i class="bi bi-cart3 me-2"></i> ADD TO CART
+                </button>
+            </div>
+            
+            <div class="d-flex gap-2">
+                 <button class="btn btn-dark flex-grow-1 fs-6 fw-bold py-3 text-uppercase rounded-3">
+                    Buy It Now
+                </button>
+            </div>
+
+            <div class="mt-4 p-3 bg-light rounded-3 d-flex gap-3 align-items-center">
+                <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=100&q=80" class="rounded-circle" style="width:50px; height:50px;" />
+                <div>
+                    <div class="small text-muted">Sold by</div>
+                    <a href="/shop/nusrat-boutique" class="fw-bold text-dark text-decoration-none">Nusrat Boutique <i class="bi bi-patch-check-fill text-primary"></i></a>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<style>
+    .cursor-pointer { cursor: pointer; }
+    .hover-opacity-100:hover { opacity: 1 !important; transition: 0.2s ease; }
+</style>

@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\LamisaMart.Vendors.Application\LamisaMart.Vendors.Application.csproj" />
+    <ProjectReference Include="..\LamisaMart.Vendors.Domain\LamisaMart.Vendors.Domain.csproj" />
+    <ProjectReference Include="..\..\..\Shared\LamisaMart.Shared.Infrastructure\LamisaMart.Shared.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>

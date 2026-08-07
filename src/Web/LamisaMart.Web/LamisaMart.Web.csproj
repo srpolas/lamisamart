@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Modules\Catalog\LamisaMart.Catalog.Application\LamisaMart.Catalog.Application.csproj" />
+    <ProjectReference Include="..\..\Modules\Catalog\LamisaMart.Catalog.Infrastructure\LamisaMart.Catalog.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Modules\Ordering\LamisaMart.Ordering.Application\LamisaMart.Ordering.Application.csproj" />
+    <ProjectReference Include="..\..\Modules\Ordering\LamisaMart.Ordering.Infrastructure\LamisaMart.Ordering.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Modules\Vendors\LamisaMart.Vendors.Application\LamisaMart.Vendors.Application.csproj" />
+    <ProjectReference Include="..\..\Modules\Vendors\LamisaMart.Vendors.Infrastructure\LamisaMart.Vendors.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Modules\Accounting\LamisaMart.Accounting.Application\LamisaMart.Accounting.Application.csproj" />
+    <ProjectReference Include="..\..\Modules\Accounting\LamisaMart.Accounting.Infrastructure\LamisaMart.Accounting.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Modules\Payments\LamisaMart.Payments.Application\LamisaMart.Payments.Application.csproj" />
+    <ProjectReference Include="..\..\Modules\Payments\LamisaMart.Payments.Infrastructure\LamisaMart.Payments.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Modules\Identity\LamisaMart.Identity.Application\LamisaMart.Identity.Application.csproj" />
+    <ProjectReference Include="..\..\Modules\Identity\LamisaMart.Identity.Infrastructure\LamisaMart.Identity.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Modules\PageBuilder\LamisaMart.PageBuilder.Application\LamisaMart.PageBuilder.Application.csproj" />
+    <ProjectReference Include="..\..\Modules\PageBuilder\LamisaMart.PageBuilder.Infrastructure\LamisaMart.PageBuilder.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Shared\LamisaMart.Shared.Infrastructure\LamisaMart.Shared.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Htmx" Version="1.7.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.11">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="QRCoder" Version="1.6.0" />
+    <PackageReference Include="Serilog.AspNetCore" Version="8.0.3" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+</Project>

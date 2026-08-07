@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - লমিসা মার্ট | LamisaMart</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="LamisaMart is a premium Bangladeshi multi-vendor marketplace specializing in women's fashion, sarees, kurtis, cosmetics, and jewelry." />
+    <meta name="keywords" content="LamisaMart, e-commerce, bangladesh, saree, kurti, women fashion, online shopping" />
+    <meta name="author" content="LamisaMart" />
+    <meta property="og:title" content="@ViewData["Title"] - LamisaMart" />
+    <meta property="og:description" content="Shop premium women's fashion and accessories from top vendors across Bangladesh." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://lamisamart.com/" />
+    <meta property="og:image" content="/images/LamisaMart_design_concept.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    
+    <!-- PWA Manifest & Icons -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#B83256" />
+    <link rel="apple-touch-icon" href="/images/icons/icon-192x192.png" />
+    
+    <!-- Bootstrap 5 CSS & Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    
+    <!-- LamisaMart Design System -->
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <!-- 1. Top Announcement Bar -->
+    <div class="lm-topbar">
+        <div class="lm-topbar-content">
+            <div class="lm-topbar-item">
+                <i class="bi bi-truck"></i>
+                <span>Free Delivery on orders over ৳1500</span>
+            </div>
+            <div class="lm-topbar-center">
+                <div class="lm-topbar-item"><i class="bi bi-patch-check"></i> 100% Original Products</div>
+                <div>|</div>
+                <div class="lm-topbar-item"><i class="bi bi-arrow-counterclockwise"></i> Easy Returns & Exchange</div>
+            </div>
+            <div class="lm-topbar-item">
+                <span>বাংলা</span> | <span class="opacity-75">English</span>
+            </div>
+            <div class="lm-topbar-item ms-3">
+                <button id="pwaInstallBtn" class="btn btn-sm btn-outline-light rounded-pill px-3 py-0" style="display: none; border-color: #FAF7F2; font-size: 0.8rem;">
+                    <i class="bi bi-download me-1"></i> Install App
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. Main Header -->
+    <header class="lm-header">
+        <div class="lm-header-container">
+            <!-- Logo -->
+            <a href="/" class="lm-logo-container">
+                <div class="lm-logo-badge">LM</div>
+                <div class="lm-logo-text">
+                    <span class="lm-logo-title">LAMISA MART</span>
+                    <span class="lm-logo-bengali">লমিসা মার্ট</span>
+                    <span class="lm-logo-tagline">প্রতিদিনের সাজে, লমিসা মার্ট।</span>
+                </div>
+            </a>
+
+            <!-- Search Bar -->
+            <form action="/search" method="get" class="lm-search-box">
+                <input type="text" name="q" class="lm-search-input" placeholder="Search for products..." />
+                <button type="submit" class="lm-search-btn"><i class="bi bi-search"></i></button>
+            </form>
+
+            <!-- Header Actions -->
+            <div class="lm-header-actions">
+                <a href="/account/wishlist" class="lm-action-item">
+                    <i class="bi bi-heart lm-action-icon"></i>
+                    <span>Wishlist</span>
+                </a>
+                <a href="/account/login" class="lm-action-item">
+                    <i class="bi bi-person lm-action-icon"></i>
+                    <span>Account</span>
+                </a>
+                <a href="/cart" class="lm-action-item">
+                    <i class="bi bi-bag lm-action-icon"></i>
+                    <span class="lm-badge">0</span>
+                    <span>Cart</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 3. Category Navigation Bar -->
+    <nav class="lm-nav">
+        <div class="lm-nav-container">
+            <a href="/" class="lm-nav-link active">HOME</a>
+            <a href="/category/new-arrival" class="lm-nav-link">NEW ARRIVAL</a>
+            <a href="/category/saree" class="lm-nav-link">SAREE</a>
+            <a href="/category/three-piece" class="lm-nav-link">THREE PIECE</a>
+            <a href="/category/kurti" class="lm-nav-link">KURTI</a>
+            <a href="/category/innerwear" class="lm-nav-link">INNERWEAR</a>
+            <a href="/category/jewelry" class="lm-nav-link">JEWELRY</a>
+            <a href="/category/bags" class="lm-nav-link">BAGS</a>
+            <a href="/category/cosmetics" class="lm-nav-link">COSMETICS</a>
+            <a href="/category/sale" class="lm-nav-link text-danger">SALE</a>
+            <a href="/about" class="lm-nav-link">ABOUT US</a>
+            <a href="/contact" class="lm-nav-link">CONTACT</a>
+        </div>
+    </nav>
+
+    <!-- Main Render Body -->
+    <main role="main">
+        @RenderBody()
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-top mt-5 pt-5 pb-4">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-3 col-md-6">
+                    <div class="lm-logo-container mb-3">
+                        <div class="lm-logo-badge">LM</div>
+                        <div class="lm-logo-text">
+                            <span class="lm-logo-title">LAMISA MART</span>
+                            <span class="lm-logo-bengali">লমিসা মার্ট</span>
+                        </div>
+                    </div>
+                    <p class="small text-muted">Premium Bangladeshi multi-vendor marketplace for women's fashion, clothing, accessories, and beauty products.</p>
+                    <p class="small text-muted mb-0">© 2026 Lamisa Mart. All Rights Reserved.</p>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h6 class="fw-bold mb-3">SHOP CATEGORIES</h6>
+                    <ul class="list-unstyled small text-muted lh-lg mb-0">
+                        <li><a href="/category/saree">Sarees & Ethnic Wear</a></li>
+                        <li><a href="/category/three-piece">Three Piece & Kurtis</a></li>
+                        <li><a href="/category/jewelry">Jewelry & Accessories</a></li>
+                        <li><a href="/category/bags">Bags & Purses</a></li>
+                        <li><a href="/category/cosmetics">Cosmetics & Perfumes</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h6 class="fw-bold mb-3">CUSTOMER SERVICE</h6>
+                    <ul class="list-unstyled small text-muted lh-lg mb-0">
+                        <li><i class="bi bi-telephone me-2"></i>+880 1234-567890</li>
+                        <li><i class="bi bi-envelope me-2"></i>support@lamisamart.bd</li>
+                        <li><i class="bi bi-clock me-2"></i>Mon - Sat: 10AM - 9PM</li>
+                        <li><i class="bi bi-geo-alt me-2"></i>Dhanmondi, Dhaka, Bangladesh</li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h6 class="fw-bold mb-3">WE ACCEPT</h6>
+                    <div class="d-flex gap-2 align-items-center mb-3">
+                        <span class="badge bg-danger p-2">bKash</span>
+                        <span class="badge bg-warning text-dark p-2">Nagad</span>
+                        <span class="badge bg-primary p-2">VISA</span>
+                        <span class="badge bg-secondary p-2">Mastercard</span>
+                        <span class="badge bg-success p-2">BanglaQR</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Mobile Sticky Navigation Bar (PWA) -->
+    <div class="lm-mobile-bottom-nav">
+        <a href="/" class="lm-action-item"><i class="bi bi-house lm-action-icon"></i><span>Home</span></a>
+        <a href="/category" class="lm-action-item"><i class="bi bi-grid lm-action-icon"></i><span>Categories</span></a>
+        <a href="/account/wishlist" class="lm-action-item"><i class="bi bi-heart lm-action-icon"></i><span>Wishlist</span></a>
+        <a href="/account/profile" class="lm-action-item"><i class="bi bi-person lm-action-icon"></i><span>Account</span></a>
+        <a href="/cart" class="lm-action-item"><i class="bi bi-bag lm-action-icon"></i><span class="lm-badge">0</span><span>Cart</span></a>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    <script>
+        // PWA Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js');
+            });
+        }
+
+        // PWA Install Prompt Logic
+        let deferredPrompt;
+        const installBtn = document.getElementById('pwaInstallBtn');
+
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Prevent the mini-infobar from appearing on mobile
+            e.preventDefault();
+            // Stash the event so it can be triggered later.
+            deferredPrompt = e;
+            // Update UI notify the user they can install the PWA
+            installBtn.style.display = 'inline-block';
+
+            installBtn.addEventListener('click', async () => {
+                // Hide the app provided install promotion
+                installBtn.style.display = 'none';
+                // Show the install prompt
+                deferredPrompt.prompt();
+                // Wait for the user to respond to the prompt
+                const { outcome } = await deferredPrompt.userChoice;
+                // We've used the prompt, and can't use it again, throw it away
+                deferredPrompt = null;
+            });
+        });
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

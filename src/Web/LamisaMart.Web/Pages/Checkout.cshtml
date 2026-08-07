@@ -1,0 +1,142 @@
+@page
+@model CheckoutModel
+@{
+    ViewData["Title"] = "Secure Checkout";
+}
+
+<div class="container my-5 py-3">
+    <h2 class="fw-bold mb-4">Checkout</h2>
+
+    <form method="post">
+        <div class="row gx-5">
+            <!-- Delivery Information -->
+            <div class="col-lg-7">
+                <div class="card border-0 shadow-sm rounded-4 mb-4">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-4">1. Delivery Information</h5>
+                        
+                        <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+                        <div class="row g-3">
+                            <div class="col-12">
+                                <label class="form-label fw-medium text-muted small">Full Name</label>
+                                <input asp-for="Input.Name" class="form-control py-2 bg-light border-0" placeholder="e.g. Nusrat Jahan" required />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium text-muted small">Phone Number</label>
+                                <input asp-for="Input.Phone" class="form-control py-2 bg-light border-0" placeholder="01XXXXXXXXX" required />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium text-muted small">Email Address</label>
+                                <input asp-for="Input.Email" type="email" class="form-control py-2 bg-light border-0" placeholder="e.g. email@example.com" required />
+                            </div>
+                            <div class="col-12">
+                                <label class="form-label fw-medium text-muted small">Street Address</label>
+                                <input asp-for="Input.Address" class="form-control py-2 bg-light border-0" placeholder="House/Flat No, Road Name, Area" required />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-medium text-muted small">City/District</label>
+                                <select asp-for="Input.City" class="form-select py-2 bg-light border-0" required>
+                                    <option value="">Select District</option>
+                                    <option value="Dhaka">Dhaka</option>
+                                    <option value="Chattogram">Chattogram</option>
+                                    <option value="Sylhet">Sylhet</option>
+                                    <option value="Rajshahi">Rajshahi</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Method -->
+                <div class="card border-0 shadow-sm rounded-4">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-4">2. Payment Method</h5>
+                        
+                        <div class="form-check p-3 rounded-3 mb-2" style="background-color: #FAF7F2; border: 1px solid #C5A059;">
+                            <input asp-for="Input.PaymentMethod" class="form-check-input ms-1" type="radio" value="SSLCommerz" id="paymentSSL" checked>
+                            <label class="form-check-label fw-bold ms-3" for="paymentSSL">
+                                Digital Payment (Card / Mobile Banking)
+                                <div class="small text-muted fw-normal mt-1">Pay securely via bKash, Nagad, Visa, Mastercard, AMEX (via SSLCommerz)</div>
+                            </label>
+                        </div>
+
+                        <div class="form-check p-3 rounded-3 mb-2 bg-light">
+                            <input asp-for="Input.PaymentMethod" class="form-check-input ms-1" type="radio" value="BanglaQR" id="paymentQR">
+                            <label class="form-check-label fw-bold ms-3" for="paymentQR">
+                                BanglaQR
+                                <div class="small text-muted fw-normal mt-1">Scan QR code from your bank app</div>
+                            </label>
+                        </div>
+                        
+                        <div class="form-check p-3 rounded-3 bg-light">
+                            <input asp-for="Input.PaymentMethod" class="form-check-input ms-1" type="radio" value="COD" id="paymentCOD">
+                            <label class="form-check-label fw-bold ms-3" for="paymentCOD">
+                                Cash on Delivery (COD)
+                                <div class="small text-muted fw-normal mt-1">Pay in cash when your order arrives</div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Order Summary -->
+            <div class="col-lg-5 mt-4 mt-lg-0">
+                <div class="card border-0 shadow-sm rounded-4" style="background-color: #F8F9FA;">
+                    <div class="card-body p-4">
+                        <h5 class="fw-bold mb-4">Order Summary</h5>
+                        
+                        <div class="d-flex gap-3 mb-3 pb-3 border-bottom">
+                            <div class="position-relative">
+                                <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=100&q=80" class="rounded-3 object-fit-cover" style="width:60px; height:60px;" />
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-dark">1</span>
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="fw-bold small">Premium Jamdani Silk Saree</div>
+                                <div class="text-muted extra-small">Maroon</div>
+                            </div>
+                            <div class="fw-bold small">৳ 3,650</div>
+                        </div>
+
+                        <div class="d-flex gap-3 mb-4 pb-3 border-bottom">
+                            <div class="position-relative">
+                                <img src="https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=100&q=80" class="rounded-3 object-fit-cover" style="width:60px; height:60px;" />
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-circle bg-dark">2</span>
+                            </div>
+                            <div class="flex-grow-1">
+                                <div class="fw-bold small">Leather Handbag Designer</div>
+                                <div class="text-muted extra-small">Black</div>
+                            </div>
+                            <div class="fw-bold small">৳ 2,400</div>
+                        </div>
+
+                        <div class="d-flex justify-content-between mb-2 small text-muted">
+                            <span>Subtotal</span>
+                            <span>৳ 6,050</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2 small text-muted">
+                            <span>Shipping (Inside Dhaka)</span>
+                            <span>৳ 80</span>
+                        </div>
+                        
+                        <hr class="text-muted opacity-25 my-3" />
+                        
+                        <div class="d-flex justify-content-between mb-4">
+                            <span class="fw-bold fs-5">Total</span>
+                            <span class="fw-bold fs-5 text-danger">৳ 6,130</span>
+                        </div>
+                        
+                        <button type="submit" class="lm-btn-primary w-100 py-3 d-flex justify-content-between px-4 fs-6">
+                            <span>Place Order</span>
+                            <span>৳ 6,130</span>
+                        </button>
+                        
+                        <div class="text-center mt-3 text-muted" style="font-size: 11px;">
+                            By placing your order you agree to our Terms & Conditions and Privacy Policy.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

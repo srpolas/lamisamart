@@ -1,0 +1,119 @@
+@page
+@model LamisaMart.Web.Pages.Vendor.IndexModel
+@{
+    ViewData["Title"] = "Vendor Dashboard";
+    Layout = "_VendorLayout";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3 class="fw-bold m-0">Welcome, Nusrat Boutique</h3>
+        <p class="text-muted small m-0">Here is your store performance.</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="/Vendor/Products/Add" class="btn btn-dark"><i class="bi bi-plus-lg me-1"></i> Add Product</a>
+    </div>
+</div>
+
+<!-- Stats Row -->
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 bg-white p-3 h-100 border-start border-4" style="border-color: #B83256 !important;">
+            <div class="text-muted small fw-medium mb-1">TOTAL SALES</div>
+            <h3 class="fw-bold m-0 text-dark">৳ 45,500</h3>
+            <div class="text-success small mt-2"><i class="bi bi-arrow-up-right"></i> +8.5% from last week</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 bg-white p-3 h-100 border-start border-4 border-info">
+            <div class="text-muted small fw-medium mb-1">PENDING ORDERS</div>
+            <h3 class="fw-bold m-0 text-dark">12</h3>
+            <div class="text-danger small mt-2">Requires your attention</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 bg-white p-3 h-100 border-start border-4 border-warning">
+            <div class="text-muted small fw-medium mb-1">ACTIVE PRODUCTS</div>
+            <h3 class="fw-bold m-0 text-dark">42</h3>
+            <div class="text-success small mt-2">All in stock</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card border-0 shadow-sm rounded-4 bg-white p-3 h-100 border-start border-4 border-success">
+            <div class="text-muted small fw-medium mb-1">LEDGER BALANCE</div>
+            <h3 class="fw-bold m-0 text-dark">৳ 12,200</h3>
+            <div class="text-muted small mt-2">Next payout: Nov 1</div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Sub-Orders to Fulfill -->
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm rounded-4">
+            <div class="card-header bg-white border-0 pt-4 pb-0 d-flex justify-content-between align-items-center">
+                <h6 class="fw-bold m-0">Recent Sub-Orders (Your Fulfillments)</h6>
+                <a href="#" class="text-decoration-none small text-danger">View All</a>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="text-muted small">
+                            <tr>
+                                <th>Sub-Order ID</th>
+                                <th>Product</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Net Amount (90%)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="fw-medium">#SORD-5892-A</td>
+                                <td>Premium Jamdani Saree (Maroon)</td>
+                                <td>Oct 24, 2023</td>
+                                <td><span class="badge bg-warning text-dark">Pending Shipping</span></td>
+                                <td class="fw-bold text-success">৳ 3,285</td>
+                            </tr>
+                            <tr>
+                                <td class="fw-medium">#SORD-5891-B</td>
+                                <td>Cotton Kurti Set</td>
+                                <td>Oct 23, 2023</td>
+                                <td><span class="badge bg-info">Shipped</span></td>
+                                <td class="fw-bold text-success">৳ 1,665</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Quick Actions -->
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-header bg-white border-0 pt-4 pb-0">
+                <h6 class="fw-bold m-0">Shop Management</h6>
+            </div>
+            <div class="card-body">
+                <a href="#" class="d-flex align-items-center p-3 rounded-3 mb-2 text-decoration-none bg-light text-dark shadow-sm">
+                    <div class="bg-dark text-white rounded p-2 me-3"><i class="bi bi-person-badge"></i></div>
+                    <div>
+                        <div class="fw-bold">Shop Profile</div>
+                        <div class="small text-muted">Update logo & banners</div>
+                    </div>
+                    <i class="bi bi-chevron-right ms-auto text-muted"></i>
+                </a>
+                
+                <a href="#" class="d-flex align-items-center p-3 rounded-3 text-decoration-none bg-light text-dark shadow-sm">
+                    <div class="bg-success text-white rounded p-2 me-3"><i class="bi bi-wallet2"></i></div>
+                    <div>
+                        <div class="fw-bold">Payouts & Ledger</div>
+                        <div class="small text-muted">View accounting history</div>
+                    </div>
+                    <i class="bi bi-chevron-right ms-auto text-muted"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
