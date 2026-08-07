@@ -8,21 +8,30 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <style>
         body { background-color: #F8F9FA; font-family: 'Inter', sans-serif; }
-        .vendor-sidebar { width: 260px; min-height: 100vh; background-color: #ffffff; border-right: 1px solid #dee2e6; position: fixed; }
+        .vendor-sidebar { width: 260px; min-height: 100vh; background-color: #ffffff; border-right: 1px solid #dee2e6; position: fixed; top: 0; left: 0; z-index: 1040; transition: transform 0.3s ease; }
         .vendor-sidebar .nav-link { color: #495057; padding: 12px 20px; transition: 0.2s; font-weight: 500; }
         .vendor-sidebar .nav-link:hover, .vendor-sidebar .nav-link.active { background-color: #FAF4EB; color: #B83256; border-right: 4px solid #B83256; }
         .vendor-sidebar .nav-link i { margin-right: 10px; width: 20px; text-align: center; }
-        .vendor-main { margin-left: 260px; padding: 30px; }
+        .vendor-main { margin-left: 260px; padding: 20px; transition: margin-left 0.3s ease; }
+        
+        @@media (max-width: 991.98px) {
+            .vendor-sidebar { transform: translateX(-100%); }
+            .vendor-sidebar.show { transform: translateX(0); }
+            .vendor-main { margin-left: 0; padding: 15px; }
+        }
     </style>
 </head>
 <body>
     <div class="d-flex">
         <!-- Sidebar -->
-        <div class="vendor-sidebar">
-            <div class="p-4 mb-3 text-center border-bottom">
-                <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=100&q=80" class="rounded-circle mb-2" style="width: 60px; height: 60px;" />
-                <div class="fw-bold fs-6 text-dark">Nusrat Boutique</div>
-                <div class="small text-muted">Vendor Panel</div>
+        <div class="vendor-sidebar shadow-sm" id="vendorSidebar">
+            <div class="p-4 mb-3 text-center border-bottom d-flex justify-content-between align-items-center">
+                <div class="text-center w-100">
+                    <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=100&q=80" class="rounded-circle mb-2" style="width: 50px; height: 50px; object-fit: cover;" />
+                    <div class="fw-bold fs-6 text-dark">Nusrat Boutique</div>
+                    <div class="small text-muted">Vendor Panel</div>
+                </div>
+                <button class="btn text-muted d-lg-none p-0" onclick="toggleVendorSidebar()"><i class="bi bi-x-lg fs-5"></i></button>
             </div>
             
             <ul class="nav flex-column mb-auto">
@@ -62,14 +71,15 @@
         <!-- Main Content -->
         <div class="vendor-main flex-grow-1">
             <!-- Topbar -->
-            <div class="bg-white p-3 rounded-4 shadow-sm mb-4 d-flex justify-content-end align-items-center">
-                <div class="d-flex align-items-center gap-3">
+            <div class="bg-white p-3 rounded-4 shadow-sm mb-4 d-flex justify-content-between align-items-center">
+                <button class="btn btn-outline-secondary d-lg-none" onclick="toggleVendorSidebar()"><i class="bi bi-list"></i> Menu</button>
+                <div class="d-flex align-items-center gap-3 ms-auto">
                     <div class="position-relative">
                         <i class="bi bi-bell fs-5 text-muted"></i>
                     </div>
                     <div class="d-flex align-items-center gap-2 border-start ps-3 ms-2">
                         <div class="rounded-circle bg-danger text-white d-flex align-items-center justify-content-center fw-bold" style="width:36px; height:36px;">NJ</div>
-                        <div class="fw-medium small">Nusrat Jahan</div>
+                        <div class="fw-medium small d-none d-sm-block">Nusrat Jahan</div>
                     </div>
                 </div>
             </div>
@@ -77,5 +87,10 @@
             @RenderBody()
         </div>
     </div>
+    <script>
+        function toggleVendorSidebar() {
+            document.getElementById('vendorSidebar').classList.toggle('show');
+        }
+    </script>
 </body>
 </html>

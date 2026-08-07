@@ -1,5 +1,5 @@
 /* ==========================================================================
-   LamisaMart — Master CSS Design System
+   LamisaMart — Master CSS Design System (Mobile-First & Fully Responsive)
    Matches LamisaMart.png design concept precisely
    Primary: Deep Crimson Rose (#B83256), Gold Accent (#C5A059), Cream (#FAF7F2)
    ========================================================================== */
@@ -56,6 +56,7 @@ body {
   padding: 0;
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
 a {
@@ -70,7 +71,7 @@ img {
   display: block;
 }
 
-/* Top Announcement Bar */
+/* 1. Top Announcement Bar */
 .lm-topbar {
   background-color: var(--lm-primary);
   color: #ffffff;
@@ -85,6 +86,7 @@ img {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 12px;
 }
 
 .lm-topbar-center {
@@ -96,13 +98,17 @@ img {
   display: flex;
   align-items: center;
   gap: 6px;
+  white-space: nowrap;
 }
 
-/* Header Section */
+/* 2. Header Section */
 .lm-header {
   background-color: #ffffff;
   border-bottom: 1px solid var(--lm-border);
-  padding: 16px 24px;
+  padding: 12px 24px;
+  position: sticky;
+  top: 0;
+  z-index: 999;
 }
 
 .lm-header-container {
@@ -111,7 +117,17 @@ img {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 32px;
+  gap: 24px;
+}
+
+.lm-mobile-toggle {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 24px;
+  color: var(--lm-text-main);
+  padding: 4px;
+  cursor: pointer;
 }
 
 /* Logo Frame */
@@ -122,8 +138,8 @@ img {
 }
 
 .lm-logo-badge {
-  width: 54px;
-  height: 54px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   border: 2px solid var(--lm-gold);
   display: flex;
@@ -131,9 +147,10 @@ img {
   justify-content: center;
   color: var(--lm-gold);
   font-weight: 700;
-  font-size: 22px;
+  font-size: 20px;
   background: radial-gradient(circle, #FFFDF9 0%, #F5EDE0 100%);
   box-shadow: var(--lm-shadow-sm);
+  flex-shrink: 0;
 }
 
 .lm-logo-text {
@@ -142,16 +159,16 @@ img {
 }
 
 .lm-logo-title {
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 800;
-  letter-spacing: 1.5px;
+  letter-spacing: 1.2px;
   color: var(--lm-primary-dark);
   line-height: 1.1;
 }
 
 .lm-logo-bengali {
   font-family: var(--lm-font-bengali);
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--lm-gold);
 }
@@ -171,7 +188,7 @@ img {
 
 .lm-search-input {
   width: 100%;
-  padding: 12px 48px 12px 20px;
+  padding: 10px 48px 10px 18px;
   border-radius: var(--lm-radius-pill);
   border: 1px solid #E2DCD5;
   background-color: #FAF8F5;
@@ -223,20 +240,20 @@ img {
 .lm-badge {
   position: absolute;
   top: -4px;
-  right: 2px;
+  right: -4px;
   background-color: var(--lm-primary);
   color: white;
   font-size: 10px;
   font-weight: 700;
-  width: 17px;
-  height: 17px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-/* Main Category Navigation Bar */
+/* 3. Main Category Navigation Bar */
 .lm-nav {
   background-color: #ffffff;
   border-bottom: 1px solid var(--lm-border);
@@ -248,25 +265,58 @@ img {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 28px;
+  gap: 24px;
   padding: 0 16px;
   overflow-x: auto;
   white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
+}
+
+.lm-nav-container::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
 }
 
 .lm-nav-link {
-  padding: 14px 4px;
+  padding: 12px 6px;
   font-size: 13px;
   font-weight: 600;
   color: #444444;
   letter-spacing: 0.5px;
   border-bottom: 2px solid transparent;
   transition: all 0.2s ease;
+  flex-shrink: 0;
 }
 
 .lm-nav-link:hover, .lm-nav-link.active {
   color: var(--lm-primary);
   border-bottom-color: var(--lm-primary);
+}
+
+/* 4. Mobile Offcanvas Navigation Drawer */
+.lm-offcanvas-menu {
+  max-width: 310px;
+}
+
+.lm-drawer-header {
+  background-color: var(--lm-primary);
+  color: white;
+  padding: 20px 16px;
+}
+
+.lm-drawer-nav .nav-link {
+  color: var(--lm-text-main);
+  padding: 12px 16px;
+  font-weight: 600;
+  border-bottom: 1px solid var(--lm-border-light);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.lm-drawer-nav .nav-link:hover, .lm-drawer-nav .nav-link.active {
+  color: var(--lm-primary);
+  background-color: var(--lm-primary-light);
 }
 
 /* Section Title Dividers */
@@ -275,7 +325,7 @@ img {
   font-size: 18px;
   font-weight: 700;
   letter-spacing: 1px;
-  margin: 40px 0 24px;
+  margin: 32px 0 20px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -290,13 +340,13 @@ img {
   background-color: var(--lm-gold);
 }
 
-/* Shop By Category Circles */
+/* 5. Shop By Category Circles */
 .lm-categories-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 16px;
   max-width: 1280px;
-  margin: 0 auto 40px;
+  margin: 0 auto 32px;
   padding: 0 16px;
 }
 
@@ -304,13 +354,14 @@ img {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   cursor: pointer;
+  text-align: center;
 }
 
 .lm-category-circle {
-  width: 110px;
-  height: 110px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
   background-color: #F5EEE6;
   border: 2px solid #EFE4D6;
@@ -320,6 +371,7 @@ img {
   justify-content: center;
   transition: all 0.3s ease;
   box-shadow: var(--lm-shadow-sm);
+  aspect-ratio: 1 / 1;
 }
 
 .lm-category-card:hover .lm-category-circle {
@@ -335,13 +387,14 @@ img {
 }
 
 .lm-category-label {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.5px;
   color: var(--lm-text-main);
+  word-break: break-word;
 }
 
-/* Trust Badges Bar */
+/* 6. Trust Badges Bar */
 .lm-trust-bar {
   background-color: #FFFFFF;
   border-top: 1px solid var(--lm-border-light);
@@ -362,12 +415,13 @@ img {
 .lm-trust-item {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 12px;
 }
 
 .lm-trust-icon {
-  font-size: 28px;
+  font-size: 26px;
   color: var(--lm-gold);
+  flex-shrink: 0;
 }
 
 .lm-trust-title {
@@ -382,13 +436,13 @@ img {
   margin: 0;
 }
 
-/* Product Cards Grid */
+/* 7. Product Cards Grid */
 .lm-products-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 20px;
   max-width: 1280px;
-  margin: 0 auto 40px;
+  margin: 0 auto 32px;
   padding: 0 16px;
 }
 
@@ -399,6 +453,8 @@ img {
   overflow: hidden;
   transition: all 0.3s ease;
   position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 .lm-product-card:hover {
@@ -409,15 +465,15 @@ img {
 
 .lm-product-image {
   width: 100%;
-  aspect-ratio: 3/4;
+  aspect-ratio: 3 / 4;
   object-fit: cover;
   background-color: #F8F4EE;
 }
 
 .lm-product-wishlist {
   position: absolute;
-  top: 12px;
-  right: 12px;
+  top: 10px;
+  right: 10px;
   width: 32px;
   height: 32px;
   border-radius: 50%;
@@ -425,10 +481,11 @@ img {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
+  font-size: 15px;
   color: #777777;
   box-shadow: var(--lm-shadow-sm);
   cursor: pointer;
+  z-index: 2;
 }
 
 .lm-product-wishlist:hover {
@@ -436,7 +493,11 @@ img {
 }
 
 .lm-product-info {
-  padding: 14px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  justify-content: space-between;
 }
 
 .lm-product-title {
@@ -444,9 +505,12 @@ img {
   font-weight: 600;
   color: var(--lm-text-main);
   margin: 0 0 6px;
-  white-space: nowrap;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
+  line-height: 1.3;
 }
 
 .lm-product-price {
@@ -455,10 +519,10 @@ img {
   color: var(--lm-primary);
 }
 
-/* Buttons */
+/* 8. Buttons */
 .lm-btn-primary {
   background-color: var(--lm-primary);
-  color: #ffffff;
+  color: #ffffff !important;
   padding: 10px 24px;
   border-radius: var(--lm-radius-pill);
   font-weight: 600;
@@ -467,43 +531,224 @@ img {
   cursor: pointer;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   transition: background-color 0.2s ease;
+  text-align: center;
 }
 
 .lm-btn-primary:hover {
   background-color: var(--lm-primary-hover);
 }
 
-/* Mobile Sticky Bottom Bar (PWA) */
+/* 9. Mobile Sticky Bottom Navigation Bar (PWA / Touch Optimized) */
 .lm-mobile-bottom-nav {
   display: none;
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
-  background: white;
+  background: #ffffff;
   border-top: 1px solid var(--lm-border);
-  padding: 8px 16px;
+  padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
   z-index: 1000;
-  box-shadow: 0 -4px 12px rgba(0,0,0,0.06);
+  box-shadow: 0 -4px 15px rgba(0,0,0,0.08);
 }
 
-@media (max-width: 768px) {
+.lm-mobile-bottom-nav .lm-action-item {
+  flex: 1;
+  text-align: center;
+  color: var(--lm-text-muted);
+}
+
+.lm-mobile-bottom-nav .lm-action-item.active,
+.lm-mobile-bottom-nav .lm-action-item:hover {
+  color: var(--lm-primary);
+}
+
+.lm-mobile-bottom-nav .lm-action-icon {
+  font-size: 20px;
+}
+
+/* Dynamic Floating CTA Bar on Mobile Product Page */
+.lm-mobile-sticky-cta {
+  display: none;
+  position: fixed;
+  bottom: 56px;
+  left: 0;
+  right: 0;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(8px);
+  border-top: 1px solid var(--lm-border);
+  padding: 10px 16px;
+  z-index: 999;
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+}
+
+/* ==========================================================================
+   MEDIA QUERIES (Mobile & Tablet Responsiveness)
+   ========================================================================== */
+
+@media (max-width: 991.98px) {
+  .lm-header {
+    padding: 10px 16px;
+  }
+  .lm-header-container {
+    gap: 16px;
+  }
   .lm-categories-grid {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
   }
   .lm-products-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
   }
-  .lm-trust-container {
-    grid-template-columns: repeat(2, 1fr);
+}
+
+@media (max-width: 767.98px) {
+  /* Body spacing for sticky bottom bar */
+  body {
+    padding-bottom: 68px;
+  }
+
+  /* Topbar adjustment */
+  .lm-topbar {
+    padding: 6px 12px;
   }
   .lm-topbar-center {
     display: none;
   }
+  .lm-topbar-content {
+    font-size: 11.5px;
+    justify-content: space-between;
+  }
+
+  /* Header mobile restructuring */
+  .lm-mobile-toggle {
+    display: block;
+  }
+  
+  .lm-logo-title {
+    font-size: 16px;
+    letter-spacing: 0.8px;
+  }
+  .lm-logo-bengali {
+    font-size: 12px;
+  }
+  .lm-logo-tagline {
+    display: none;
+  }
+  .lm-logo-badge {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+  
+  .lm-header-actions .lm-action-item span:not(.lm-badge) {
+    display: none; /* Icon only on mobile top header */
+  }
+  .lm-header-actions {
+    gap: 14px;
+  }
+  
+  .lm-search-box {
+    display: none; /* Hide header inline search on small mobile, show sub-header search */
+  }
+
+  .lm-mobile-search-row {
+    display: block;
+    padding: 8px 16px 10px;
+    background-color: #ffffff;
+    border-bottom: 1px solid var(--lm-border-light);
+  }
+
+  /* Navigation Bar */
+  .lm-nav {
+    display: none; /* Desktop category bar replaced by mobile drawer & touch slider */
+  }
+
+  /* Mobile Sticky Bottom Nav */
   .lm-mobile-bottom-nav {
     display: flex;
     justify-content: space-around;
+    align-items: center;
+  }
+
+  /* Section Title */
+  .lm-section-title {
+    font-size: 16px;
+    margin: 24px 0 16px;
+  }
+  .lm-section-title::before, .lm-section-title::after {
+    width: 30px;
+  }
+
+  /* Category Grid on Mobile */
+  .lm-categories-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px 8px;
+    padding: 0 12px;
+  }
+
+  .lm-category-circle {
+    width: 72px;
+    height: 72px;
+  }
+
+  .lm-category-label {
+    font-size: 11px;
+  }
+
+  /* Trust Bar on Mobile */
+  .lm-trust-container {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px 10px;
+    padding: 0 12px;
+  }
+  .lm-trust-item {
+    gap: 8px;
+  }
+  .lm-trust-icon {
+    font-size: 22px;
+  }
+  .lm-trust-title {
+    font-size: 12px;
+  }
+  .lm-trust-sub {
+    font-size: 10px;
+  }
+
+  /* Products Grid on Mobile */
+  .lm-products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    padding: 0 12px;
+  }
+  .lm-product-info {
+    padding: 10px;
+  }
+  .lm-product-title {
+    font-size: 13px;
+  }
+  .lm-product-price {
+    font-size: 14px;
+  }
+
+  .lm-mobile-sticky-cta {
+    display: flex;
+  }
+}
+
+@media (max-width: 480px) {
+  .lm-categories-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px 6px;
+  }
+  .lm-category-circle {
+    width: 66px;
+    height: 66px;
+  }
+  .lm-category-label {
+    font-size: 10px;
   }
 }

@@ -2,7 +2,7 @@
 <html lang="bn">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
     <title>@ViewData["Title"] - লমিসা মার্ট | LamisaMart</title>
     
     <!-- SEO Meta Tags -->
@@ -34,19 +34,19 @@
         <div class="lm-topbar-content">
             <div class="lm-topbar-item">
                 <i class="bi bi-truck"></i>
-                <span>Free Delivery on orders over ৳1500</span>
+                <span>Free Delivery over ৳1500</span>
             </div>
             <div class="lm-topbar-center">
                 <div class="lm-topbar-item"><i class="bi bi-patch-check"></i> 100% Original Products</div>
                 <div>|</div>
                 <div class="lm-topbar-item"><i class="bi bi-arrow-counterclockwise"></i> Easy Returns & Exchange</div>
             </div>
-            <div class="lm-topbar-item">
-                <span>বাংলা</span> | <span class="opacity-75">English</span>
-            </div>
-            <div class="lm-topbar-item ms-3">
-                <button id="pwaInstallBtn" class="btn btn-sm btn-outline-light rounded-pill px-3 py-0" style="display: none; border-color: #FAF7F2; font-size: 0.8rem;">
-                    <i class="bi bi-download me-1"></i> Install App
+            <div class="d-flex align-items-center gap-2">
+                <div class="lm-topbar-item">
+                    <span>বাংলা</span> | <span class="opacity-75">EN</span>
+                </div>
+                <button id="pwaInstallBtn" class="btn btn-sm btn-outline-light rounded-pill px-2 py-0 ms-1" style="display: none; border-color: #FAF7F2; font-size: 0.75rem;">
+                    <i class="bi bi-download"></i> Install
                 </button>
             </div>
         </div>
@@ -55,6 +55,11 @@
     <!-- 2. Main Header -->
     <header class="lm-header">
         <div class="lm-header-container">
+            <!-- Mobile Menu Toggle Button -->
+            <button class="lm-mobile-toggle" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu" aria-label="Toggle navigation">
+                <i class="bi bi-list"></i>
+            </button>
+
             <!-- Logo -->
             <a href="/" class="lm-logo-container">
                 <div class="lm-logo-badge">LM</div>
@@ -65,32 +70,81 @@
                 </div>
             </a>
 
-            <!-- Search Bar -->
+            <!-- Search Bar (Desktop) -->
             <form action="/search" method="get" class="lm-search-box">
-                <input type="text" name="q" class="lm-search-input" placeholder="Search for products..." />
-                <button type="submit" class="lm-search-btn"><i class="bi bi-search"></i></button>
+                <input type="text" name="q" class="lm-search-input" placeholder="Search for sarees, kurtis, makeup..." aria-label="Search" />
+                <button type="submit" class="lm-search-btn" aria-label="Submit Search"><i class="bi bi-search"></i></button>
             </form>
 
             <!-- Header Actions -->
             <div class="lm-header-actions">
-                <a href="/account/wishlist" class="lm-action-item">
+                <a href="/account/wishlist" class="lm-action-item" title="Wishlist">
                     <i class="bi bi-heart lm-action-icon"></i>
                     <span>Wishlist</span>
                 </a>
-                <a href="/account/login" class="lm-action-item">
+                <a href="/account/login" class="lm-action-item" title="Account">
                     <i class="bi bi-person lm-action-icon"></i>
                     <span>Account</span>
                 </a>
-                <a href="/cart" class="lm-action-item">
+                <a href="/cart" class="lm-action-item" title="Cart">
                     <i class="bi bi-bag lm-action-icon"></i>
-                    <span class="lm-badge">0</span>
+                    <span class="lm-badge">2</span>
                     <span>Cart</span>
                 </a>
             </div>
         </div>
     </header>
 
-    <!-- 3. Category Navigation Bar -->
+    <!-- Mobile Search Row (Shown only on small mobile devices) -->
+    <div class="lm-mobile-search-row d-md-none">
+        <form action="/search" method="get" class="position-relative">
+            <input type="text" name="q" class="lm-search-input py-2 fs-6" placeholder="Search for sarees, kurtis, cosmetics..." aria-label="Search" />
+            <button type="submit" class="lm-search-btn" aria-label="Submit Search"><i class="bi bi-search"></i></button>
+        </form>
+    </div>
+
+    <!-- 3. Offcanvas Navigation Drawer for Mobile -->
+    <div class="offcanvas offcanvas-start lm-offcanvas-menu" tabindex="-1" id="mobileMenu" aria-labelledby="mobileMenuLabel">
+        <div class="offcanvas-header lm-drawer-header">
+            <div class="d-flex align-items-center gap-2">
+                <div class="lm-logo-badge border-white text-white bg-transparent" style="width:38px; height:38px; font-size:14px;">LM</div>
+                <div>
+                    <h6 class="mb-0 fw-bold text-white">LAMISA MART</h6>
+                    <small class="text-white-50" style="font-size: 11px;">Women's Fashion Marketplace</small>
+                </div>
+            </div>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body p-0">
+            <div class="p-3 bg-light border-bottom d-flex align-items-center justify-content-between">
+                <span class="small fw-semibold text-muted">Language / ভাষা</span>
+                <div class="btn-group btn-group-sm">
+                    <button type="button" class="btn btn-danger btn-sm active">বাংলা</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm">English</button>
+                </div>
+            </div>
+            
+            <div class="lm-drawer-nav">
+                <div class="p-2 px-3 small fw-bold text-uppercase text-muted bg-light">Categories</div>
+                <a href="/" class="nav-link"><span><i class="bi bi-house-door me-2 text-danger"></i> Home</span> <i class="bi bi-chevron-right small text-muted"></i></a>
+                <a href="/category/new-arrival" class="nav-link"><span><i class="bi bi-sparkles me-2 text-warning"></i> New Arrivals</span> <span class="badge bg-danger rounded-pill">Hot</span></a>
+                <a href="/category/saree" class="nav-link"><span><i class="bi bi-tag me-2 text-danger"></i> Sarees & Ethnic</span> <i class="bi bi-chevron-right small text-muted"></i></a>
+                <a href="/category/three-piece" class="nav-link"><span><i class="bi bi-grid me-2 text-primary"></i> Three Piece</span> <i class="bi bi-chevron-right small text-muted"></i></a>
+                <a href="/category/kurti" class="nav-link"><span><i class="bi bi-bag-heart me-2 text-success"></i> Kurtis & Tunics</span> <i class="bi bi-chevron-right small text-muted"></i></a>
+                <a href="/category/innerwear" class="nav-link"><span><i class="bi bi-heart me-2 text-info"></i> Innerwear</span> <i class="bi bi-chevron-right small text-muted"></i></a>
+                <a href="/category/jewelry" class="nav-link"><span><i class="bi bi-gem me-2 text-warning"></i> Jewelry & Ornaments</span> <i class="bi bi-chevron-right small text-muted"></i></a>
+                <a href="/category/bags" class="nav-link"><span><i class="bi bi-bag me-2 text-secondary"></i> Handbags & Purses</span> <i class="bi bi-chevron-right small text-muted"></i></a>
+                <a href="/category/cosmetics" class="nav-link"><span><i class="bi bi-palette me-2 text-danger"></i> Cosmetics & Beauty</span> <i class="bi bi-chevron-right small text-muted"></i></a>
+                <a href="/category/sale" class="nav-link text-danger fw-bold"><span><i class="bi bi-percent me-2"></i> Special Clearance Sale</span> <span class="badge bg-danger">Up to 50%</span></a>
+                
+                <div class="p-2 px-3 small fw-bold text-uppercase text-muted bg-light mt-2">Portals & Account</div>
+                <a href="/Vendor" class="nav-link text-dark"><span><i class="bi bi-shop me-2 text-primary"></i> Vendor Dashboard</span> <i class="bi bi-arrow-up-right small text-muted"></i></a>
+                <a href="/Admin" class="nav-link text-dark"><span><i class="bi bi-shield-lock me-2 text-secondary"></i> Admin Panel</span> <i class="bi bi-arrow-up-right small text-muted"></i></a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. Category Navigation Bar (Desktop Horizontal Scroll) -->
     <nav class="lm-nav">
         <div class="lm-nav-container">
             <a href="/" class="lm-nav-link active">HOME</a>
@@ -114,7 +168,7 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-white border-top mt-5 pt-5 pb-4">
+    <footer class="bg-white border-top mt-5 pt-5 pb-5">
         <div class="container">
             <div class="row g-4">
                 <div class="col-lg-3 col-md-6">
@@ -128,7 +182,7 @@
                     <p class="small text-muted">Premium Bangladeshi multi-vendor marketplace for women's fashion, clothing, accessories, and beauty products.</p>
                     <p class="small text-muted mb-0">© 2026 Lamisa Mart. All Rights Reserved.</p>
                 </div>
-                <div class="col-lg-3 col-md-6">
+                <div class="col-lg-3 col-md-6 col-6">
                     <h6 class="fw-bold mb-3">SHOP CATEGORIES</h6>
                     <ul class="list-unstyled small text-muted lh-lg mb-0">
                         <li><a href="/category/saree">Sarees & Ethnic Wear</a></li>
@@ -138,18 +192,18 @@
                         <li><a href="/category/cosmetics">Cosmetics & Perfumes</a></li>
                     </ul>
                 </div>
-                <div class="col-lg-3 col-md-6">
+                <div class="col-lg-3 col-md-6 col-6">
                     <h6 class="fw-bold mb-3">CUSTOMER SERVICE</h6>
                     <ul class="list-unstyled small text-muted lh-lg mb-0">
-                        <li><i class="bi bi-telephone me-2"></i>+880 1234-567890</li>
-                        <li><i class="bi bi-envelope me-2"></i>support@lamisamart.bd</li>
-                        <li><i class="bi bi-clock me-2"></i>Mon - Sat: 10AM - 9PM</li>
-                        <li><i class="bi bi-geo-alt me-2"></i>Dhanmondi, Dhaka, Bangladesh</li>
+                        <li><i class="bi bi-telephone me-1"></i> +880 1234-567890</li>
+                        <li><i class="bi bi-envelope me-1"></i> support@lamisamart.bd</li>
+                        <li><i class="bi bi-clock me-1"></i> Mon - Sat: 10AM - 9PM</li>
+                        <li><i class="bi bi-geo-alt me-1"></i> Dhanmondi, Dhaka</li>
                     </ul>
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <h6 class="fw-bold mb-3">WE ACCEPT</h6>
-                    <div class="d-flex gap-2 align-items-center mb-3">
+                    <div class="d-flex flex-wrap gap-2 align-items-center mb-3">
                         <span class="badge bg-danger p-2">bKash</span>
                         <span class="badge bg-warning text-dark p-2">Nagad</span>
                         <span class="badge bg-primary p-2">VISA</span>
@@ -161,13 +215,29 @@
         </div>
     </footer>
 
-    <!-- Mobile Sticky Navigation Bar (PWA) -->
+    <!-- Mobile Sticky Navigation Bar (PWA & Touch Friendly) -->
     <div class="lm-mobile-bottom-nav">
-        <a href="/" class="lm-action-item"><i class="bi bi-house lm-action-icon"></i><span>Home</span></a>
-        <a href="/category" class="lm-action-item"><i class="bi bi-grid lm-action-icon"></i><span>Categories</span></a>
-        <a href="/account/wishlist" class="lm-action-item"><i class="bi bi-heart lm-action-icon"></i><span>Wishlist</span></a>
-        <a href="/account/profile" class="lm-action-item"><i class="bi bi-person lm-action-icon"></i><span>Account</span></a>
-        <a href="/cart" class="lm-action-item"><i class="bi bi-bag lm-action-icon"></i><span class="lm-badge">0</span><span>Cart</span></a>
+        <a href="/" class="lm-action-item active">
+            <i class="bi bi-house lm-action-icon"></i>
+            <span>Home</span>
+        </a>
+        <a href="#" class="lm-action-item" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu">
+            <i class="bi bi-grid lm-action-icon"></i>
+            <span>Categories</span>
+        </a>
+        <a href="/account/wishlist" class="lm-action-item">
+            <i class="bi bi-heart lm-action-icon"></i>
+            <span>Wishlist</span>
+        </a>
+        <a href="/account/login" class="lm-action-item">
+            <i class="bi bi-person lm-action-icon"></i>
+            <span>Account</span>
+        </a>
+        <a href="/cart" class="lm-action-item">
+            <i class="bi bi-bag lm-action-icon"></i>
+            <span class="lm-badge">2</span>
+            <span>Cart</span>
+        </a>
     </div>
 
     <!-- Scripts -->
@@ -186,23 +256,18 @@
         const installBtn = document.getElementById('pwaInstallBtn');
 
         window.addEventListener('beforeinstallprompt', (e) => {
-            // Prevent the mini-infobar from appearing on mobile
             e.preventDefault();
-            // Stash the event so it can be triggered later.
             deferredPrompt = e;
-            // Update UI notify the user they can install the PWA
-            installBtn.style.display = 'inline-block';
+            if (installBtn) installBtn.style.display = 'inline-block';
 
-            installBtn.addEventListener('click', async () => {
-                // Hide the app provided install promotion
-                installBtn.style.display = 'none';
-                // Show the install prompt
-                deferredPrompt.prompt();
-                // Wait for the user to respond to the prompt
-                const { outcome } = await deferredPrompt.userChoice;
-                // We've used the prompt, and can't use it again, throw it away
-                deferredPrompt = null;
-            });
+            if (installBtn) {
+                installBtn.addEventListener('click', async () => {
+                    installBtn.style.display = 'none';
+                    deferredPrompt.prompt();
+                    const { outcome } = await deferredPrompt.userChoice;
+                    deferredPrompt = null;
+                });
+            }
         });
     </script>
     @await RenderSectionAsync("Scripts", required: false)
