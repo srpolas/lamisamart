@@ -38,6 +38,8 @@ builder.Services.AddControllers();
 builder.Services.AddMediatR(cfg => {
     cfg.RegisterServicesFromAssembly(typeof(LamisaMart.Catalog.Application.DTOs.CategoryDto).Assembly);
     cfg.RegisterServicesFromAssembly(typeof(LamisaMart.Ordering.Application.DTOs.OrderDto).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(LamisaMart.Payments.Application.Common.Interfaces.ISSLCommerzClient).Assembly);
+    cfg.RegisterServicesFromAssembly(typeof(LamisaMart.PageBuilder.Application.Layouts.Queries.GetPageLayoutQuery).Assembly);
 });
 
 // Payments Module Configuration
