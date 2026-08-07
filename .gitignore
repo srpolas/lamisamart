@@ -486,10 +486,13 @@ publish/
 
 # LamisaMart specific ignored files
 instructions.txt
-LamisaMart.png
+# LamisaMart specific ignores
 memory.md
 Plan.md
 work_in_progress.md
+instructions.txt
+LamisaMart.png
 publish.sh
 Dockerfile
 docker-compose*
+appsettings*.json
