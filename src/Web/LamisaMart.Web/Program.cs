@@ -30,6 +30,14 @@ builder.Services.AddDbContext<AccountingDbContext>(options =>
 builder.Services.AddDbContext<PageBuilderDbContext>(options =>
     options.UseSqlServer(connectionString));
 
+// Bind Interfaces
+builder.Services.AddScoped<LamisaMart.Catalog.Application.Common.Interfaces.ICatalogDbContext>(provider => provider.GetRequiredService<CatalogDbContext>());
+builder.Services.AddScoped<LamisaMart.Ordering.Application.Common.Interfaces.IOrderingDbContext>(provider => provider.GetRequiredService<OrderingDbContext>());
+builder.Services.AddScoped<LamisaMart.Payments.Application.Common.Interfaces.IPaymentsDbContext>(provider => provider.GetRequiredService<PaymentsDbContext>());
+builder.Services.AddScoped<LamisaMart.Vendors.Application.Common.Interfaces.IVendorsDbContext>(provider => provider.GetRequiredService<VendorsDbContext>());
+builder.Services.AddScoped<LamisaMart.Accounting.Application.Common.Interfaces.IAccountingDbContext>(provider => provider.GetRequiredService<AccountingDbContext>());
+builder.Services.AddScoped<LamisaMart.PageBuilder.Application.Common.Interfaces.IPageBuilderDbContext>(provider => provider.GetRequiredService<PageBuilderDbContext>());
+
 // 2. Add Services to Container
 builder.Services.AddRazorPages();
 builder.Services.AddControllers();
