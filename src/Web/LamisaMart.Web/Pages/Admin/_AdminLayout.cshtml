@@ -50,20 +50,39 @@
                         <i class="bi bi-speedometer2"></i> Dashboard
                     </a>
                 </li>
+
+                <!-- Business Main Menu with Submenus -->
+                @{
+                    var currentPage = ViewContext.RouteData.Values["page"]?.ToString() ?? "";
+                    var isBusinessActive = currentPage.StartsWith("/Admin/Business") || currentPage == "/Admin/Orders";
+                }
                 <li class="nav-item">
-                    <a href="/Admin/Vendors" class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/Admin/Vendors" ? "active" : "")">
-                        <i class="bi bi-shop"></i> Vendors <span class="badge bg-warning text-dark ms-auto fs-7 rounded-pill">5 New</span>
+                    <a class="nav-link d-flex align-items-center justify-content-between cursor-pointer @(isBusinessActive ? "active" : "")" 
+                       data-bs-toggle="collapse" href="#businessSubmenu" role="button" aria-expanded="@(isBusinessActive ? "true" : "false")">
+                        <span><i class="bi bi-briefcase"></i> Business</span>
+                        <i class="bi bi-chevron-down fs-7"></i>
                     </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/Admin/Orders" class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/Admin/Orders" ? "active" : "")">
-                        <i class="bi bi-cart3"></i> Platform Orders
-                    </a>
+                    <div class="collapse @(isBusinessActive ? "show" : "")" id="businessSubmenu">
+                        <a href="/Admin/Business/Status" class="submenu-link @(currentPage == "/Admin/Business/Status" ? "active" : "")">
+                            <i class="bi bi-graph-up-arrow me-1"></i> Status (Dashboard)
+                        </a>
+                        <a href="/Admin/Business/Orders" class="submenu-link @(currentPage == "/Admin/Business/Orders" || currentPage == "/Admin/Orders" ? "active" : "")">
+                            <i class="bi bi-cart3 me-1"></i> Orders
+                        </a>
+                        <a href="/Admin/Business/Customers" class="submenu-link @(currentPage == "/Admin/Business/Customers" ? "active" : "")">
+                            <i class="bi bi-people me-1"></i> Customers
+                        </a>
+                        <a href="/Admin/Business/Reports" class="submenu-link @(currentPage == "/Admin/Business/Reports" ? "active" : "")">
+                            <i class="bi bi-bar-chart-line me-1"></i> Reports
+                        </a>
+                        <a href="/Admin/Business/Settings" class="submenu-link @(currentPage == "/Admin/Business/Settings" ? "active" : "")">
+                            <i class="bi bi-gear me-1"></i> Settings
+                        </a>
+                    </div>
                 </li>
 
                 <!-- Product Main Menu with Submenus -->
                 @{
-                    var currentPage = ViewContext.RouteData.Values["page"]?.ToString() ?? "";
                     var isProductActive = currentPage.StartsWith("/Admin/Products");
                 }
                 <li class="nav-item">
@@ -95,12 +114,17 @@
                 </li>
 
                 <li class="nav-item">
-                    <a href="/Admin/Accounting" class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/Admin/Accounting" ? "active" : "")">
+                    <a href="/Admin/Vendors" class="nav-link @(currentPage == "/Admin/Vendors" ? "active" : "")">
+                        <i class="bi bi-shop"></i> Vendors <span class="badge bg-warning text-dark ms-auto fs-7 rounded-pill">5 New</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/Admin/Accounting" class="nav-link @(currentPage == "/Admin/Accounting" ? "active" : "")">
                         <i class="bi bi-calculator"></i> Accounting Ledger
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="/Admin/PageBuilder" class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/Admin/PageBuilder" ? "active" : "")">
+                    <a href="/Admin/PageBuilder" class="nav-link @(currentPage == "/Admin/PageBuilder" ? "active" : "")">
                         <i class="bi bi-layout-wtf"></i> Page Builder CMS
                     </a>
                 </li>

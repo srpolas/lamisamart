@@ -1,0 +1,64 @@
+@page "/Admin/Business/Customers"
+@model LamisaMart.Web.Pages.Admin.Business.CustomersModel
+@{
+    ViewData["Title"] = "Customer Management - LamisaMart Admin";
+    Layout = "_AdminLayout";
+}
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+        <h3 class="fw-bold text-dark m-0">Customer Database & Lifetime Value</h3>
+        <p class="text-muted small mb-0">Browse registered customer profiles, track total orders placed, and audit lifetime spend.</p>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-5">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="bg-light text-muted small border-bottom">
+                <tr>
+                    <th class="ps-4 py-3">Customer Profile</th>
+                    <th class="py-3">Contact Details</th>
+                    <th class="py-3">City / Location</th>
+                    <th class="py-3 text-center">Total Orders</th>
+                    <th class="py-3 text-end">Lifetime Spend</th>
+                    <th class="pe-4 py-3 text-end">Joined Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var c in Model.CustomersList)
+                {
+                    <tr>
+                        <td class="ps-4">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="rounded-circle bg-danger-subtle text-danger fw-bold d-flex align-items-center justify-content-center" style="width: 42px; height: 42px;">
+                                    @c.Name.Substring(0, 1)
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold text-dark mb-0 fs-7">@c.Name</h6>
+                                    <span class="text-muted fs-8">ID: @c.Id.ToString("N").Substring(0, 8)</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="fw-medium text-dark fs-7"><i class="bi bi-envelope me-1 text-muted"></i>@c.Email</div>
+                            <span class="text-muted fs-7"><i class="bi bi-telephone me-1 text-primary"></i>@c.Phone</span>
+                        </td>
+                        <td>
+                            <span class="badge bg-light text-dark border fs-7">@c.City</span>
+                        </td>
+                        <td class="text-center fw-bold text-dark fs-7">
+                            @c.TotalOrders Orders
+                        </td>
+                        <td class="text-end fw-extrabold text-danger fs-6">
+                            ৳ @c.LifetimeSpend.ToString("N0")
+                        </td>
+                        <td class="pe-4 text-end fs-7 text-muted">
+                            @c.JoinedDate.ToString("MMM dd, yyyy")
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

@@ -1,0 +1,560 @@
+@page "/Admin/Business/Orders"
+@model LamisaMart.Web.Pages.Admin.Business.OrdersModel
+@{
+    ViewData["Title"] = "Business Orders Management - LamisaMart Admin";
+    Layout = "_AdminLayout";
+}
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+        <h3 class="fw-bold text-dark m-0">Business Orders Management</h3>
+        <p class="text-muted small mb-0">Track order origins, view customer audit details, print commercial invoices, and manage order statuses.</p>
+    </div>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show rounded-4 p-3 shadow-sm mb-4" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show rounded-4 p-3 shadow-sm mb-4" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<!-- Status Filter Tabs & Search Bar -->
+<div class="card border-0 shadow-sm rounded-4 mb-4">
+    <div class="card-body p-3">
+        <form method="get" action="/Admin/Business/Orders" class="row g-2 align-items-center">
+            <div class="col-12 col-md-8">
+                <div class="d-flex gap-2 overflow-x-auto pb-1 scrollbar-hidden">
+                    <a href="/Admin/Business/Orders" class="btn btn-sm rounded-pill px-3 @(string.IsNullOrEmpty(Model.StatusFilter) ? "btn-dark fw-bold" : "btn-outline-secondary")">
+                        All Orders
+                    </a>
+                    <a href="/Admin/Business/Orders?statusFilter=Pending" class="btn btn-sm rounded-pill px-3 @(Model.StatusFilter == "Pending" ? "btn-warning text-dark fw-bold" : "btn-outline-warning text-dark")">
+                        Pending
+                    </a>
+                    <a href="/Admin/Business/Orders?statusFilter=Processing" class="btn btn-sm rounded-pill px-3 @(Model.StatusFilter == "Processing" ? "btn-info text-white fw-bold" : "btn-outline-info")">
+                        Processing
+                    </a>
+                    <a href="/Admin/Business/Orders?statusFilter=Shipped" class="btn btn-sm rounded-pill px-3 @(Model.StatusFilter == "Shipped" ? "btn-primary fw-bold" : "btn-outline-primary")">
+                        Shipped
+                    </a>
+                    <a href="/Admin/Business/Orders?statusFilter=Delivered" class="btn btn-sm rounded-pill px-3 @(Model.StatusFilter == "Delivered" ? "btn-success fw-bold" : "btn-outline-success")">
+                        Delivered
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <div class="input-group input-group-sm">
+                    <input type="text" name="searchQuery" value="@Model.SearchQuery" class="form-control bg-light border-0 py-2" placeholder="Search Order #, customer or phone..." />
+                    <button class="btn btn-outline-secondary bg-light border-0" type="submit"><i class="bi bi-search"></i></button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Orders Table -->
+<div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-5">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="bg-light text-muted small border-bottom">
+                <tr>
+                    <th class="ps-4 py-3">Order # & Timestamp</th>
+                    <th class="py-3">Customer Details</th>
+                    <th class="py-3">Origin Channel</th>
+                    <th class="py-3">Items Count</th>
+                    <th class="py-3 text-center">Payment Status</th>
+                    <th class="py-3 text-center">Order Status</th>
+                    <th class="py-3 text-end">Total Amount</th>
+                    <th class="pe-4 py-3 text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.OrdersList != null && Model.OrdersList.Any())
+                {
+                    foreach (var order in Model.OrdersList)
+                    {
+                        var itemsJson = System.Text.Json.JsonSerializer.Serialize(order.Items);
+                        var logsJson = System.Text.Json.JsonSerializer.Serialize(order.StatusLogs);
+
+                        <tr>
+                            <td class="ps-4">
+                                <div class="fw-bold text-dark fs-7">@order.OrderNumber</div>
+                                <span class="text-muted fs-7"><i class="bi bi-clock me-1 text-danger"></i> @order.CreatedAt.ToString("MMM dd, yyyy - hh:mm tt")</span>
+                            </td>
+                            <td>
+                                <div class="fw-bold text-dark fs-7">@order.CustomerName</div>
+                                <span class="text-muted fs-7 d-block"><i class="bi bi-telephone me-1 text-primary"></i> @order.CustomerPhone</span>
+                                <span class="badge bg-light text-dark border fs-8 mt-1"><i class="bi bi-geo-alt me-1"></i>@order.ShippingCity</span>
+                            </td>
+                            <td>
+                                @if (order.Origin.Contains("Web"))
+                                {
+                                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle fs-7">
+                                        <i class="bi bi-globe me-1"></i>@order.Origin
+                                    </span>
+                                }
+                                else if (order.Origin.Contains("App"))
+                                {
+                                    <span class="badge bg-primary-subtle text-primary border border-primary-subtle fs-7">
+                                        <i class="bi bi-phone me-1"></i>@order.Origin
+                                    </span>
+                                }
+                                else if (order.Origin.Contains("WhatsApp") || order.Origin.Contains("Facebook"))
+                                {
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle fs-7">
+                                        <i class="bi bi-whatsapp me-1"></i>@order.Origin
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary-subtle text-secondary border fs-7">
+                                        <i class="bi bi-shop me-1"></i>@order.Origin
+                                    </span>
+                                }
+                            </td>
+                            <td class="fs-7 fw-bold text-dark">
+                                @order.ItemCount Items
+                            </td>
+                            <td class="text-center">
+                                <span class="badge bg-light text-primary border fw-bold fs-7 d-block mb-1">@order.PaymentMethod</span>
+                                @if (order.IsPaid)
+                                {
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill fs-8">
+                                        <i class="bi bi-check-circle-fill me-1"></i> Paid
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-warning-subtle text-warning text-dark border border-warning-subtle rounded-pill fs-8">
+                                        Unpaid
+                                    </span>
+                                }
+                            </td>
+                            <td class="text-center">
+                                @if (order.Status == LamisaMart.Ordering.Domain.Entities.OrderStatus.Delivered)
+                                {
+                                    <span class="badge bg-success shadow-sm rounded-pill px-3 py-1">Delivered</span>
+                                }
+                                else if (order.Status == LamisaMart.Ordering.Domain.Entities.OrderStatus.Shipped)
+                                {
+                                    <span class="badge bg-primary shadow-sm rounded-pill px-3 py-1">Shipped</span>
+                                }
+                                else if (order.Status == LamisaMart.Ordering.Domain.Entities.OrderStatus.Processing || order.Status == LamisaMart.Ordering.Domain.Entities.OrderStatus.Confirmed)
+                                {
+                                    <span class="badge bg-warning text-dark shadow-sm rounded-pill px-3 py-1">Processing</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary rounded-pill px-3 py-1">@order.Status</span>
+                                }
+                            </td>
+                            <td class="text-end fw-extrabold text-dark fs-6">
+                                ৳ @order.TotalAmount.ToString("N0")
+                            </td>
+                            <td class="pe-4 text-end">
+                                <div class="d-flex justify-content-end gap-1 mb-1">
+                                    <button type="button" class="btn btn-sm btn-outline-dark rounded-circle p-0 d-inline-flex align-items-center justify-content-center" style="width: 32px; height: 32px;"
+                                            title="View Order Details & Audit Trail"
+                                            data-number="@order.OrderNumber"
+                                            data-created="@order.CreatedAt.ToString("MMM dd, yyyy - hh:mm tt")"
+                                            data-customer="@order.CustomerName"
+                                            data-phone="@order.CustomerPhone"
+                                            data-email="@order.CustomerEmail"
+                                            data-city="@order.ShippingCity"
+                                            data-address="@order.ShippingAddress"
+                                            data-origin="@order.Origin"
+                                            data-payment="@order.PaymentMethod"
+                                            data-ispaid="@(order.IsPaid ? "true" : "false")"
+                                            data-status="@order.Status"
+                                            data-total="@order.TotalAmount"
+                                            data-items='@itemsJson'
+                                            data-logs='@logsJson'
+                                            onclick="openOrderDetailsModalFromData(this)">
+                                        <i class="bi bi-eye"></i>
+                                    </button>
+
+                                    <button type="button" class="btn btn-sm btn-outline-danger rounded-circle p-0 d-inline-flex align-items-center justify-content-center" style="width: 32px; height: 32px;"
+                                            title="Print Invoice"
+                                            data-number="@order.OrderNumber"
+                                            data-created="@order.CreatedAt.ToString("MMM dd, yyyy - hh:mm tt")"
+                                            data-customer="@order.CustomerName"
+                                            data-phone="@order.CustomerPhone"
+                                            data-email="@order.CustomerEmail"
+                                            data-city="@order.ShippingCity"
+                                            data-address="@order.ShippingAddress"
+                                            data-payment="@order.PaymentMethod"
+                                            data-total="@order.TotalAmount"
+                                            data-items='@itemsJson'
+                                            onclick="openPrintInvoiceModalFromData(this)">
+                                        <i class="bi bi-printer"></i>
+                                    </button>
+                                </div>
+
+                                <form method="post" asp-page-handler="UpdateStatus" class="d-inline-block">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="orderId" value="@order.Id" />
+                                    <select name="newStatus" class="form-select form-select-sm border-secondary-subtle fs-8" style="width: 110px;" onchange="this.form.submit()">
+                                        <option value="">Status...</option>
+                                        <option value="Confirmed" selected="@(order.Status == LamisaMart.Ordering.Domain.Entities.OrderStatus.Confirmed)">Confirmed</option>
+                                        <option value="Processing" selected="@(order.Status == LamisaMart.Ordering.Domain.Entities.OrderStatus.Processing)">Processing</option>
+                                        <option value="Shipped" selected="@(order.Status == LamisaMart.Ordering.Domain.Entities.OrderStatus.Shipped)">Shipped</option>
+                                        <option value="Delivered" selected="@(order.Status == LamisaMart.Ordering.Domain.Entities.OrderStatus.Delivered)">Delivered</option>
+                                        <option value="Cancelled" selected="@(order.Status == LamisaMart.Ordering.Domain.Entities.OrderStatus.Cancelled)">Cancelled</option>
+                                    </select>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="8" class="text-center py-5 text-muted">
+                            <i class="bi bi-box-seam display-4 mb-2 d-block text-muted"></i>
+                            <h6 class="fw-bold">No Orders Found</h6>
+                            <p class="small mb-0">Try clearing your filters or searching for another order number.</p>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal: Order Details & Audit Trail -->
+<div class="modal fade" id="orderDetailsModal" tabindex="-1" aria-labelledby="orderDetailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content rounded-4 border-0 shadow">
+            <div class="modal-header border-bottom-0 pb-0">
+                <div>
+                    <h5 class="modal-title fw-bold text-dark" id="orderDetailsModalLabel">Order Details & Audit Trail</h5>
+                    <span class="text-muted small">Order Number: <strong id="detOrderNumber" class="text-danger"></strong></span>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <!-- Top Summary Cards -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-4">
+                        <div class="p-3 bg-light rounded-3 border">
+                            <span class="d-block small text-muted">When Order Came:</span>
+                            <span class="fw-bold text-dark fs-7" id="detOrderCreated"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 bg-light rounded-3 border">
+                            <span class="d-block small text-muted">Order Origin Channel:</span>
+                            <span class="badge bg-danger-subtle text-danger border border-danger-subtle fs-7 mt-1" id="detOrderOrigin"></span>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="p-3 bg-light rounded-3 border">
+                            <span class="d-block small text-muted">Current Status:</span>
+                            <span class="badge bg-success rounded-pill px-3 py-1 fs-7 mt-1" id="detOrderStatus"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Customer Details Card -->
+                <div class="card border rounded-3 mb-4 shadow-2xs">
+                    <div class="card-header bg-light fw-bold text-dark fs-7 border-bottom">
+                        <i class="bi bi-person-circle me-1 text-primary"></i> Customer Information
+                    </div>
+                    <div class="card-body p-3">
+                        <div class="row g-2 fs-7">
+                            <div class="col-md-6"><strong>Full Name:</strong> <span id="detCustomerName"></span></div>
+                            <div class="col-md-6"><strong>Phone Number:</strong> <span id="detCustomerPhone"></span></div>
+                            <div class="col-md-6"><strong>Email Address:</strong> <span id="detCustomerEmail"></span></div>
+                            <div class="col-md-6"><strong>Delivery City:</strong> <span id="detShippingCity"></span></div>
+                            <div class="col-12"><strong>Shipping Address:</strong> <span id="detShippingAddress"></span></div>
+                            <div class="col-md-6"><strong>Payment Method:</strong> <span id="detPaymentMethod"></span></div>
+                            <div class="col-md-6"><strong>Payment Status:</strong> <span id="detIsPaid"></span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Status Change Audit Trail Timeline -->
+                <div class="card border rounded-3 mb-4 shadow-2xs">
+                    <div class="card-header bg-light fw-bold text-dark fs-7 border-bottom">
+                        <i class="bi bi-clock-history me-1 text-danger"></i> Status Timeline & History (When Status Changed)
+                    </div>
+                    <div class="card-body p-3">
+                        <div class="timeline" id="detStatusLogsTimeline">
+                            <!-- Populated via Javascript -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ordered Items Breakdown Table -->
+                <div class="card border rounded-3 shadow-2xs">
+                    <div class="card-header bg-light fw-bold text-dark fs-7 border-bottom">
+                        <i class="bi bi-box-seam me-1 text-warning"></i> Ordered Items Details
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table align-middle mb-0 fs-7">
+                                <thead class="bg-light text-muted">
+                                    <tr>
+                                        <th class="ps-3 py-2">Item Info</th>
+                                        <th class="py-2 text-center">Qty</th>
+                                        <th class="py-2 text-end">Unit Price</th>
+                                        <th class="pe-3 py-2 text-end">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="detItemsTableBody">
+                                    <!-- Populated via Javascript -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-top-0 pt-0">
+                <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal: Printable Commercial Invoice -->
+<div class="modal fade" id="printInvoiceModal" tabindex="-1" aria-labelledby="printInvoiceModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content rounded-4 border-0 shadow">
+            <div class="modal-header border-bottom-0 pb-0">
+                <h5 class="modal-title fw-bold text-dark" id="printInvoiceModalLabel"><i class="bi bi-file-earmark-pdf me-1 text-danger"></i> Commercial Tax Invoice</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4" id="printableInvoiceContent">
+                <div class="p-4 border rounded-4 bg-white shadow-2xs">
+                    <!-- Invoice Header -->
+                    <div class="d-flex justify-content-between align-items-center border-bottom pb-3 mb-4">
+                        <div>
+                            <h3 class="fw-extrabold text-dark mb-0">LAMISA <span class="text-danger">MART</span></h3>
+                            <span class="small text-muted">Premium E-Commerce Platform</span>
+                        </div>
+                        <div class="text-end">
+                            <h5 class="fw-bold text-danger mb-0">TAX INVOICE</h5>
+                            <span class="fs-7 text-dark fw-bold" id="invOrderNumber"></span><br />
+                            <span class="fs-8 text-muted" id="invOrderDate"></span>
+                        </div>
+                    </div>
+
+                    <!-- Bill To & Ship To -->
+                    <div class="row g-3 mb-4 fs-7">
+                        <div class="col-6">
+                            <h6 class="fw-bold text-dark fs-7 mb-1">Customer / Billed To:</h6>
+                            <div class="fw-bold text-dark" id="invCustomerName"></div>
+                            <div class="text-muted" id="invCustomerPhone"></div>
+                            <div class="text-muted" id="invCustomerEmail"></div>
+                        </div>
+                        <div class="col-6 text-end">
+                            <h6 class="fw-bold text-dark fs-7 mb-1">Shipping Destination:</h6>
+                            <div class="fw-bold text-dark" id="invShippingCity"></div>
+                            <div class="text-muted" id="invShippingAddress"></div>
+                            <div class="text-muted">Payment: <strong id="invPaymentMethod"></strong></div>
+                        </div>
+                    </div>
+
+                    <!-- Items Table -->
+                    <div class="table-responsive mb-4">
+                        <table class="table table-bordered align-middle fs-7 mb-0">
+                            <thead class="bg-light fw-bold text-dark">
+                                <tr>
+                                    <th>Description & Specs</th>
+                                    <th class="text-center">Qty</th>
+                                    <th class="text-end">Unit Price</th>
+                                    <th class="text-end">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody id="invItemsBody">
+                                <!-- Populated via JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Invoice Summary -->
+                    <div class="row align-items-center fs-7">
+                        <div class="col-6 text-muted">
+                            <p class="small mb-0">Thank you for shopping with LamisaMart Bangladesh!</p>
+                            <span class="fs-8">Computer Generated Invoice — No Signature Required.</span>
+                        </div>
+                        <div class="col-6 text-end">
+                            <div class="d-flex justify-content-between py-1">
+                                <span>Subtotal:</span>
+                                <strong id="invSubtotal"></strong>
+                            </div>
+                            <div class="d-flex justify-content-between py-1">
+                                <span>Shipping Fee:</span>
+                                <strong>৳ 120</strong>
+                            </div>
+                            <div class="d-flex justify-content-between py-1 border-top pt-2 fs-6">
+                                <span class="fw-bold text-dark">Grand Total:</span>
+                                <strong class="fw-extrabold text-danger fs-5" id="invGrandTotal"></strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-top-0 pt-0">
+                <button type="button" class="btn btn-secondary rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger rounded-pill px-4 fw-bold shadow-sm" onclick="printInvoiceDocument()">
+                    <i class="bi bi-printer me-1"></i> Print Invoice
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function openOrderDetailsModalFromData(btn) {
+            const number = btn.getAttribute('data-number') || '';
+            const created = btn.getAttribute('data-created') || '';
+            const customer = btn.getAttribute('data-customer') || '';
+            const phone = btn.getAttribute('data-phone') || '';
+            const email = btn.getAttribute('data-email') || '';
+            const city = btn.getAttribute('data-city') || '';
+            const address = btn.getAttribute('data-address') || '';
+            const origin = btn.getAttribute('data-origin') || '';
+            const payment = btn.getAttribute('data-payment') || '';
+            const ispaid = btn.getAttribute('data-ispaid') === 'true';
+            const status = btn.getAttribute('data-status') || '';
+            const itemsJson = btn.getAttribute('data-items') || '[]';
+            const logsJson = btn.getAttribute('data-logs') || '[]';
+
+            document.getElementById('detOrderNumber').innerText = number;
+            document.getElementById('detOrderCreated').innerText = created;
+            document.getElementById('detOrderOrigin').innerText = origin;
+            document.getElementById('detOrderStatus').innerText = status;
+
+            document.getElementById('detCustomerName').innerText = customer;
+            document.getElementById('detCustomerPhone').innerText = phone;
+            document.getElementById('detCustomerEmail').innerText = email;
+            document.getElementById('detShippingCity').innerText = city;
+            document.getElementById('detShippingAddress').innerText = address;
+            document.getElementById('detPaymentMethod').innerText = payment;
+            document.getElementById('detIsPaid').innerHTML = ispaid ? '<span class="badge bg-success">Paid</span>' : '<span class="badge bg-warning text-dark">Unpaid</span>';
+
+            // Populate Timeline
+            const timelineEl = document.getElementById('detStatusLogsTimeline');
+            timelineEl.innerHTML = '';
+            try {
+                const logs = JSON.parse(logsJson);
+                if (logs && logs.length > 0) {
+                    logs.forEach(log => {
+                        const item = document.createElement('div');
+                        item.className = 'd-flex gap-3 mb-3 position-relative';
+                        item.innerHTML = `
+                            <div class="rounded-circle bg-danger text-white d-flex align-items-center justify-content-center flex-shrink-0" style="width: 28px; height: 28px; font-size: 0.75rem;">
+                                <i class="bi bi-check2"></i>
+                            </div>
+                            <div>
+                                <h6 class="fw-bold text-dark fs-7 mb-0">${log.StatusName}</h6>
+                                <span class="text-muted fs-8"><i class="bi bi-clock me-1"></i>${log.Timestamp} &bull; Updated by: ${log.UpdatedBy}</span>
+                            </div>
+                        `;
+                        timelineEl.appendChild(item);
+                    });
+                }
+            } catch (e) {}
+
+            // Populate Items Table
+            const itemsBody = document.getElementById('detItemsTableBody');
+            itemsBody.innerHTML = '';
+            try {
+                const items = JSON.parse(itemsJson);
+                if (items && items.length > 0) {
+                    items.forEach(item => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td class="ps-3">
+                                <div class="d-flex align-items-center gap-2">
+                                    <img src="${item.ImageUrl}" alt="${item.ProductName}" class="rounded-2 object-fit-cover" style="width: 40px; height: 48px;" />
+                                    <div>
+                                        <div class="fw-bold text-dark fs-7">${item.ProductName}</div>
+                                        <span class="text-muted fs-8">${item.VariantInfo || ''}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="text-center fw-bold">${item.Quantity}</td>
+                            <td class="text-end">৳ ${Number(item.UnitPrice).toLocaleString('en-US')}</td>
+                            <td class="pe-3 text-end fw-bold text-dark">৳ ${Number(item.TotalPrice).toLocaleString('en-US')}</td>
+                        `;
+                        itemsBody.appendChild(row);
+                    });
+                }
+            } catch (e) {}
+
+            const modal = new bootstrap.Modal(document.getElementById('orderDetailsModal'));
+            modal.show();
+        }
+
+        function openPrintInvoiceModalFromData(btn) {
+            const number = btn.getAttribute('data-number') || '';
+            const created = btn.getAttribute('data-created') || '';
+            const customer = btn.getAttribute('data-customer') || '';
+            const phone = btn.getAttribute('data-phone') || '';
+            const email = btn.getAttribute('data-email') || '';
+            const city = btn.getAttribute('data-city') || '';
+            const address = btn.getAttribute('data-address') || '';
+            const payment = btn.getAttribute('data-payment') || '';
+            const total = Number(btn.getAttribute('data-total') || '0');
+            const itemsJson = btn.getAttribute('data-items') || '[]';
+
+            document.getElementById('invOrderNumber').innerText = 'Invoice #' + number;
+            document.getElementById('invOrderDate').innerText = 'Date: ' + created;
+            document.getElementById('invCustomerName').innerText = customer;
+            document.getElementById('invCustomerPhone').innerText = phone;
+            document.getElementById('invCustomerEmail').innerText = email;
+            document.getElementById('invShippingCity').innerText = city;
+            document.getElementById('invShippingAddress').innerText = address;
+            document.getElementById('invPaymentMethod').innerText = payment;
+
+            document.getElementById('invSubtotal').innerText = '৳ ' + total.toLocaleString('en-US');
+            document.getElementById('invGrandTotal').innerText = '৳ ' + (total + 120).toLocaleString('en-US');
+
+            const body = document.getElementById('invItemsBody');
+            body.innerHTML = '';
+            try {
+                const items = JSON.parse(itemsJson);
+                if (items && items.length > 0) {
+                    items.forEach(item => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td>
+                                <strong>${item.ProductName}</strong>
+                                <div class="text-muted fs-8">${item.VariantInfo || ''}</div>
+                            </td>
+                            <td class="text-center">${item.Quantity}</td>
+                            <td class="text-end">৳ ${Number(item.UnitPrice).toLocaleString('en-US')}</td>
+                            <td class="text-end font-bold">৳ ${Number(item.TotalPrice).toLocaleString('en-US')}</td>
+                        `;
+                        body.appendChild(tr);
+                    });
+                }
+            } catch (e) {}
+
+            const modal = new bootstrap.Modal(document.getElementById('printInvoiceModal'));
+            modal.show();
+        }
+
+        function printInvoiceDocument() {
+            const printContent = document.getElementById('printableInvoiceContent').innerHTML;
+            const originalContent = document.body.innerHTML;
+            document.body.innerHTML = printContent;
+            window.print();
+            document.body.innerHTML = originalContent;
+            window.location.reload();
+        }
+    </script>
+}

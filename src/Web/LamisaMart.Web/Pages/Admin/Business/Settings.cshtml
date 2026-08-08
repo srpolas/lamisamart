@@ -1,0 +1,64 @@
+@page "/Admin/Business/Settings"
+@model LamisaMart.Web.Pages.Admin.Business.SettingsModel
+@{
+    ViewData["Title"] = "Business Settings - LamisaMart Admin";
+    Layout = "_AdminLayout";
+}
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+        <h3 class="fw-bold text-dark m-0">Business & Storefront Settings</h3>
+        <p class="text-muted small mb-0">Configure store metadata, default delivery charges, invoice branding, and support channels.</p>
+    </div>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show rounded-4 p-3 shadow-sm mb-4" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="card border-0 shadow-sm rounded-4 mb-5">
+    <div class="card-body p-4">
+        <form method="post">
+            @Html.AntiForgeryToken()
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold small text-dark">Business / Store Name</label>
+                    <input type="text" asp-for="StoreName" class="form-control rounded-3" required />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold small text-dark">Support Email Address</label>
+                    <input type="email" asp-for="SupportEmail" class="form-control rounded-3" required />
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold small text-dark">Customer Support Helpline</label>
+                    <input type="text" asp-for="SupportPhone" class="form-control rounded-3" required />
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold small text-dark">Default Shipping Fee (BDT)</label>
+                    <div class="input-group">
+                        <span class="input-group-text bg-light border-end-0">৳</span>
+                        <input type="number" asp-for="DefaultDeliveryFee" class="form-control rounded-end-3" required />
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-semibold small text-dark">VAT / Tax Rate (%)</label>
+                    <div class="input-group">
+                        <input type="number" step="0.1" asp-for="VatTaxRate" class="form-control rounded-start-3" required />
+                        <span class="input-group-text bg-light border-start-0">%</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-4 border-top mt-4 text-end">
+                <button type="submit" class="btn btn-danger rounded-pill px-4 py-2 fw-bold shadow-sm">
+                    <i class="bi bi-floppy me-1"></i> Save Settings
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
