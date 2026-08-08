@@ -46,10 +46,32 @@ public class TagsModel : PageModel
         return RedirectToPage();
     }
 
+    public IActionResult OnPostEditTag(Guid tagId, string tagName, string slug)
+    {
+        if (string.IsNullOrWhiteSpace(tagName))
+        {
+            TempData["ErrorMessage"] = "Tag name is required.";
+            return RedirectToPage();
+        }
+
+        var cleanName = tagName.Trim().Replace("#", "");
+        TempData["SuccessMessage"] = $"Tag '#{cleanName}' updated successfully!";
+        return RedirectToPage();
+    }
+
     public IActionResult OnPostDelete(Guid tagId)
     {
         TempData["SuccessMessage"] = "Tag deleted successfully.";
         return RedirectToPage();
+    }
+
+    private static string GenerateSlug(string text)
+    {
+        string str = text.ToLowerInvariant();
+        str = Regex.Replace(str, @"[^a-z0-9\s-]", "");
+        str = Regex.Replace(str, @"\s+", " ").Trim();
+        str = Regex.Replace(str, @"\s", "-");
+        return str;
     }
 
     private List<TagViewModel> GetSampleTags(string? search)
