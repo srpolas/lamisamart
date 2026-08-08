@@ -147,7 +147,7 @@ public class IndexModel : PageModel
         {
             new()
             {
-                Id = Guid.Parse("p1111111-1111-1111-1111-111111111111"),
+                Id = Guid.Parse("ba111111-1111-1111-1111-111111111111"),
                 Title = "Home Storefront Page",
                 Slug = "",
                 Route = "/",
@@ -162,7 +162,7 @@ public class IndexModel : PageModel
             },
             new()
             {
-                Id = Guid.Parse("p2222222-2222-2222-2222-222222222222"),
+                Id = Guid.Parse("ba222222-2222-2222-2222-222222222222"),
                 Title = "Privacy Policy",
                 Slug = "privacy",
                 Route = "/privacy",
@@ -177,7 +177,7 @@ public class IndexModel : PageModel
             },
             new()
             {
-                Id = Guid.Parse("p3333333-3333-3333-3333-333333333333"),
+                Id = Guid.Parse("ba333333-3333-3333-3333-333333333333"),
                 Title = "Terms of Service",
                 Slug = "terms",
                 Route = "/terms",
@@ -192,7 +192,7 @@ public class IndexModel : PageModel
             },
             new()
             {
-                Id = Guid.Parse("p4444444-4444-4444-4444-444444444444"),
+                Id = Guid.Parse("ba444444-4444-4444-4444-444444444444"),
                 Title = "About Us & Artisan Heritage",
                 Slug = "about",
                 Route = "/about",
@@ -207,7 +207,7 @@ public class IndexModel : PageModel
             },
             new()
             {
-                Id = Guid.Parse("p5555555-5555-5555-5555-555555555555"),
+                Id = Guid.Parse("ba555555-5555-5555-5555-555555555555"),
                 Title = "Customer Support & Contact",
                 Slug = "contact",
                 Route = "/contact",
@@ -222,7 +222,7 @@ public class IndexModel : PageModel
             },
             new()
             {
-                Id = Guid.Parse("p6666666-6666-6666-6666-666666666666"),
+                Id = Guid.Parse("ba666666-6666-6666-6666-666666666666"),
                 Title = "Shipping & Nationwide Delivery Policy",
                 Slug = "shipping",
                 Route = "/shipping",
