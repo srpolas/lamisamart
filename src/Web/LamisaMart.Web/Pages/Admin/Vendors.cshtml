@@ -1,0 +1,206 @@
+@page "/Admin/Vendors"
+@model LamisaMart.Web.Pages.Admin.VendorsModel
+@{
+    ViewData["Title"] = "Vendor Management - LamisaMart Admin";
+    Layout = "_AdminLayout";
+}
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+        <h3 class="fw-bold text-dark m-0">Vendor Directory & Approvals</h3>
+        <p class="text-muted small mb-0">Manage registered shop vendors, review pending applications, and set commissions.</p>
+    </div>
+    <div class="d-flex gap-2">
+        <button type="button" class="btn btn-danger btn-sm rounded-pill px-3 py-2 fw-bold shadow-sm" data-bs-toggle="modal" data-bs-target="#addVendorModal">
+            <i class="bi bi-plus-lg me-1"></i> Add New Vendor
+        </button>
+    </div>
+</div>
+
+<!-- Status Filter Tabs & Search Bar -->
+<div class="card border-0 shadow-sm rounded-4 mb-4">
+    <div class="card-body p-3">
+        <form method="get" action="/Admin/Vendors" class="row g-2 align-items-center">
+            <div class="col-12 col-md-7">
+                <div class="d-flex gap-2 overflow-x-auto pb-1 scrollbar-hidden">
+                    <a href="/Admin/Vendors" class="btn btn-sm rounded-pill px-3 @(string.IsNullOrEmpty(Model.StatusFilter) ? "btn-dark fw-bold" : "btn-outline-secondary")">
+                        All Vendors
+                    </a>
+                    <a href="/Admin/Vendors?statusFilter=Pending" class="btn btn-sm rounded-pill px-3 @(Model.StatusFilter == "Pending" ? "btn-warning fw-bold text-dark" : "btn-outline-warning text-dark")">
+                        <i class="bi bi-clock-history me-1"></i> Pending Approval
+                    </a>
+                    <a href="/Admin/Vendors?statusFilter=Active" class="btn btn-sm rounded-pill px-3 @(Model.StatusFilter == "Active" ? "btn-success fw-bold" : "btn-outline-success")">
+                        <i class="bi bi-check-circle me-1"></i> Active
+                    </a>
+                    <a href="/Admin/Vendors?statusFilter=Suspended" class="btn btn-sm rounded-pill px-3 @(Model.StatusFilter == "Suspended" ? "btn-danger fw-bold" : "btn-outline-danger")">
+                        <i class="bi bi-slash-circle me-1"></i> Suspended
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-5">
+                <div class="input-group input-group-sm">
+                    <input type="text" name="searchQuery" value="@Model.SearchQuery" class="form-control bg-light border-0 py-2" placeholder="Search by business name or store..." />
+                    <button class="btn btn-outline-secondary bg-light border-0" type="submit"><i class="bi bi-search"></i></button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Vendors Data Table -->
+<div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-5">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="bg-light text-muted small border-bottom">
+                <tr>
+                    <th class="ps-4 py-3">Store Name</th>
+                    <th class="py-3">Business Entity</th>
+                    <th class="py-3">Reg & TIN</th>
+                    <th class="py-3">Location</th>
+                    <th class="py-3 text-center">Products</th>
+                    <th class="py-3 text-center">Gross Sales</th>
+                    <th class="py-3 text-center">Commission</th>
+                    <th class="py-3 text-center">Status</th>
+                    <th class="pe-4 py-3 text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.VendorsList != null && Model.VendorsList.Any())
+                {
+                    foreach (var vendor in Model.VendorsList)
+                    {
+                        <tr>
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center gap-3">
+                                    <div class="rounded-circle bg-danger-subtle text-danger fw-bold d-flex align-items-center justify-content-center" style="width: 40px; height: 40px;">
+                                        @vendor.StoreName.Substring(0, Math.Min(2, vendor.StoreName.Length)).ToUpper()
+                                    </div>
+                                    <div>
+                                        <h6 class="fw-bold text-dark mb-0 fs-7">@vendor.StoreName</h6>
+                                        <span class="text-muted fs-7">Joined @vendor.CreatedAt.ToString("MMM yyyy")</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="fw-medium text-dark fs-7">@vendor.BusinessName</span>
+                            </td>
+                            <td>
+                                <div class="fs-7 text-dark fw-medium">@vendor.RegistrationNumber</div>
+                                <span class="text-muted fs-7">@vendor.TaxId</span>
+                            </td>
+                            <td>
+                                <span class="badge bg-light text-dark border fs-7">
+                                    <i class="bi bi-geo-alt me-1 text-danger"></i> @vendor.City
+                                </span>
+                            </td>
+                            <td class="text-center fw-bold text-dark fs-7">@vendor.ProductCount</td>
+                            <td class="text-center fw-extrabold text-success fs-7">৳ @vendor.TotalSalesAmount.ToString("N0")</td>
+                            <td class="text-center">
+                                <span class="badge bg-primary-subtle text-primary fw-bold">@vendor.CommissionRatePercent%</span>
+                            </td>
+                            <td class="text-center">
+                                @if (vendor.Status == LamisaMart.Vendors.Domain.Entities.VendorStatus.Active)
+                                {
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill">Active</span>
+                                }
+                                else if (vendor.Status == LamisaMart.Vendors.Domain.Entities.VendorStatus.Pending)
+                                {
+                                    <span class="badge bg-warning-subtle text-warning border border-warning-subtle rounded-pill">Pending Approval</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger-subtle text-danger border border-danger-subtle rounded-pill">Suspended</span>
+                                }
+                            </td>
+                            <td class="pe-4 text-end">
+                                <div class="d-flex justify-content-end gap-1">
+                                    @if (vendor.Status == LamisaMart.Vendors.Domain.Entities.VendorStatus.Pending)
+                                    {
+                                        <form method="post" asp-page-handler="Approve" asp-route-vendorId="@vendor.Id" class="d-inline">
+                                            <button type="submit" class="btn btn-sm btn-success rounded-pill px-3 py-1 fw-bold fs-7 shadow-sm">
+                                                <i class="bi bi-check-lg me-1"></i> Approve
+                                            </button>
+                                        </form>
+                                    }
+                                    else if (vendor.Status == LamisaMart.Vendors.Domain.Entities.VendorStatus.Active)
+                                    {
+                                        <form method="post" asp-page-handler="Suspend" asp-route-vendorId="@vendor.Id" class="d-inline" onsubmit="return confirm('Are you sure you want to suspend this vendor?');">
+                                            <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill px-2 py-1 fs-7">
+                                                Suspend
+                                            </button>
+                                        </form>
+                                    }
+                                    else
+                                    {
+                                        <form method="post" asp-page-handler="Approve" asp-route-vendorId="@vendor.Id" class="d-inline">
+                                            <button type="submit" class="btn btn-sm btn-outline-success rounded-pill px-2 py-1 fs-7">
+                                                Reactivate
+                                            </button>
+                                        </form>
+                                    }
+                                    <a href="/Shop" class="btn btn-sm btn-light border rounded-circle p-0 d-flex align-items-center justify-content-center" style="width: 30px; height: 30px;" title="View Store">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="9" class="text-center py-5 text-muted">
+                            <i class="bi bi-shop-window display-4 mb-2 d-block text-muted"></i>
+                            <h6 class="fw-bold">No Vendors Found</h6>
+                            <p class="small mb-0">Try clearing your search query or status filter.</p>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal: Add New Vendor -->
+<div class="modal fade" id="addVendorModal" tabindex="-1" aria-labelledby="addVendorModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 border-0 shadow">
+            <div class="modal-header border-bottom-0 pb-0">
+                <h5 class="modal-title fw-bold" id="addVendorModalLabel">Onboard New Boutique Vendor</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form method="post" action="/Admin/Vendors">
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small">Store / Brand Name <span class="text-danger">*</span></label>
+                        <input type="text" name="storeName" class="form-control rounded-3" placeholder="e.g. Silk Crafts Rajshahi" required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small">Business Registered Entity <span class="text-danger">*</span></label>
+                        <input type="text" name="businessName" class="form-control rounded-3" placeholder="e.g. Silk Crafts BD Ltd" required />
+                    </div>
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label class="form-label fw-semibold small">Trade License No.</label>
+                            <input type="text" name="regNumber" class="form-control rounded-3" placeholder="TRD-109283" />
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label fw-semibold small">City / Location</label>
+                            <input type="text" name="city" class="form-control rounded-3" placeholder="Narayanganj" />
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small">Platform Commission Rate (%)</label>
+                        <input type="number" name="commission" value="8.0" step="0.5" class="form-control rounded-3" />
+                    </div>
+                    <div class="pt-2">
+                        <button type="submit" class="btn btn-danger w-100 rounded-pill py-2 fw-bold">
+                            <i class="bi bi-check-circle me-1"></i> Register & Activate Store
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
