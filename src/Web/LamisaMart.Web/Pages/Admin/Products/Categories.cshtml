@@ -98,7 +98,12 @@
                             <div class="d-flex justify-content-end gap-1">
                                 <button type="button" class="btn btn-sm btn-outline-secondary rounded-circle p-0 d-inline-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" 
                                         title="Edit Category & Change Picture"
-                                        onclick="openEditCategoryModal('@cat.Id', '@cat.Name', '@cat.Slug', '@cat.ImageUrl', @(cat.IsFeatured ? "true" : "false"))">
+                                        data-id="@cat.Id"
+                                        data-name="@cat.Name"
+                                        data-slug="@cat.Slug"
+                                        data-image="@cat.ImageUrl"
+                                        data-featured="@(cat.IsFeatured ? "true" : "false")"
+                                        onclick="openEditCategoryModalFromData(this)">
                                     <i class="bi bi-pencil"></i>
                                 </button>
                                 <a href="/category/@cat.Slug" target="_blank" class="btn btn-sm btn-outline-primary rounded-circle p-0 d-inline-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" title="View Storefront Category">
@@ -198,7 +203,13 @@
 
 @section Scripts {
     <script>
-        function openEditCategoryModal(id, name, slug, imageUrl, isFeatured) {
+        function openEditCategoryModalFromData(btn) {
+            const id = btn.getAttribute('data-id') || '';
+            const name = btn.getAttribute('data-name') || '';
+            const slug = btn.getAttribute('data-slug') || '';
+            const imageUrl = btn.getAttribute('data-image') || '';
+            const isFeatured = btn.getAttribute('data-featured') === 'true';
+
             document.getElementById('editCategoryId').value = id;
             document.getElementById('editCategoryName').value = name;
             document.getElementById('editCategorySlug').value = slug;
