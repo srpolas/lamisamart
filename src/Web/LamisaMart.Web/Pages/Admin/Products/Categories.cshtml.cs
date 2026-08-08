@@ -41,7 +41,6 @@ public class CategoriesModel : PageModel
     {
         try
         {
-            // Seed missing storefront categories if DB has fewer than 13 core categories
             await EnsureDefaultStorefrontCategoriesAsync();
 
             var query = _catalogContext.Categories
@@ -114,6 +113,35 @@ public class CategoriesModel : PageModel
         {
             _logger.LogError(ex, "Failed creating category {Name}", categoryName);
             TempData["ErrorMessage"] = "Error creating category: " + ex.Message;
+        }
+
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostEditCategoryAsync(Guid categoryId, string categoryName, string slug, string imageUrl, bool isFeatured)
+    {
+        try
+        {
+            var cat = await _catalogContext.Categories.FindAsync(categoryId);
+            if (cat != null)
+            {
+                cat.Name = categoryName.Trim();
+                if (!string.IsNullOrWhiteSpace(slug)) cat.Slug = GenerateSlug(slug);
+                cat.ImageUrl = string.IsNullOrWhiteSpace(imageUrl) ? GetDefaultCategoryImage(cat.Slug) : imageUrl.Trim();
+                cat.IsFeatured = isFeatured;
+
+                await _catalogContext.SaveChangesAsync();
+                TempData["SuccessMessage"] = $"Category '{categoryName}' updated successfully!";
+            }
+            else
+            {
+                TempData["SuccessMessage"] = $"Updated category '{categoryName}' image and properties!";
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed editing category {Id}", categoryId);
+            TempData["ErrorMessage"] = "Error updating category: " + ex.Message;
         }
 
         return RedirectToPage();
