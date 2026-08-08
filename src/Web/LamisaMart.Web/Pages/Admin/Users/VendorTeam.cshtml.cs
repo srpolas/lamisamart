@@ -58,6 +58,28 @@ public class VendorTeamModel : PageModel
         return RedirectToPage();
     }
 
+    public IActionResult OnPostEditStaffUser(
+        Guid staffId,
+        string fullName,
+        string email,
+        string phone,
+        string vendorName,
+        string role,
+        bool canManageProducts,
+        bool canProcessOrders,
+        bool canViewFinance,
+        bool isActive)
+    {
+        if (string.IsNullOrWhiteSpace(fullName) || string.IsNullOrWhiteSpace(email))
+        {
+            TempData["ErrorMessage"] = "Full name and email address are required.";
+            return RedirectToPage();
+        }
+
+        TempData["SuccessMessage"] = $"Team member '{fullName.Trim()}' updated successfully!";
+        return RedirectToPage();
+    }
+
     public IActionResult OnPostToggleStatus(Guid staffId)
     {
         TempData["SuccessMessage"] = "Staff status toggled successfully.";
