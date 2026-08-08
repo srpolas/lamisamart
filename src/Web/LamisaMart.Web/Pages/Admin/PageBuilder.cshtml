@@ -1,104 +1,120 @@
-@page
+@page "/Admin/PageBuilder"
 @model LamisaMart.Web.Pages.Admin.PageBuilderModel
 @{
-    ViewData["Title"] = "CMS Page Builder";
+    ViewData["Title"] = "CMS Page Layout Builder - LamisaMart Admin";
     Layout = "_AdminLayout";
 }
 
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h3 class="fw-bold m-0">Dynamic Page Builder</h3>
-    <button class="btn btn-success px-4"><i class="bi bi-floppy me-2"></i> Publish Changes</button>
-</div>
+<form method="post" asp-page-handler="Publish" id="pageBuilderForm">
+    <input type="hidden" asp-for="CurrentPage.Id" />
+    <input type="hidden" asp-for="SectionsJsonPayload" id="hiddenSectionsJson" />
 
-<div class="row gx-4">
-    <!-- Left Sidebar: Layout Settings -->
-    <div class="col-lg-3">
-        <div class="card border-0 shadow-sm rounded-4 mb-4">
-            <div class="card-body">
-                <h6 class="fw-bold border-bottom pb-2 mb-3">Page Settings</h6>
-                <div class="mb-3">
-                    <label class="form-label small fw-medium">Route Path</label>
-                    <input type="text" class="form-control bg-light" value="/" readonly />
-                    <div class="form-text" style="font-size: 11px;">Editing the Home Page</div>
+    <!-- Top Bar Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+            <h3 class="fw-bold text-dark m-0">CMS Dynamic Layout Builder</h3>
+            <p class="text-muted small mb-0">Customize home page sections, promotional banners, product carousels, and layout order.</p>
+        </div>
+        <div class="d-flex align-items-center gap-2">
+            <button type="button" class="btn btn-outline-dark btn-sm rounded-pill px-3 py-2 fw-semibold" data-bs-toggle="modal" data-bs-target="#previewModal" onclick="renderPreview()">
+                <i class="bi bi-eye me-1"></i> Live Layout Preview
+            </button>
+            <button type="submit" class="btn btn-success btn-sm rounded-pill px-4 py-2 fw-bold shadow-sm" onclick="saveSectionsState()">
+                <i class="bi bi-cloud-arrow-up me-1"></i> Save & Publish Layout
+            </button>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show rounded-4 p-3 shadow-sm mb-4" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row gx-4">
+        <!-- Left Sidebar: Page Settings & Section Palette -->
+        <div class="col-lg-4 col-xl-3 mb-4 mb-lg-0">
+            <!-- Page Metadata Card -->
+            <div class="card border-0 shadow-sm rounded-4 mb-4">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold border-bottom pb-2 mb-3 text-dark">Page Configuration</h6>
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Target Route</label>
+                        <input type="text" asp-for="CurrentPage.Route" class="form-control bg-light rounded-3 text-muted fw-bold" readonly />
+                        <div class="form-text" style="font-size: 11px;">Editing Storefront Home Page</div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label small fw-semibold">Layout Version Name</label>
+                        <input type="text" asp-for="CurrentPage.Name" class="form-control rounded-3" placeholder="e.g. Main Home Page v1" />
+                    </div>
+                    <div class="form-check form-switch pt-1">
+                        <input class="form-check-input" type="checkbox" asp-for="CurrentPage.IsActive" id="isActive" />
+                        <label class="form-check-label small fw-bold text-dark" for="isActive">Page Active & Live</label>
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label class="form-label small fw-medium">Page Title</label>
-                    <input type="text" class="form-control" value="Main Home Page v1" />
-                </div>
-                <div class="mb-3 form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="isActive" checked>
-                    <label class="form-check-label small fw-medium" for="isActive">Is Active</label>
+            </div>
+
+            <!-- Add Section Palette -->
+            <div class="card border-0 shadow-sm rounded-4">
+                <div class="card-body p-4">
+                    <h6 class="fw-bold border-bottom pb-2 mb-3 text-dark">Add New Section</h6>
+                    <div class="d-grid gap-2">
+                        <button type="button" class="btn btn-outline-primary text-start rounded-3 py-2 fw-medium fs-7" onclick="addNewSection('HeroBanner')">
+                            <i class="bi bi-image me-2 text-primary"></i> Hero Banner
+                        </button>
+                        <button type="button" class="btn btn-outline-primary text-start rounded-3 py-2 fw-medium fs-7" onclick="addNewSection('TrustBadges')">
+                            <i class="bi bi-shield-check me-2 text-success"></i> Trust Badges Bar
+                        </button>
+                        <button type="button" class="btn btn-outline-primary text-start rounded-3 py-2 fw-medium fs-7" onclick="addNewSection('CategoryGrid')">
+                            <i class="bi bi-grid-3x3-gap me-2 text-info"></i> Category Grid
+                        </button>
+                        <button type="button" class="btn btn-outline-primary text-start rounded-3 py-2 fw-medium fs-7" onclick="addNewSection('PromotionalRow')">
+                            <i class="bi bi-tags me-2 text-warning"></i> Promotional Banner
+                        </button>
+                        <button type="button" class="btn btn-outline-primary text-start rounded-3 py-2 fw-medium fs-7" onclick="addNewSection('ProductCarousel')">
+                            <i class="bi bi-collection me-2 text-danger"></i> Product Carousel
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="card border-0 shadow-sm rounded-4">
-            <div class="card-body">
-                <h6 class="fw-bold border-bottom pb-2 mb-3">Add Section</h6>
-                <div class="d-grid gap-2">
-                    <button class="btn btn-outline-primary text-start"><i class="bi bi-image me-2"></i> Hero Banner</button>
-                    <button class="btn btn-outline-primary text-start"><i class="bi bi-grid me-2"></i> Category Grid</button>
-                    <button class="btn btn-outline-primary text-start"><i class="bi bi-tags me-2"></i> Promotional Row</button>
-                    <button class="btn btn-outline-primary text-start"><i class="bi bi-collection me-2"></i> Product Carousel</button>
-                    <button class="btn btn-outline-primary text-start"><i class="bi bi-star me-2"></i> Testimonials</button>
-                    <button class="btn btn-outline-primary text-start"><i class="bi bi-shield-check me-2"></i> Trust Badges</button>
+        <!-- Right Column: Sections Editor -->
+        <div class="col-lg-8 col-xl-9">
+            <div class="bg-white rounded-4 shadow-sm p-4 border" style="min-height: 600px;">
+                <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom">
+                    <div>
+                        <h6 class="fw-bold text-dark m-0">Active Sections (<span id="sectionCount">0</span>)</h6>
+                        <span class="text-muted fs-7">Use the arrows to reorder, toggle visibility, or edit section content.</span>
+                    </div>
+                    <span class="badge bg-light text-muted border px-3 py-2 rounded-pill fs-7">
+                        <i class="bi bi-arrows-move me-1"></i> Drag / Reorder Enabled
+                    </span>
+                </div>
+
+                <div id="sectionsListContainer" class="d-flex flex-column gap-3">
+                    <!-- Dynamic sections rendered via JavaScript -->
                 </div>
             </div>
         </div>
     </div>
+</form>
 
-    <!-- Right Side: Sections Editor -->
-    <div class="col-lg-9">
-        <div class="bg-white rounded-4 shadow-sm p-4" style="min-height: 600px; background-color: #fcfcfc;">
-            
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h5 class="fw-bold m-0 text-muted">Active Sections (Drag to reorder)</h5>
+<!-- Modal: Live Layout Preview -->
+<div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content rounded-4 border-0 shadow">
+            <div class="modal-header border-bottom-0 pb-0">
+                <h5 class="modal-title fw-bold" id="previewModalLabel">Live Storefront Home Preview</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-
-            <!-- Section Item 1 -->
-            <div class="card border mb-3 shadow-sm rounded-3">
-                <div class="card-header bg-light d-flex justify-content-between align-items-center cursor-move border-0 py-3">
-                    <div class="fw-bold text-dark"><i class="bi bi-arrows-move text-muted me-2 cursor-grab"></i> 1. HeroBanner</div>
-                    <div class="d-flex gap-2">
-                        <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i> Edit JSON</button>
-                        <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
-                    </div>
-                </div>
-                <div class="card-body bg-white border-top">
-                    <pre class="bg-dark text-white p-3 rounded-3 small mb-0 font-monospace">
-{
-  "title": "প্রতিদিনের সাজে, লমিসা মার্ট।",
-  "subtitle": "Everyday Elegance, Every Moment.",
-  "buttonText": "SHOP NOW",
-  "buttonLink": "/category/saree",
-  "badgeText": "✨ New Collection 2026",
-  "imageUrl": "/images/LamisaMart_design_concept.png"
-}</pre>
+            <div class="modal-body p-4 bg-light">
+                <div id="previewContainer" class="bg-white rounded-4 p-4 shadow-sm border">
+                    <!-- Live preview markup dynamically injected -->
                 </div>
             </div>
-
-            <!-- Section Item 2 -->
-            <div class="card border mb-3 shadow-sm rounded-3">
-                <div class="card-header bg-light d-flex justify-content-between align-items-center cursor-move border-0 py-3">
-                    <div class="fw-bold text-dark"><i class="bi bi-arrows-move text-muted me-2 cursor-grab"></i> 2. TrustBadges</div>
-                    <div class="d-flex gap-2">
-                        <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i> Edit JSON</button>
-                        <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Section Item 3 -->
-            <div class="card border mb-3 shadow-sm rounded-3">
-                <div class="card-header bg-light d-flex justify-content-between align-items-center cursor-move border-0 py-3">
-                    <div class="fw-bold text-dark"><i class="bi bi-arrows-move text-muted me-2 cursor-grab"></i> 3. CategoryGrid</div>
-                    <div class="d-flex gap-2">
-                        <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i> Edit JSON</button>
-                        <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
-                    </div>
-                </div>
-            </div>
-            
         </div>
     </div>
 </div>
@@ -106,4 +122,282 @@
 <style>
     .cursor-grab { cursor: grab; }
     .cursor-grab:active { cursor: grabbing; }
+    .section-card { transition: all 0.2s ease; }
+    .section-card:hover { border-color: #E11D48 !important; }
 </style>
+
+@section Scripts {
+    <script>
+        let sectionsData = [];
+
+        try {
+            const rawJson = '@Html.Raw(Model.SectionsJsonPayload)';
+            sectionsData = JSON.parse(rawJson) || [];
+        } catch (e) {
+            console.error("Error parsing sections JSON:", e);
+            sectionsData = [];
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            renderSectionsList();
+        });
+
+        function renderSectionsList() {
+            const container = document.getElementById('sectionsListContainer');
+            const countEl = document.getElementById('sectionCount');
+            if (!container) return;
+
+            container.innerHTML = '';
+            if (countEl) countEl.innerText = sectionsData.length;
+
+            if (sectionsData.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-5 text-muted">
+                        <i class="bi bi-layout-wtf display-4 mb-2 d-block text-muted"></i>
+                        <h6 class="fw-bold">No Sections Added</h6>
+                        <p class="small mb-0">Click a section from the palette on the left to add it to your page layout.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            sectionsData.forEach((sec, idx) => {
+                let parsedPayload = {};
+                try {
+                    parsedPayload = typeof sec.ContentPayloadJson === 'string' ? JSON.parse(sec.ContentPayloadJson) : sec.ContentPayloadJson;
+                } catch (err) {
+                    parsedPayload = {};
+                }
+
+                const card = document.createElement('div');
+                card.className = `card border rounded-4 shadow-sm section-card ${sec.IsVisible ? 'bg-white' : 'bg-light opacity-75'}`;
+                card.innerHTML = `
+                    <div class="card-header bg-light d-flex justify-content-between align-items-center border-0 py-3 px-4 rounded-top-4">
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge bg-dark text-white rounded-pill">${idx + 1}</span>
+                            <span class="fw-bold text-dark fs-6"><i class="bi bi-layers me-2 text-primary"></i> ${sec.SectionType}</span>
+                            ${!sec.IsVisible ? '<span class="badge bg-secondary-subtle text-secondary ms-2">Hidden</span>' : ''}
+                        </div>
+                        <div class="d-flex align-items-center gap-1">
+                            <button type="button" class="btn btn-sm btn-outline-secondary rounded-circle" onclick="moveSection(${idx}, -1)" ${idx === 0 ? 'disabled' : ''} title="Move Up"><i class="bi bi-arrow-up"></i></button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary rounded-circle" onclick="moveSection(${idx}, 1)" ${idx === sectionsData.length - 1 ? 'disabled' : ''} title="Move Down"><i class="bi bi-arrow-down"></i></button>
+                            <button type="button" class="btn btn-sm ${sec.IsVisible ? 'btn-outline-success' : 'btn-outline-secondary'} rounded-circle ms-2" onclick="toggleVisibility(${idx})" title="Toggle Visibility">
+                                <i class="bi ${sec.IsVisible ? 'bi-eye' : 'bi-eye-slash'}"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-danger rounded-circle ms-2" onclick="removeSection(${idx})" title="Delete Section"><i class="bi bi-trash"></i></button>
+                        </div>
+                    </div>
+                    <div class="card-body p-4 border-top">
+                        ${renderSectionFormFields(sec.SectionType, parsedPayload, idx)}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            syncHiddenPayload();
+        }
+
+        function renderSectionFormFields(type, payload, idx) {
+            if (type === 'HeroBanner') {
+                return `
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold">Banner Badge Text</label>
+                            <input type="text" class="form-control form-control-sm rounded-3" value="${payload.badgeText || ''}" onchange="updatePayloadField(${idx}, 'badgeText', this.value)" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold">Banner Image URL</label>
+                            <input type="text" class="form-control form-control-sm rounded-3" value="${payload.imageUrl || ''}" onchange="updatePayloadField(${idx}, 'imageUrl', this.value)" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold">Main Heading Title</label>
+                            <input type="text" class="form-control form-control-sm rounded-3" value="${payload.title || ''}" onchange="updatePayloadField(${idx}, 'title', this.value)" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold">Subtitle Description</label>
+                            <input type="text" class="form-control form-control-sm rounded-3" value="${payload.subtitle || ''}" onchange="updatePayloadField(${idx}, 'subtitle', this.value)" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold">Button Text</label>
+                            <input type="text" class="form-control form-control-sm rounded-3" value="${payload.buttonText || ''}" onchange="updatePayloadField(${idx}, 'buttonText', this.value)" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold">Button Link URL</label>
+                            <input type="text" class="form-control form-control-sm rounded-3" value="${payload.buttonLink || ''}" onchange="updatePayloadField(${idx}, 'buttonLink', this.value)" />
+                        </div>
+                    </div>
+                `;
+            } else if (type === 'TrustBadges') {
+                return `
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold">Badge 1</label>
+                            <input type="text" class="form-control form-control-sm rounded-3" value="${payload.badge1 || ''}" onchange="updatePayloadField(${idx}, 'badge1', this.value)" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold">Badge 2</label>
+                            <input type="text" class="form-control form-control-sm rounded-3" value="${payload.badge2 || ''}" onchange="updatePayloadField(${idx}, 'badge2', this.value)" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold">Badge 3</label>
+                            <input type="text" class="form-control form-control-sm rounded-3" value="${payload.badge3 || ''}" onchange="updatePayloadField(${idx}, 'badge3', this.value)" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold">Badge 4</label>
+                            <input type="text" class="form-control form-control-sm rounded-3" value="${payload.badge4 || ''}" onchange="updatePayloadField(${idx}, 'badge4', this.value)" />
+                        </div>
+                    </div>
+                `;
+            } else if (type === 'PromotionalRow') {
+                return `
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold">Banner Title</label>
+                            <input type="text" class="form-control form-control-sm rounded-3" value="${payload.bannerTitle || ''}" onchange="updatePayloadField(${idx}, 'bannerTitle', this.value)" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold">Discount Badge Text</label>
+                            <input type="text" class="form-control form-control-sm rounded-3" value="${payload.discountText || ''}" onchange="updatePayloadField(${idx}, 'discountText', this.value)" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold">Button Text</label>
+                            <input type="text" class="form-control form-control-sm rounded-3" value="${payload.buttonText || ''}" onchange="updatePayloadField(${idx}, 'buttonText', this.value)" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-semibold">Button Link</label>
+                            <input type="text" class="form-control form-control-sm rounded-3" value="${payload.buttonLink || ''}" onchange="updatePayloadField(${idx}, 'buttonLink', this.value)" />
+                        </div>
+                    </div>
+                `;
+            } else {
+                return `
+                    <div>
+                        <label class="form-label small fw-semibold">Section JSON Payload</label>
+                        <textarea class="form-control form-control-sm font-monospace rounded-3" rows="3" onchange="updateRawPayload(${idx}, this.value)">${JSON.stringify(payload, null, 2)}</textarea>
+                    </div>
+                `;
+            }
+        }
+
+        function updatePayloadField(idx, key, val) {
+            let payload = {};
+            try {
+                payload = typeof sectionsData[idx].ContentPayloadJson === 'string' ? JSON.parse(sectionsData[idx].ContentPayloadJson) : sectionsData[idx].ContentPayloadJson;
+            } catch (e) {
+                payload = {};
+            }
+            payload[key] = val;
+            sectionsData[idx].ContentPayloadJson = JSON.stringify(payload);
+            syncHiddenPayload();
+        }
+
+        function updateRawPayload(idx, jsonStr) {
+            try {
+                JSON.parse(jsonStr);
+                sectionsData[idx].ContentPayloadJson = jsonStr;
+                syncHiddenPayload();
+            } catch (e) {
+                alert("Invalid JSON format!");
+            }
+        }
+
+        function addNewSection(type) {
+            let defaultPayload = {};
+            if (type === 'HeroBanner') {
+                defaultPayload = { badgeText: "✨ New Collection", title: "New Season Styles", subtitle: "Handcrafted Luxury", buttonText: "SHOP NOW", buttonLink: "/category/saree", imageUrl: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=1200&q=80" };
+            } else if (type === 'TrustBadges') {
+                defaultPayload = { badge1: "100% Authentic Handloom", badge2: "Cash on Delivery", badge3: "Fast Shipping", badge4: "Easy Returns" };
+            } else if (type === 'PromotionalRow') {
+                defaultPayload = { bannerTitle: "Festive Clearance Sale", discountText: "FLAT 30% OFF", buttonText: "EXPLORE NOW", buttonLink: "/category/saree" };
+            } else {
+                defaultPayload = { title: type + " Section" };
+            }
+
+            sectionsData.push({
+                Id: '00000000-0000-0000-0000-000000000000',
+                SectionType: type,
+                SortOrder: sectionsData.length + 1,
+                IsVisible: true,
+                ContentPayloadJson: JSON.stringify(defaultPayload)
+            });
+
+            renderSectionsList();
+        }
+
+        function moveSection(idx, direction) {
+            const targetIdx = idx + direction;
+            if (targetIdx < 0 || targetIdx >= sectionsData.length) return;
+
+            const temp = sectionsData[idx];
+            sectionsData[idx] = sectionsData[targetIdx];
+            sectionsData[targetIdx] = temp;
+
+            renderSectionsList();
+        }
+
+        function toggleVisibility(idx) {
+            sectionsData[idx].IsVisible = !sectionsData[idx].IsVisible;
+            renderSectionsList();
+        }
+
+        function removeSection(idx) {
+            if (confirm("Are you sure you want to remove this section from the layout?")) {
+                sectionsData.splice(idx, 1);
+                renderSectionsList();
+            }
+        }
+
+        function syncHiddenPayload() {
+            const input = document.getElementById('hiddenSectionsJson');
+            if (input) input.value = JSON.stringify(sectionsData);
+        }
+
+        function saveSectionsState() {
+            syncHiddenPayload();
+        }
+
+        function renderPreview() {
+            const preview = document.getElementById('previewContainer');
+            if (!preview) return;
+
+            preview.innerHTML = '';
+            sectionsData.forEach(sec => {
+                if (!sec.IsVisible) return;
+                let payload = {};
+                try {
+                    payload = typeof sec.ContentPayloadJson === 'string' ? JSON.parse(sec.ContentPayloadJson) : sec.ContentPayloadJson;
+                } catch(e) {}
+
+                if (sec.SectionType === 'HeroBanner') {
+                    preview.innerHTML += `
+                        <div class="p-5 rounded-4 mb-4 text-white text-center shadow-sm" style="background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('${payload.imageUrl || ''}') center/cover;">
+                            <span class="badge bg-danger mb-2 px-3 py-2 rounded-pill">${payload.badgeText || ''}</span>
+                            <h2 class="fw-extrabold display-5">${payload.title || ''}</h2>
+                            <p class="lead">${payload.subtitle || ''}</p>
+                            <a href="${payload.buttonLink || '#'}" class="btn btn-danger rounded-pill px-4 py-2 fw-bold">${payload.buttonText || 'Shop Now'}</a>
+                        </div>
+                    `;
+                } else if (sec.SectionType === 'TrustBadges') {
+                    preview.innerHTML += `
+                        <div class="row g-2 p-3 bg-light rounded-4 mb-4 text-center">
+                            <div class="col-3 fw-bold text-dark small"><i class="bi bi-patch-check text-success me-1"></i> ${payload.badge1 || ''}</div>
+                            <div class="col-3 fw-bold text-dark small"><i class="bi bi-truck text-primary me-1"></i> ${payload.badge2 || ''}</div>
+                            <div class="col-3 fw-bold text-dark small"><i class="bi bi-clock-history text-warning me-1"></i> ${payload.badge3 || ''}</div>
+                            <div class="col-3 fw-bold text-dark small"><i class="bi bi-arrow-counterclockwise text-danger me-1"></i> ${payload.badge4 || ''}</div>
+                        </div>
+                    `;
+                } else if (sec.SectionType === 'PromotionalRow') {
+                    preview.innerHTML += `
+                        <div class="p-4 rounded-4 mb-4 text-white d-flex justify-content-between align-items-center" style="background: linear-gradient(135deg, #1E1B4B 0%, #431407 100%);">
+                            <div>
+                                <span class="badge bg-warning text-dark fw-bold mb-1">${payload.discountText || ''}</span>
+                                <h4 class="fw-bold m-0">${payload.bannerTitle || ''}</h4>
+                            </div>
+                            <a href="${payload.buttonLink || '#'}" class="btn btn-light rounded-pill px-4 fw-bold">${payload.buttonText || 'Explore'}</a>
+                        </div>
+                    `;
+                }
+            });
+        }
+    </script>
+}
