@@ -8,7 +8,7 @@
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
     <div>
         <h3 class="fw-bold text-dark m-0">Product Brands Management</h3>
-        <p class="text-muted small mb-0">Create brands, set featured homepage logos, and organize brand catalogs.</p>
+        <p class="text-muted small mb-0">Create brands, set featured homepage logos, authorize multi-vendor sellers, and manage brand catalogs.</p>
     </div>
     <div>
         <button type="button" class="btn btn-danger btn-sm rounded-pill px-4 py-2 fw-bold shadow-sm" data-bs-toggle="modal" data-bs-target="#addBrandModal">
@@ -52,23 +52,42 @@
             <thead class="bg-light text-muted small border-bottom">
                 <tr>
                     <th class="ps-4 py-3">Brand Logo & Name</th>
+                    <th class="py-3">Authorized Selling Vendors</th>
                     <th class="py-3">Slug Route</th>
                     <th class="py-3 text-center">Products Count</th>
                     <th class="py-3 text-center">Featured</th>
-                    <th class="py-3">Created Date</th>
                     <th class="pe-4 py-3 text-end">Actions</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var brand in Model.BrandsList)
                 {
+                    var vendorsJoined = string.Join(",", brand.AuthorizedVendors);
                     <tr>
                         <td class="ps-4">
                             <div class="d-flex align-items-center gap-3">
-                                <img src="@brand.LogoUrl" alt="@brand.Name" class="rounded-circle object-fit-cover shadow-sm" style="width: 44px; height: 44px;" />
+                                <img src="@brand.LogoUrl" alt="@brand.Name" class="rounded-circle object-fit-cover shadow-sm border" style="width: 44px; height: 44px;" />
                                 <div>
                                     <h6 class="fw-bold text-dark mb-0 fs-7">@brand.Name</h6>
+                                    <span class="fs-8 text-muted">ID: @brand.Id.ToString("N").Substring(0, 8)</span>
                                 </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="d-flex flex-wrap gap-1">
+                                @if (brand.AuthorizedVendors != null && brand.AuthorizedVendors.Any())
+                                {
+                                    foreach (var vendor in brand.AuthorizedVendors)
+                                    {
+                                        <span class="badge bg-primary-subtle text-primary border border-primary-subtle fs-7">
+                                            <i class="bi bi-shop me-1"></i>@vendor
+                                        </span>
+                                    }
+                                }
+                                else
+                                {
+                                    <span class="badge bg-light text-muted border fs-7">All Verified Vendors</span>
+                                }
                             </div>
                         </td>
                         <td class="fs-7 text-muted">/brand/@brand.Slug</td>
@@ -91,16 +110,16 @@
                                 }
                             </form>
                         </td>
-                        <td class="fs-7 text-muted">@brand.CreatedAt.ToString("MMM dd, yyyy")</td>
                         <td class="pe-4 text-end">
                             <div class="d-flex justify-content-end gap-1">
                                 <button type="button" class="btn btn-sm btn-outline-secondary rounded-circle p-0 d-inline-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" 
-                                        title="Edit Brand & Logo"
+                                        title="Edit Brand, Logo & Authorized Vendors"
                                         data-id="@brand.Id"
                                         data-name="@brand.Name"
                                         data-slug="@brand.Slug"
                                         data-logo="@brand.LogoUrl"
                                         data-featured="@(brand.IsFeatured ? "true" : "false")"
+                                        data-vendors="@vendorsJoined"
                                         onclick="openEditBrandModalFromData(this)">
                                     <i class="bi bi-pencil"></i>
                                 </button>
@@ -135,6 +154,23 @@
                         <label class="form-label fw-semibold small text-dark">Brand Name <span class="text-danger">*</span></label>
                         <input type="text" name="brandName" class="form-control rounded-3" placeholder="e.g. Tangail Weavers Collection" required />
                     </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-dark">Authorized Selling Vendors <span class="text-muted">(Multi-Vendor Selection)</span></label>
+                        <p class="text-muted fs-8 mb-2">Select all vendors authorized to sell products under this brand name.</p>
+                        <div class="p-3 bg-light rounded-3 border max-h-180 overflow-y-auto">
+                            @foreach (var vendor in Model.AvailableVendors)
+                            {
+                                <div class="form-check mb-1">
+                                    <input class="form-check-input" type="checkbox" name="selectedVendors" value="@vendor.Name" id="add_v_@vendor.Id" checked />
+                                    <label class="form-check-label small fw-semibold text-dark" for="add_v_@vendor.Id">
+                                        <i class="bi bi-shop me-1 text-primary"></i>@vendor.Name
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
                     <div class="mb-3">
                         <label class="form-label fw-semibold small text-dark">Brand Logo URL</label>
                         <input type="text" name="logoUrl" class="form-control rounded-3" placeholder="https://images.unsplash.com/..." value="https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=150&q=80" />
@@ -159,7 +195,7 @@
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content rounded-4 border-0 shadow">
             <div class="modal-header border-bottom-0 pb-0">
-                <h5 class="modal-title fw-bold text-dark" id="editBrandModalLabel">Edit Brand & Logo</h5>
+                <h5 class="modal-title fw-bold text-dark" id="editBrandModalLabel">Edit Brand & Authorized Vendors</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-4">
@@ -178,6 +214,22 @@
                     </div>
 
                     <div class="mb-3">
+                        <label class="form-label fw-semibold small text-dark">Authorized Selling Vendors <span class="text-muted">(Multi-Vendor Selection)</span></label>
+                        <p class="text-muted fs-8 mb-2">Select all vendors authorized to sell products under this brand name.</p>
+                        <div class="p-3 bg-light rounded-3 border max-h-180 overflow-y-auto">
+                            @foreach (var vendor in Model.AvailableVendors)
+                            {
+                                <div class="form-check mb-1">
+                                    <input class="form-check-input edit-vendor-chk" type="checkbox" name="selectedVendors" value="@vendor.Name" id="edit_v_@vendor.Id" />
+                                    <label class="form-check-label small fw-semibold text-dark" for="edit_v_@vendor.Id">
+                                        <i class="bi bi-shop me-1 text-primary"></i>@vendor.Name
+                                    </label>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
                         <label class="form-label fw-semibold small text-dark">Brand Logo URL <span class="text-danger">*</span></label>
                         <input type="text" name="logoUrl" id="editBrandLogoUrl" class="form-control rounded-3" placeholder="https://images.unsplash.com/..." required oninput="previewEditLogo(this.value)" />
                     </div>
@@ -185,7 +237,7 @@
                     <!-- Live Logo Preview Box -->
                     <div class="mb-3 text-center bg-light p-2 rounded-3 border">
                         <span class="d-block small text-muted mb-1">Logo Preview:</span>
-                        <img id="editBrandPreviewImg" src="" alt="Preview" class="rounded-circle object-fit-cover shadow-sm" style="width: 80px; height: 80px;" />
+                        <img id="editBrandPreviewImg" src="" alt="Preview" class="rounded-circle object-fit-cover shadow-sm border" style="width: 80px; height: 80px;" />
                     </div>
 
                     <div class="mb-3 form-check form-switch">
@@ -212,12 +264,18 @@
             const slug = btn.getAttribute('data-slug') || '';
             const logoUrl = btn.getAttribute('data-logo') || '';
             const isFeatured = btn.getAttribute('data-featured') === 'true';
+            const vendorsStr = btn.getAttribute('data-vendors') || '';
 
             document.getElementById('editBrandId').value = id;
             document.getElementById('editBrandName').value = name;
             document.getElementById('editBrandSlug').value = slug;
             document.getElementById('editBrandLogoUrl').value = logoUrl;
             document.getElementById('editBrandIsFeaturedCheck').checked = isFeatured;
+
+            const vendorArray = vendorsStr.split(',').map(v => v.trim());
+            document.querySelectorAll('.edit-vendor-chk').forEach(chk => {
+                chk.checked = vendorArray.includes(chk.value);
+            });
 
             previewEditLogo(logoUrl);
 
