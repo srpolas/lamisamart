@@ -100,7 +100,7 @@
                             else
                             {
                                 <span class="badge bg-secondary-subtle text-secondary border rounded-pill px-3 py-1 fs-7">
-                                    Suspended
+                                    <i class="bi bi-lock-fill me-1 text-danger"></i> Suspended
                                 </span>
                             }
                         </td>
@@ -115,12 +115,37 @@
                                         onclick="populateEditUserModal('@user.Id', '@user.FullName', '@user.Email', '@user.Phone', '@user.Role', '@user.AssociatedVendor', @(user.IsActive ? "true" : "false"))">
                                     <i class="bi bi-pencil"></i>
                                 </button>
-                                
+
+                                <!-- Lock / Unlock Icon Button -->
                                 <form method="post" asp-page-handler="ToggleUserStatus" class="d-inline">
                                     @Html.AntiForgeryToken()
                                     <input type="hidden" name="userId" value="@user.Id" />
-                                    <button type="submit" class="btn btn-sm btn-outline-secondary rounded-pill px-2 fs-7" title="Toggle Access Status">
-                                        Toggle
+                                    @if (user.IsActive)
+                                    {
+                                        <button type="submit" class="btn btn-sm btn-outline-warning text-dark rounded-circle p-0 d-inline-flex align-items-center justify-content-center"
+                                                style="width: 32px; height: 32px;"
+                                                title="Lock (Disable User)">
+                                            <i class="bi bi-lock-fill"></i>
+                                        </button>
+                                    }
+                                    else
+                                    {
+                                        <button type="submit" class="btn btn-sm btn-outline-success rounded-circle p-0 d-inline-flex align-items-center justify-content-center"
+                                                style="width: 32px; height: 32px;"
+                                                title="Unlock (Enable User)">
+                                            <i class="bi bi-unlock-fill"></i>
+                                        </button>
+                                    }
+                                </form>
+
+                                <!-- Delete User Button -->
+                                <form method="post" asp-page-handler="DeleteUser" class="d-inline" onsubmit="return confirm('Are you sure you want to permanently delete this user account?');">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="userId" value="@user.Id" />
+                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-circle p-0 d-inline-flex align-items-center justify-content-center"
+                                            style="width: 32px; height: 32px;"
+                                            title="Delete User Account">
+                                        <i class="bi bi-trash"></i>
                                     </button>
                                 </form>
                             </div>
