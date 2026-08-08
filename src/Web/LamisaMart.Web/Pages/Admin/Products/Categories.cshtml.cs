@@ -122,21 +122,43 @@ public class CategoriesModel : PageModel
     {
         try
         {
-            var cat = await _catalogContext.Categories.FindAsync(categoryId);
-            if (cat != null)
+            if (string.IsNullOrWhiteSpace(categoryName))
             {
-                cat.Name = categoryName.Trim();
-                if (!string.IsNullOrWhiteSpace(slug)) cat.Slug = GenerateSlug(slug);
-                cat.ImageUrl = string.IsNullOrWhiteSpace(imageUrl) ? GetDefaultCategoryImage(cat.Slug) : imageUrl.Trim();
-                cat.IsFeatured = isFeatured;
+                TempData["ErrorMessage"] = "Category name cannot be empty.";
+                return RedirectToPage();
+            }
 
-                await _catalogContext.SaveChangesAsync();
-                TempData["SuccessMessage"] = $"Category '{categoryName}' updated successfully!";
+            var targetSlug = !string.IsNullOrWhiteSpace(slug) ? GenerateSlug(slug) : GenerateSlug(categoryName);
+            var targetName = categoryName.Trim();
+
+            // Find category by ID, slug, or name
+            var cat = await _catalogContext.Categories
+                .FirstOrDefaultAsync(c => c.Id == categoryId || c.Slug.ToLower() == targetSlug.ToLower() || c.Name.ToLower() == targetName.ToLower());
+
+            if (cat == null)
+            {
+                cat = new Category
+                {
+                    Id = categoryId != Guid.Empty ? categoryId : Guid.NewGuid(),
+                    Name = targetName,
+                    Slug = targetSlug,
+                    ImageUrl = string.IsNullOrWhiteSpace(imageUrl) ? GetDefaultCategoryImage(targetSlug) : imageUrl.Trim(),
+                    IsActive = true,
+                    IsFeatured = isFeatured,
+                    DisplayOrder = CategoriesList.Count + 1
+                };
+                _catalogContext.Categories.Add(cat);
             }
             else
             {
-                TempData["SuccessMessage"] = $"Updated category '{categoryName}' image and properties!";
+                cat.Name = targetName;
+                cat.Slug = targetSlug;
+                cat.ImageUrl = string.IsNullOrWhiteSpace(imageUrl) ? GetDefaultCategoryImage(targetSlug) : imageUrl.Trim();
+                cat.IsFeatured = isFeatured;
             }
+
+            await _catalogContext.SaveChangesAsync();
+            TempData["SuccessMessage"] = $"Category '{targetName}' updated successfully!";
         }
         catch (Exception ex)
         {

@@ -122,7 +122,8 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-4">
-                <form method="post" action="/Admin/Products/Categories?handler=CreateCategory">
+                <form method="post" asp-page-handler="CreateCategory">
+                    @Html.AntiForgeryToken()
                     <div class="mb-3">
                         <label class="form-label fw-semibold small text-dark">Category Name <span class="text-danger">*</span></label>
                         <input type="text" name="categoryName" class="form-control rounded-3" placeholder="e.g. Wedding Jamdani" required />
@@ -155,7 +156,8 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-4">
-                <form method="post" action="/Admin/Products/Categories?handler=EditCategory">
+                <form method="post" asp-page-handler="EditCategory">
+                    @Html.AntiForgeryToken()
                     <input type="hidden" name="categoryId" id="editCategoryId" />
 
                     <div class="mb-3">
