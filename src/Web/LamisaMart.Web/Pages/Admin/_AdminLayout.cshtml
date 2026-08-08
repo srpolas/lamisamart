@@ -107,6 +107,16 @@
                     </div>
                 </li>
 
+                <!-- Pages Main Menu -->
+                @{
+                    var isPagesActive = currentPage.StartsWith("/Admin/Pages");
+                }
+                <li class="nav-item">
+                    <a href="/Admin/Pages" class="nav-link @(isPagesActive ? "active" : "")">
+                        <i class="bi bi-file-earmark-richtext"></i> Pages CMS
+                    </a>
+                </li>
+
                 <!-- Product Main Menu with Submenus -->
                 @{
                     var isProductActive = currentPage.StartsWith("/Admin/Products");
@@ -151,7 +161,7 @@
                 </li>
                 <li class="nav-item">
                     <a href="/Admin/PageBuilder" class="nav-link @(currentPage == "/Admin/PageBuilder" ? "active" : "")">
-                        <i class="bi bi-layout-wtf"></i> Page Builder CMS
+                        <i class="bi bi-layout-wtf"></i> Dynamic Layout Builder
                     </a>
                 </li>
                 <li class="nav-item mt-4 pt-3 border-top border-light border-opacity-10">
