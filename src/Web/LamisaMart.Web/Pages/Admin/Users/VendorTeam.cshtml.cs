@@ -7,6 +7,7 @@ namespace LamisaMart.Web.Pages.Admin.Users;
 [Authorize(Roles = "SuperAdmin,SuperUser,Admin,VendorAdmin")]
 public class VendorTeamModel : PageModel
 {
+    private static readonly List<VendorStaffViewModel> MasterStaffStore = InitMasterStaffStore();
     private readonly ILogger<VendorTeamModel> _logger;
 
     public VendorTeamModel(ILogger<VendorTeamModel> logger)
@@ -35,7 +36,7 @@ public class VendorTeamModel : PageModel
     public void OnGet()
     {
         LoadVendors();
-        StaffList = GetSampleStaff();
+        StaffList = MasterStaffStore.ToList();
     }
 
     public IActionResult OnPostCreateStaffUser(
@@ -54,6 +55,22 @@ public class VendorTeamModel : PageModel
             return RedirectToPage();
         }
 
+        var newStaff = new VendorStaffViewModel
+        {
+            Id = Guid.NewGuid(),
+            FullName = fullName.Trim(),
+            Email = email.Trim(),
+            Phone = phone ?? string.Empty,
+            VendorName = vendorName,
+            Role = role,
+            CanManageProducts = canManageProducts,
+            CanProcessOrders = canProcessOrders,
+            CanViewFinance = canViewFinance,
+            IsActive = true,
+            AddedAt = DateTime.UtcNow
+        };
+
+        MasterStaffStore.Add(newStaff);
         TempData["SuccessMessage"] = $"Team member '{fullName.Trim()}' added as '{role}' for store '{vendorName}'!";
         return RedirectToPage();
     }
@@ -76,19 +93,44 @@ public class VendorTeamModel : PageModel
             return RedirectToPage();
         }
 
+        var targetStaff = MasterStaffStore.FirstOrDefault(s => s.Id == staffId);
+        if (targetStaff != null)
+        {
+            targetStaff.FullName = fullName.Trim();
+            targetStaff.Email = email.Trim();
+            targetStaff.Phone = phone ?? string.Empty;
+            targetStaff.VendorName = vendorName;
+            targetStaff.Role = role;
+            targetStaff.CanManageProducts = canManageProducts;
+            targetStaff.CanProcessOrders = canProcessOrders;
+            targetStaff.CanViewFinance = canViewFinance;
+            targetStaff.IsActive = isActive;
+        }
+
         TempData["SuccessMessage"] = $"Team member '{fullName.Trim()}' updated successfully!";
         return RedirectToPage();
     }
 
     public IActionResult OnPostToggleStatus(Guid staffId)
     {
-        TempData["SuccessMessage"] = "Staff status toggled successfully.";
+        var targetStaff = MasterStaffStore.FirstOrDefault(s => s.Id == staffId);
+        if (targetStaff != null)
+        {
+            targetStaff.IsActive = !targetStaff.IsActive;
+            var statusText = targetStaff.IsActive ? "Active (Unlocked)" : "Disabled (Locked)";
+            TempData["SuccessMessage"] = $"Staff member '{targetStaff.FullName}' status changed to: {statusText}!";
+        }
         return RedirectToPage();
     }
 
     public IActionResult OnPostDeleteStaff(Guid staffId)
     {
-        TempData["SuccessMessage"] = "Staff account deleted successfully.";
+        var targetStaff = MasterStaffStore.FirstOrDefault(s => s.Id == staffId);
+        if (targetStaff != null)
+        {
+            MasterStaffStore.Remove(targetStaff);
+            TempData["SuccessMessage"] = $"Staff member '{targetStaff.FullName}' deleted successfully!";
+        }
         return RedirectToPage();
     }
 
@@ -106,15 +148,15 @@ public class VendorTeamModel : PageModel
         };
     }
 
-    private List<VendorStaffViewModel> GetSampleStaff()
+    private static List<VendorStaffViewModel> InitMasterStaffStore()
     {
         var now = DateTime.UtcNow;
         return new List<VendorStaffViewModel>
         {
-            new() { Id = Guid.NewGuid(), FullName = "Kamrul Hasan", Email = "kamrul.mgr@narayanganjweavers.com", Phone = "01711223355", Role = "Manager", VendorName = "Narayanganj Weaver Guild", CanManageProducts = true, CanProcessOrders = true, CanViewFinance = true, IsActive = true, AddedAt = now.AddMonths(-4) },
-            new() { Id = Guid.NewGuid(), FullName = "Fatema Begum", Email = "fatema.sales@narayanganjweavers.com", Phone = "01711223366", Role = "SalesPerson", VendorName = "Narayanganj Weaver Guild", CanManageProducts = false, CanProcessOrders = true, CanViewFinance = false, IsActive = true, AddedAt = now.AddMonths(-2) },
-            new() { Id = Guid.NewGuid(), FullName = "Ariful Haque", Email = "arif.mgr@silkemporium.com", Phone = "01822334466", Role = "Manager", VendorName = "Silk Emporium Rajshahi", CanManageProducts = true, CanProcessOrders = true, CanViewFinance = false, IsActive = true, AddedAt = now.AddMonths(-3) },
-            new() { Id = Guid.NewGuid(), FullName = "Sabrina Sultana", Email = "sabrina.sales@nusrat.com", Phone = "01933445577", Role = "SalesPerson", VendorName = "Nusrat Boutique", CanManageProducts = true, CanProcessOrders = true, CanViewFinance = false, IsActive = true, AddedAt = now.AddMonths(-1) }
+            new() { Id = Guid.Parse("a1111111-1111-1111-1111-111111111111"), FullName = "Kamrul Hasan", Email = "kamrul.mgr@narayanganjweavers.com", Phone = "01711223355", Role = "Manager", VendorName = "Narayanganj Weaver Guild", CanManageProducts = true, CanProcessOrders = true, CanViewFinance = true, IsActive = true, AddedAt = now.AddMonths(-4) },
+            new() { Id = Guid.Parse("a2222222-2222-2222-2222-222222222222"), FullName = "Fatema Begum", Email = "fatema.sales@narayanganjweavers.com", Phone = "01711223366", Role = "SalesPerson", VendorName = "Narayanganj Weaver Guild", CanManageProducts = false, CanProcessOrders = true, CanViewFinance = false, IsActive = true, AddedAt = now.AddMonths(-2) },
+            new() { Id = Guid.Parse("a3333333-3333-3333-3333-333333333333"), FullName = "Ariful Haque", Email = "arif.mgr@silkemporium.com", Phone = "01822334466", Role = "Manager", VendorName = "Silk Emporium Rajshahi", CanManageProducts = true, CanProcessOrders = true, CanViewFinance = false, IsActive = true, AddedAt = now.AddMonths(-3) },
+            new() { Id = Guid.Parse("a4444444-4444-4444-4444-444444444444"), FullName = "Sabrina Sultana", Email = "sabrina.sales@nusrat.com", Phone = "01933445577", Role = "SalesPerson", VendorName = "Nusrat Boutique", CanManageProducts = true, CanProcessOrders = true, CanViewFinance = false, IsActive = true, AddedAt = now.AddMonths(-1) }
         };
     }
 }
