@@ -69,9 +69,15 @@ else
     </div>
 </section>
 
-<!-- 3. Shop By Category (13 Curated Categories) -->
+<!-- 3. Shop By Category (10 Categories + View All Button) -->
 <section class="container my-4 my-md-5">
-    <div class="lm-section-title">SHOP BY CATEGORY</div>
+    <div class="d-flex justify-content-between align-items-center mb-3 mb-md-4">
+        <h4 class="fw-bold m-0 fs-5 fs-md-4 text-uppercase" style="color: var(--lm-text-main);">SHOP BY CATEGORY</h4>
+        <a href="/category/saree" class="btn btn-outline-danger btn-sm rounded-pill px-3 py-1 fw-bold fs-7">
+            View All <i class="bi bi-arrow-right ms-1"></i>
+        </a>
+    </div>
+
     <div class="lm-categories-grid">
         <a href="/category/saree" class="lm-category-card">
             <div class="lm-category-circle">
@@ -133,23 +139,12 @@ else
             </div>
             <span class="lm-category-label">JEWELRY</span>
         </a>
-        <a href="/category/innerwear" class="lm-category-card">
-            <div class="lm-category-circle">
-                <img src="https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=300&q=80" alt="Innerwear" />
-            </div>
-            <span class="lm-category-label">INNERWEAR</span>
-        </a>
-        <a href="/category/cosmetics" class="lm-category-card">
-            <div class="lm-category-circle">
-                <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=300&q=80" alt="Cosmetics" />
-            </div>
-            <span class="lm-category-label">COSMETICS</span>
-        </a>
-        <a href="/category/home-handicraft" class="lm-category-card">
-            <div class="lm-category-circle">
-                <img src="https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=300&q=80" alt="Home Decor" />
-            </div>
-            <span class="lm-category-label">HOME DECOR</span>
+    </div>
+
+    <!-- View All Categories Bottom Button -->
+    <div class="text-center mt-4">
+        <a href="/category/saree" class="btn btn-danger rounded-pill px-4 py-2 fw-bold shadow-sm">
+            View All Categories <i class="bi bi-arrow-right ms-1"></i>
         </a>
     </div>
 </section>
