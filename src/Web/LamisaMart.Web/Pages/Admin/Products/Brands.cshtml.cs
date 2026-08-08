@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Text.RegularExpressions;
 
 namespace LamisaMart.Web.Pages.Admin.Products;
 
@@ -43,7 +44,19 @@ public class BrandsModel : PageModel
             return RedirectToPage();
         }
 
-        TempData["SuccessMessage"] = $"Brand '{brandName}' added successfully!";
+        TempData["SuccessMessage"] = $"Brand '{brandName.Trim()}' added successfully!";
+        return RedirectToPage();
+    }
+
+    public IActionResult OnPostEditBrand(Guid brandId, string brandName, string slug, string logoUrl, bool isFeatured)
+    {
+        if (string.IsNullOrWhiteSpace(brandName))
+        {
+            TempData["ErrorMessage"] = "Brand name is required.";
+            return RedirectToPage();
+        }
+
+        TempData["SuccessMessage"] = $"Brand '{brandName.Trim()}' updated successfully!";
         return RedirectToPage();
     }
 
@@ -57,6 +70,15 @@ public class BrandsModel : PageModel
     {
         TempData["SuccessMessage"] = "Brand deleted successfully.";
         return RedirectToPage();
+    }
+
+    private static string GenerateSlug(string text)
+    {
+        string str = text.ToLowerInvariant();
+        str = Regex.Replace(str, @"[^a-z0-9\s-]", "");
+        str = Regex.Replace(str, @"\s+", " ").Trim();
+        str = Regex.Replace(str, @"\s", "-");
+        return str;
     }
 
     private List<BrandViewModel> GetSampleBrands(string? search)
