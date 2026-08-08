@@ -8,7 +8,7 @@
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
     <div>
         <h3 class="fw-bold text-dark m-0">Business & Storefront Settings</h3>
-        <p class="text-muted small mb-0">Configure store metadata, default delivery charges, invoice branding, and support channels.</p>
+        <p class="text-muted small mb-0">Manage general info, products, shipping rules, payment gateways, notifications, and visibility.</p>
     </div>
 </div>
 
@@ -20,45 +20,504 @@
     </div>
 }
 
-<div class="card border-0 shadow-sm rounded-4 mb-5">
-    <div class="card-body p-4">
-        <form method="post">
-            @Html.AntiForgeryToken()
-            <div class="row g-3">
-                <div class="col-md-6">
-                    <label class="form-label fw-semibold small text-dark">Business / Store Name</label>
-                    <input type="text" asp-for="StoreName" class="form-control rounded-3" required />
-                </div>
-                <div class="col-md-6">
-                    <label class="form-label fw-semibold small text-dark">Support Email Address</label>
-                    <input type="email" asp-for="SupportEmail" class="form-control rounded-3" required />
-                </div>
-
-                <div class="col-md-6">
-                    <label class="form-label fw-semibold small text-dark">Customer Support Helpline</label>
-                    <input type="text" asp-for="SupportPhone" class="form-control rounded-3" required />
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label fw-semibold small text-dark">Default Shipping Fee (BDT)</label>
-                    <div class="input-group">
-                        <span class="input-group-text bg-light border-end-0">৳</span>
-                        <input type="number" asp-for="DefaultDeliveryFee" class="form-control rounded-end-3" required />
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <label class="form-label fw-semibold small text-dark">VAT / Tax Rate (%)</label>
-                    <div class="input-group">
-                        <input type="number" step="0.1" asp-for="VatTaxRate" class="form-control rounded-start-3" required />
-                        <span class="input-group-text bg-light border-start-0">%</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="pt-4 border-top mt-4 text-end">
-                <button type="submit" class="btn btn-danger rounded-pill px-4 py-2 fw-bold shadow-sm">
-                    <i class="bi bi-floppy me-1"></i> Save Settings
+<!-- Tabbed Navigation Header (8 Tabs) -->
+<div class="card border-0 shadow-sm rounded-4 mb-4">
+    <div class="card-body p-2">
+        <ul class="nav nav-pills nav-justified gap-1 flex-nowrap overflow-x-auto scrollbar-hidden" id="settingsTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link text-nowrap py-2.5 px-3 fw-bold rounded-3 @(Model.ActiveTab == "general" ? "active bg-danger text-white" : "text-secondary")"
+                        id="general-tab" data-bs-toggle="tab" data-bs-target="#tab-general" type="button" role="tab">
+                    <i class="bi bi-building me-1"></i> General Business Info
                 </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link text-nowrap py-2.5 px-3 fw-bold rounded-3 @(Model.ActiveTab == "products" ? "active bg-danger text-white" : "text-secondary")"
+                        id="products-tab" data-bs-toggle="tab" data-bs-target="#tab-products" type="button" role="tab">
+                    <i class="bi bi-box-seam me-1"></i> Products
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link text-nowrap py-2.5 px-3 fw-bold rounded-3 @(Model.ActiveTab == "shipping" ? "active bg-danger text-white" : "text-secondary")"
+                        id="shipping-tab" data-bs-toggle="tab" data-bs-target="#tab-shipping" type="button" role="tab">
+                    <i class="bi bi-truck me-1"></i> Shipping
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link text-nowrap py-2.5 px-3 fw-bold rounded-3 @(Model.ActiveTab == "payment" ? "active bg-danger text-white" : "text-secondary")"
+                        id="payment-tab" data-bs-toggle="tab" data-bs-target="#tab-payment" type="button" role="tab">
+                    <i class="bi bi-credit-card me-1"></i> Payment Setup
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link text-nowrap py-2.5 px-3 fw-bold rounded-3 @(Model.ActiveTab == "privacy" ? "active bg-danger text-white" : "text-secondary")"
+                        id="privacy-tab" data-bs-toggle="tab" data-bs-target="#tab-privacy" type="button" role="tab">
+                    <i class="bi bi-shield-lock me-1"></i> Accounts & Privacy
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link text-nowrap py-2.5 px-3 fw-bold rounded-3 @(Model.ActiveTab == "email" ? "active bg-danger text-white" : "text-secondary")"
+                        id="email-tab" data-bs-toggle="tab" data-bs-target="#tab-email" type="button" role="tab">
+                    <i class="bi bi-envelope-at me-1"></i> Email Notification
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link text-nowrap py-2.5 px-3 fw-bold rounded-3 @(Model.ActiveTab == "visibility" ? "active bg-danger text-white" : "text-secondary")"
+                        id="visibility-tab" data-bs-toggle="tab" data-bs-target="#tab-visibility" type="button" role="tab">
+                    <i class="bi bi-eye me-1"></i> Shop Visibility
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link text-nowrap py-2.5 px-3 fw-bold rounded-3 @(Model.ActiveTab == "advanced" ? "active bg-danger text-white" : "text-secondary")"
+                        id="advanced-tab" data-bs-toggle="tab" data-bs-target="#tab-advanced" type="button" role="tab">
+                    <i class="bi bi-sliders me-1"></i> Advanced
+                </button>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<!-- Tabbed Settings Content Panels -->
+<div class="tab-content" id="settingsTabContent">
+    <!-- 1st Tab: General Business Info -->
+    <div class="tab-pane fade @(Model.ActiveTab == "general" ? "show active" : "")" id="tab-general" role="tabpanel">
+        <div class="card border-0 shadow-sm rounded-4 mb-5">
+            <div class="card-header bg-white border-bottom py-3">
+                <h5 class="fw-bold text-dark m-0"><i class="bi bi-building me-2 text-danger"></i> 1. General Business & Legal Information</h5>
             </div>
-        </form>
+            <div class="card-body p-4">
+                <form method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="tabName" value="general" />
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small text-dark">Storefront Display Name <span class="text-danger">*</span></label>
+                            <input type="text" asp-for="StoreName" class="form-control rounded-3" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small text-dark">Legal Registered Business Entity Name</label>
+                            <input type="text" asp-for="LegalEntityName" class="form-control rounded-3" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small text-dark">Trade License Number</label>
+                            <input type="text" asp-for="TradeLicenseNo" class="form-control rounded-3" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small text-dark">BIN / VAT Registration Number</label>
+                            <input type="text" asp-for="BinVatNumber" class="form-control rounded-3" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small text-dark">Customer Support Email Address <span class="text-danger">*</span></label>
+                            <input type="email" asp-for="SupportEmail" class="form-control rounded-3" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small text-dark">Customer Helpline Phone Number <span class="text-danger">*</span></label>
+                            <input type="text" asp-for="SupportPhone" class="form-control rounded-3" required />
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-semibold small text-dark">Headquarters Physical Address</label>
+                            <input type="text" asp-for="StoreAddress" class="form-control rounded-3" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small text-dark">Default Store Currency</label>
+                            <select asp-for="Currency" class="form-select rounded-3">
+                                <option value="BDT (৳)" selected>BDT (৳) — Bangladeshi Taka</option>
+                                <option value="USD ($)">USD ($) — US Dollar</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small text-dark">Operating Timezone</label>
+                            <input type="text" asp-for="Timezone" class="form-control rounded-3" readonly />
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-top mt-4 text-end">
+                        <button type="submit" class="btn btn-danger rounded-pill px-4 py-2 fw-bold shadow-sm">
+                            <i class="bi bi-floppy me-1"></i> Save General Info
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2nd Tab: Products -->
+    <div class="tab-pane fade @(Model.ActiveTab == "products" ? "show active" : "")" id="tab-products" role="tabpanel">
+        <div class="card border-0 shadow-sm rounded-4 mb-5">
+            <div class="card-header bg-white border-bottom py-3">
+                <h5 class="fw-bold text-dark m-0"><i class="bi bi-box-seam me-2 text-danger"></i> 2. Products & Inventory Configurations</h5>
+            </div>
+            <div class="card-body p-4">
+                <form method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="tabName" value="products" />
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small text-dark">Low Stock Warning Threshold (Quantity)</label>
+                            <input type="number" asp-for="LowStockThreshold" class="form-control rounded-3" required />
+                            <div class="form-text fs-8">Triggers admin alert badge when stock drops below this number.</div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small text-dark">Default Weight Unit</label>
+                            <select asp-for="WeightUnit" class="form-select rounded-3">
+                                <option value="kg" selected>Kilograms (kg)</option>
+                                <option value="g">Grams (g)</option>
+                            </select>
+                        </div>
+
+                        <div class="col-12 border-top pt-3">
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" asp-for="EnableProductReviews" id="chkReviews" />
+                                <label class="form-check-label fw-bold text-dark" for="chkReviews">Enable Product Reviews & Verified Ratings</label>
+                            </div>
+
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" asp-for="AllowOutofStockPurchases" id="chkOutStock" />
+                                <label class="form-check-label fw-bold text-dark" for="chkOutStock">Allow Purchases When Out of Stock (Backorder Pre-orders)</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-top mt-4 text-end">
+                        <button type="submit" class="btn btn-danger rounded-pill px-4 py-2 fw-bold shadow-sm">
+                            <i class="bi bi-floppy me-1"></i> Save Product Settings
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3rd Tab: Shipping -->
+    <div class="tab-pane fade @(Model.ActiveTab == "shipping" ? "show active" : "")" id="tab-shipping" role="tabpanel">
+        <div class="card border-0 shadow-sm rounded-4 mb-5">
+            <div class="card-header bg-white border-bottom py-3">
+                <h5 class="fw-bold text-dark m-0"><i class="bi bi-truck me-2 text-danger"></i> 3. Shipping Rates & Delivery Logistics</h5>
+            </div>
+            <div class="card-body p-4">
+                <form method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="tabName" value="shipping" />
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small text-dark">Inside Dhaka City Delivery Fee (BDT)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0">৳</span>
+                                <input type="number" asp-for="InsideDhakaFee" class="form-control rounded-end-3" required />
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small text-dark">Outside Dhaka Nationwide Delivery Fee (BDT)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0">৳</span>
+                                <input type="number" asp-for="OutsideDhakaFee" class="form-control rounded-end-3" required />
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small text-dark">Free Shipping Minimum Cart Value (BDT)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0">৳</span>
+                                <input type="number" asp-for="FreeShippingThreshold" class="form-control rounded-end-3" required />
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small text-dark">Default Integrated Courier Partner</label>
+                            <select asp-for="DefaultCourierPartner" class="form-select rounded-3">
+                                <option value="Pathao Courier Express" selected>Pathao Courier Express</option>
+                                <option value="SteadFast Courier">SteadFast Courier</option>
+                                <option value="RedX Logistics">RedX Logistics</option>
+                                <option value="Paperfly Nationwide">Paperfly Nationwide</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-top mt-4 text-end">
+                        <button type="submit" class="btn btn-danger rounded-pill px-4 py-2 fw-bold shadow-sm">
+                            <i class="bi bi-floppy me-1"></i> Save Shipping Settings
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4th Tab: Payment Setup -->
+    <div class="tab-pane fade @(Model.ActiveTab == "payment" ? "show active" : "")" id="tab-payment" role="tabpanel">
+        <div class="card border-0 shadow-sm rounded-4 mb-5">
+            <div class="card-header bg-white border-bottom py-3">
+                <h5 class="fw-bold text-dark m-0"><i class="bi bi-credit-card me-2 text-danger"></i> 4. Mobile Financial Services & Gateways Setup</h5>
+            </div>
+            <div class="card-body p-4">
+                <form method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="tabName" value="payment" />
+
+                    <!-- bKash Box -->
+                    <div class="p-3 bg-light rounded-4 border mb-4">
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" asp-for="EnableBkashPayment" id="chkBkash" />
+                            <label class="form-check-label fw-bold text-danger" for="chkBkash"><i class="bi bi-phone me-1"></i> Enable bKash Payment Method</label>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold fs-7 text-dark">bKash Merchant / Personal Account Number</label>
+                                <input type="text" asp-for="BkashMerchantNumber" class="form-control form-control-sm rounded-3" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Nagad Box -->
+                    <div class="p-3 bg-light rounded-4 border mb-4">
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" asp-for="EnableNagadPayment" id="chkNagad" />
+                            <label class="form-check-label fw-bold text-warning text-dark" for="chkNagad"><i class="bi bi-wallet2 me-1"></i> Enable Nagad Payment Method</label>
+                        </div>
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold fs-7 text-dark">Nagad Merchant Account Number</label>
+                                <input type="text" asp-for="NagadMerchantNumber" class="form-control form-control-sm rounded-3" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- COD & SSLCommerz -->
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="form-check form-switch pt-2">
+                                <input class="form-check-input" type="checkbox" asp-for="EnableCashOnDelivery" id="chkCod" />
+                                <label class="form-check-label fw-bold text-dark" for="chkCod">Enable Cash on Delivery (COD)</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check form-switch pt-2">
+                                <input class="form-check-input" type="checkbox" asp-for="EnableSSLCommerz" id="chkSsl" />
+                                <label class="form-check-label fw-bold text-primary" for="chkSsl">Enable SSLCommerz Card Gateway</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-top mt-4 text-end">
+                        <button type="submit" class="btn btn-danger rounded-pill px-4 py-2 fw-bold shadow-sm">
+                            <i class="bi bi-floppy me-1"></i> Save Payment Setup
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 5th Tab: Accounts & Privacy -->
+    <div class="tab-pane fade @(Model.ActiveTab == "privacy" ? "show active" : "")" id="tab-privacy" role="tabpanel">
+        <div class="card border-0 shadow-sm rounded-4 mb-5">
+            <div class="card-header bg-white border-bottom py-3">
+                <h5 class="fw-bold text-dark m-0"><i class="bi bi-shield-lock me-2 text-danger"></i> 5. User Accounts & Data Privacy Policy</h5>
+            </div>
+            <div class="card-body p-4">
+                <form method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="tabName" value="privacy" />
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="form-check form-switch pt-2">
+                                <input class="form-check-input" type="checkbox" asp-for="AllowGuestCheckout" id="chkGuest" />
+                                <label class="form-check-label fw-bold text-dark" for="chkGuest">Allow Guest Checkout (No Account Creation Needed)</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-check form-switch pt-2">
+                                <input class="form-check-input" type="checkbox" asp-for="EnableRegistration" id="chkReg" />
+                                <label class="form-check-label fw-bold text-dark" for="chkReg">Enable User Self-Registration Page</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mt-3">
+                            <label class="form-label fw-semibold small text-dark">Data Retention Period (Days)</label>
+                            <input type="number" asp-for="DataRetentionDays" class="form-control rounded-3" />
+                        </div>
+                        <div class="col-md-6 mt-3">
+                            <label class="form-label fw-semibold small text-dark">Privacy Policy URL</label>
+                            <input type="text" asp-for="PrivacyPolicyUrl" class="form-control rounded-3" />
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-top mt-4 text-end">
+                        <button type="submit" class="btn btn-danger rounded-pill px-4 py-2 fw-bold shadow-sm">
+                            <i class="bi bi-floppy me-1"></i> Save Accounts & Privacy
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6th Tab: Email Notification -->
+    <div class="tab-pane fade @(Model.ActiveTab == "email" ? "show active" : "")" id="tab-email" role="tabpanel">
+        <div class="card border-0 shadow-sm rounded-4 mb-5">
+            <div class="card-header bg-white border-bottom py-3">
+                <h5 class="fw-bold text-dark m-0"><i class="bi bi-envelope-at me-2 text-danger"></i> 6. Email Notifications & SMTP Gateway</h5>
+            </div>
+            <div class="card-body p-4">
+                <form method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="tabName" value="email" />
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small text-dark">SMTP Server Host</label>
+                            <input type="text" asp-for="SmtpHost" class="form-control rounded-3" />
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold small text-dark">SMTP Port</label>
+                            <input type="number" asp-for="SmtpPort" class="form-control rounded-3" />
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-check form-switch pt-4">
+                                <input class="form-check-input" type="checkbox" asp-for="EnableSsl" id="chkSslEmail" />
+                                <label class="form-check-label fw-bold text-dark" for="chkSslEmail">Enable SSL/TLS</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small text-dark">SMTP Username</label>
+                            <input type="text" asp-for="SmtpUsername" class="form-control rounded-3" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small text-dark">SMTP Password</label>
+                            <input type="password" asp-for="SmtpPassword" class="form-control rounded-3" />
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-semibold small text-dark">Admin Notification Recipient Email</label>
+                            <input type="email" asp-for="AdminNotificationEmail" class="form-control rounded-3" />
+                        </div>
+                    </div>
+
+                    <h6 class="fw-bold text-dark fs-7 border-top pt-3 mb-3"><i class="bi bi-bell me-1 text-primary"></i> Customer Email Triggers</h6>
+                    <div class="form-check form-switch mb-2">
+                        <input class="form-check-input" type="checkbox" asp-for="NotifyCustomerOrderPlaced" id="chkN1" />
+                        <label class="form-check-label small text-dark" for="chkN1">Send Order Confirmation email when customer places order</label>
+                    </div>
+                    <div class="form-check form-switch mb-2">
+                        <input class="form-check-input" type="checkbox" asp-for="NotifyCustomerOrderShipped" id="chkN2" />
+                        <label class="form-check-label small text-dark" for="chkN2">Send Dispatch & Tracking email when status changes to Shipped</label>
+                    </div>
+                    <div class="form-check form-switch mb-2">
+                        <input class="form-check-input" type="checkbox" asp-for="NotifyCustomerOrderDelivered" id="chkN3" />
+                        <label class="form-check-label small text-dark" for="chkN3">Send Delivery Confirmation & Review request email when status changes to Delivered</label>
+                    </div>
+
+                    <div class="pt-4 border-top mt-4 text-end">
+                        <button type="submit" class="btn btn-danger rounded-pill px-4 py-2 fw-bold shadow-sm">
+                            <i class="bi bi-floppy me-1"></i> Save Email Settings
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 7th Tab: Shop Visibility -->
+    <div class="tab-pane fade @(Model.ActiveTab == "visibility" ? "show active" : "")" id="tab-visibility" role="tabpanel">
+        <div class="card border-0 shadow-sm rounded-4 mb-5">
+            <div class="card-header bg-white border-bottom py-3">
+                <h5 class="fw-bold text-dark m-0"><i class="bi bi-eye me-2 text-danger"></i> 7. Storefront Visibility & Banner Controls</h5>
+            </div>
+            <div class="card-body p-4">
+                <form method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="tabName" value="visibility" />
+
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" asp-for="MaintenanceMode" id="chkMaint" />
+                                <label class="form-check-label fw-bold text-danger" for="chkMaint">Enable Maintenance Mode (Under Construction Banner)</label>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-semibold small text-dark">Top Announcement Banner Text</label>
+                            <input type="text" asp-for="AnnouncementBannerText" class="form-control rounded-3" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-check form-switch pt-2">
+                                <input class="form-check-input" type="checkbox" asp-for="PasswordProtectStore" id="chkPass" />
+                                <label class="form-check-label fw-bold text-dark" for="chkPass">Password Protect Storefront</label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-check form-switch pt-2">
+                                <input class="form-check-input" type="checkbox" asp-for="HidePricesForGuests" id="chkHideP" />
+                                <label class="form-check-label fw-bold text-dark" for="chkHideP">Hide Prices for Guest Users</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-top mt-4 text-end">
+                        <button type="submit" class="btn btn-danger rounded-pill px-4 py-2 fw-bold shadow-sm">
+                            <i class="bi bi-floppy me-1"></i> Save Visibility Settings
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- 8th Tab: Advanced -->
+    <div class="tab-pane fade @(Model.ActiveTab == "advanced" ? "show active" : "")" id="tab-advanced" role="tabpanel">
+        <div class="card border-0 shadow-sm rounded-4 mb-5">
+            <div class="card-header bg-white border-bottom py-3">
+                <h5 class="fw-bold text-dark m-0"><i class="bi bi-sliders me-2 text-danger"></i> 8. Advanced Scripts & System Integration</h5>
+            </div>
+            <div class="card-body p-4">
+                <form method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="tabName" value="advanced" />
+
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small text-dark">Google Analytics Measurement ID (GA4)</label>
+                            <input type="text" asp-for="GoogleAnalyticsId" class="form-control rounded-3" />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small text-dark">Facebook Pixel ID</label>
+                            <input type="text" asp-for="FacebookPixelId" class="form-control rounded-3" />
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-semibold small text-dark">Webhook Endpoint URL</label>
+                            <input type="text" asp-for="WebhookEndpoint" class="form-control rounded-3" />
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-check form-switch pt-2">
+                                <input class="form-check-input" type="checkbox" asp-for="EnableRestApi" id="chkApi" />
+                                <label class="form-check-label fw-bold text-dark" for="chkApi">Enable REST API Access</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-top mt-4 text-end">
+                        <button type="submit" class="btn btn-danger rounded-pill px-4 py-2 fw-bold shadow-sm">
+                            <i class="bi bi-floppy me-1"></i> Save Advanced Settings
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
