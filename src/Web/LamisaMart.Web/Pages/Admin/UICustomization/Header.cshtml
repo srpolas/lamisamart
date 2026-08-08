@@ -1,14 +1,14 @@
 @page "/Admin/UICustomization/Header"
 @model LamisaMart.Web.Pages.Admin.UICustomization.HeaderModel
 @{
-    ViewData["Title"] = "Header UI Customization - LamisaMart Admin";
+    ViewData["Title"] = "Site Logo, Favicon & Header Customization - LamisaMart Admin";
     Layout = "_AdminLayout";
 }
 
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
     <div>
-        <h3 class="fw-bold text-dark m-0">Header UI Customization</h3>
-        <p class="text-muted small mb-0">Customize top announcement banner, header logo, layout alignment, search bar, and navigation icons.</p>
+        <h3 class="fw-bold text-dark m-0">Site Logo, Favicon & Header UI Customization</h3>
+        <p class="text-muted small mb-0">Upload or configure site logo image, browser tab favicon icon, site title banner image, and top header bar settings.</p>
     </div>
 </div>
 
@@ -25,7 +25,97 @@
         <form method="post">
             @Html.AntiForgeryToken()
 
-            <!-- Top Announcement Bar Section -->
+            <!-- 1. Site Logo, Favicon & Site Title Image Section -->
+            <div class="p-4 bg-light rounded-4 border mb-4">
+                <h5 class="fw-bold text-dark mb-1"><i class="bi bi-image me-2 text-danger"></i> Site Logo, Favicon & Site Title Image Settings</h5>
+                <p class="text-muted small mb-4">Configure image assets for the storefront header logo, browser tab icon (favicon), and social media title banner.</p>
+
+                <div class="row g-4">
+                    <!-- Main Site Logo -->
+                    <div class="col-md-6">
+                        <div class="card border-0 shadow-sm rounded-3 p-3 h-100 bg-white">
+                            <label class="form-label fw-bold text-dark mb-1"><i class="bi bi-flower1 me-1 text-danger"></i> Main Header Site Logo URL</label>
+                            <input type="text" asp-for="LogoUrl" class="form-control rounded-3 mb-3" placeholder="/images/logo.png or https://..." />
+
+                            <div class="text-muted small fw-semibold mb-2">Live Logo Preview:</div>
+                            <div class="p-3 bg-light rounded-3 text-center border d-flex align-items-center justify-content-center" style="min-height: 80px;">
+                                @if (!string.IsNullOrWhiteSpace(Model.LogoUrl) && (Model.LogoUrl.StartsWith("/") || Model.LogoUrl.StartsWith("http")))
+                                {
+                                    <img src="@Model.LogoUrl" alt="Site Logo" style="max-height: 55px; max-width: 220px;" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('d-none');" />
+                                    <div class="d-none lm-logo-container">
+                                        <div class="lm-logo-badge">LM</div>
+                                        <div class="lm-logo-text text-start">
+                                            <span class="lm-logo-title">@Model.SiteName</span>
+                                            <span class="lm-logo-bengali">@Model.SiteBengaliName</span>
+                                        </div>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="lm-logo-container">
+                                        <div class="lm-logo-badge" style="background: linear-gradient(135deg, #E11D48 0%, #9F1239 100%); color: white; font-weight: 800; width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center;">LM</div>
+                                        <div class="lm-logo-text text-start ms-2">
+                                            <div class="fw-bold text-dark" style="font-size: 1.1rem; line-height: 1;">@Model.SiteName</div>
+                                            <div class="small text-danger fw-semibold" style="font-size: 0.75rem;">@Model.SiteBengaliName</div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Browser Favicon -->
+                    <div class="col-md-6">
+                        <div class="card border-0 shadow-sm rounded-3 p-3 h-100 bg-white">
+                            <label class="form-label fw-bold text-dark mb-1"><i class="bi bi-bookmark-star me-1 text-warning"></i> Browser Tab Favicon Icon URL</label>
+                            <input type="text" asp-for="FaviconUrl" class="form-control rounded-3 mb-3" placeholder="/favicon.ico or /images/favicon.png" />
+
+                            <div class="text-muted small fw-semibold mb-2">Favicon Icon Preview:</div>
+                            <div class="p-3 bg-light rounded-3 border d-flex align-items-center gap-3" style="min-height: 80px;">
+                                <div class="bg-white border rounded-circle p-2 shadow-sm d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                                    <img src="@(string.IsNullOrWhiteSpace(Model.FaviconUrl) ? "/favicon.ico" : Model.FaviconUrl)" alt="Favicon" style="width: 28px; height: 28px;" onerror="this.src='/favicon.ico'" />
+                                </div>
+                                <div>
+                                    <div class="fw-bold small text-dark">Browser Tab Preview</div>
+                                    <div class="text-muted extra-small">Shows on Chrome, Safari, & Mobile Bookmarks</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Site Title Image / OpenGraph Banner -->
+                    <div class="col-md-6">
+                        <div class="card border-0 shadow-sm rounded-3 p-3 h-100 bg-white">
+                            <label class="form-label fw-bold text-dark mb-1"><i class="bi bi-card-image me-1 text-primary"></i> Site Title Image / OpenGraph Banner URL</label>
+                            <input type="text" asp-for="SiteTitleImageUrl" class="form-control rounded-3 mb-3" placeholder="/images/site-title-banner.jpg" />
+
+                            <div class="text-muted small fw-semibold mb-2">Title Banner Preview:</div>
+                            <div class="p-2 bg-light rounded-3 text-center border overflow-hidden" style="min-height: 80px;">
+                                <img src="@(string.IsNullOrWhiteSpace(Model.SiteTitleImageUrl) ? "/images/LamisaMart_design_concept.png" : Model.SiteTitleImageUrl)" alt="Site Title Banner" class="rounded-2 img-fluid" style="max-height: 70px; object-fit: cover;" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Site Name & Bengali Subtitle -->
+                    <div class="col-md-6">
+                        <div class="card border-0 shadow-sm rounded-3 p-3 h-100 bg-white">
+                            <label class="form-label fw-bold text-dark mb-1"><i class="bi bi-type me-1 text-success"></i> Store Name & Subtitle Text</label>
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <label class="form-label small text-muted mb-1">Primary Title</label>
+                                    <input type="text" asp-for="SiteName" class="form-control rounded-3" placeholder="LAMISA MART" />
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label small text-muted mb-1">Bengali Subtitle</label>
+                                    <input type="text" asp-for="SiteBengaliName" class="form-control rounded-3" placeholder="লমিসা মার্ট" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. Top Announcement Bar Section -->
             <div class="p-3 bg-light rounded-4 border mb-4">
                 <div class="form-check form-switch mb-3">
                     <input class="form-check-input" type="checkbox" asp-for="EnableTopBanner" id="chkTopBanner" />
@@ -54,7 +144,7 @@
                 </div>
             </div>
 
-            <!-- Header Layout Style & Logo -->
+            <!-- 3. Header Layout Style & Navigation Toggles -->
             <div class="row g-3 mb-4">
                 <div class="col-md-6">
                     <label class="form-label fw-semibold small text-dark">Header Layout Style</label>
@@ -66,44 +156,39 @@
                 </div>
 
                 <div class="col-md-6">
-                    <label class="form-label fw-semibold small text-dark">Store Logo Image URL</label>
-                    <input type="text" asp-for="LogoUrl" class="form-control rounded-3" />
-                </div>
-
-                <div class="col-md-6">
-                    <div class="form-check form-switch pt-2">
+                    <div class="form-check form-switch pt-4">
                         <input class="form-check-input" type="checkbox" asp-for="StickyHeader" id="chkSticky" />
                         <label class="form-check-label fw-bold text-dark" for="chkSticky">Enable Sticky Header (Fixed on Scroll)</label>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="form-check form-switch pt-2">
-                        <input class="form-check-input" type="checkbox" asp-for="EnableSearchBar" id="chkSearch" />
-                        <label class="form-check-label fw-bold text-dark" for="chkSearch">Enable Live Product Search Bar</label>
-                    </div>
-                </div>
             </div>
 
-            <!-- Icon Controls -->
-            <h6 class="fw-bold text-dark border-top pt-3 mb-3"><i class="bi bi-person-badge me-1 text-primary"></i> Navigation Header Icons</h6>
+            <!-- 4. Navigation Header Icons -->
+            <h6 class="fw-bold text-dark border-top pt-3 mb-3"><i class="bi bi-person-badge me-1 text-primary"></i> Navigation Header Icons & Search Bar</h6>
             <div class="row g-3">
-                <div class="col-md-6">
+                <div class="col-md-4">
                     <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" asp-for="ShowWishlistIcon" id="chkWish" />
-                        <label class="form-check-label small fw-bold text-dark" for="chkWish">Show Wishlist Favorites Heart Icon</label>
+                        <input class="form-check-input" type="checkbox" asp-for="EnableSearchBar" id="chkSearch" />
+                        <label class="form-check-label small fw-bold text-dark" for="chkSearch">Enable Live Search Bar</label>
                     </div>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-4">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" asp-for="ShowWishlistIcon" id="chkWish" />
+                        <label class="form-check-label small fw-bold text-dark" for="chkWish">Show Wishlist Heart Icon</label>
+                    </div>
+                </div>
+                <div class="col-md-4">
                     <div class="form-check form-switch">
                         <input class="form-check-input" type="checkbox" asp-for="ShowCartDrawer" id="chkCart" />
-                        <label class="form-check-label small fw-bold text-dark" for="chkCart">Show Slide-Over Cart Drawer Icon</label>
+                        <label class="form-check-label small fw-bold text-dark" for="chkCart">Show Cart Drawer Icon</label>
                     </div>
                 </div>
             </div>
 
             <div class="pt-4 border-top mt-4 text-end">
                 <button type="submit" class="btn btn-danger rounded-pill px-4 py-2 fw-bold shadow-sm">
-                    <i class="bi bi-floppy me-1"></i> Save Header Customizations
+                    <i class="bi bi-floppy me-1"></i> Save Logo, Favicon & Header Settings
                 </button>
             </div>
         </form>

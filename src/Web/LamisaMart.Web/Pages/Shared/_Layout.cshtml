@@ -4,7 +4,15 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Lamisa Mart | Premium Women's Fashion & Lifestyle Marketplace</title>
+    <title>@ViewData["Title"] - @HeaderModel.Settings.SiteName | Premier Bangladeshi Marketplace</title>
+    <!-- Dynamic Favicon Icon -->
+    <link rel="icon" type="image/x-icon" href="@(string.IsNullOrWhiteSpace(HeaderModel.Settings.FaviconUrl) ? "/favicon.ico" : HeaderModel.Settings.FaviconUrl)" />
+    <!-- OpenGraph Site Title Image -->
+    @if (!string.IsNullOrWhiteSpace(HeaderModel.Settings.SiteTitleImageUrl))
+    {
+        <meta property="og:image" content="@HeaderModel.Settings.SiteTitleImageUrl" />
+    }
+
     <!-- Bootstrap 5 CSS & Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
@@ -68,11 +76,25 @@
             <div class="d-flex align-items-center justify-content-between gap-3">
                 <!-- Logo -->
                 <a href="/" class="lm-logo-container">
-                    <div class="lm-logo-badge">LM</div>
-                    <div class="lm-logo-text">
-                        <span class="lm-logo-title">LAMISA MART</span>
-                        <span class="lm-logo-bengali">লমিসা মার্ট</span>
-                    </div>
+                    @if (!string.IsNullOrWhiteSpace(HeaderModel.Settings.LogoUrl) && (HeaderModel.Settings.LogoUrl.StartsWith("/") || HeaderModel.Settings.LogoUrl.StartsWith("http")))
+                    {
+                        <img src="@HeaderModel.Settings.LogoUrl" alt="@HeaderModel.Settings.SiteName" style="max-height: 48px;" onerror="this.style.display='none'; this.nextElementSibling.classList.remove('d-none');" />
+                        <div class="d-none lm-logo-container">
+                            <div class="lm-logo-badge">LM</div>
+                            <div class="lm-logo-text">
+                                <span class="lm-logo-title">@HeaderModel.Settings.SiteName</span>
+                                <span class="lm-logo-bengali">@HeaderModel.Settings.SiteBengaliName</span>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="lm-logo-badge">LM</div>
+                        <div class="lm-logo-text">
+                            <span class="lm-logo-title">@HeaderModel.Settings.SiteName</span>
+                            <span class="lm-logo-bengali">@HeaderModel.Settings.SiteBengaliName</span>
+                        </div>
+                    }
                 </a>
 
                 <!-- Search Bar -->
@@ -140,8 +162,8 @@
                     <div class="lm-logo-container mb-3">
                         <div class="lm-logo-badge">LM</div>
                         <div class="lm-logo-text">
-                            <span class="lm-logo-title">LAMISA MART</span>
-                            <span class="lm-logo-bengali">লমিসা মার্ট</span>
+                            <span class="lm-logo-title">@HeaderModel.Settings.SiteName</span>
+                            <span class="lm-logo-bengali">@HeaderModel.Settings.SiteBengaliName</span>
                         </div>
                     </div>
                     <p class="small text-muted mb-3">@FooterModel.StoreSettings.FooterAboutText</p>
