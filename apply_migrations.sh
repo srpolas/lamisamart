@@ -8,6 +8,7 @@ cd /home/srpolas/Projects/LamisaMart
 
 # Array of modules and their DbContexts
 declare -a modules=(
+  "Identity IdentityDbContext LamisaMart.Identity.Infrastructure"
   "Catalog CatalogDbContext LamisaMart.Catalog.Infrastructure"
   "Ordering OrderingDbContext LamisaMart.Ordering.Infrastructure"
   "Payments PaymentsDbContext LamisaMart.Payments.Infrastructure"
