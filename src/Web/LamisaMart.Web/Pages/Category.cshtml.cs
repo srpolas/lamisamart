@@ -117,8 +117,8 @@ public class CategoryModel : PageModel
             _logger.LogWarning(ex, "Failed retrieving products from DbContext. Falling back to curated catalog.");
         }
 
-        // 3. Fallback to curated catalog list if DbContext has no records for this category yet
-        if (!Products.Any())
+        // 3. Ensure at least 5 products exist per category
+        if (!Products.Any() || Products.Count < 5)
         {
             Products = GetCuratedProductsForCategory(ActiveSlug, Sub, Sort, MinPrice, MaxPrice, Q);
         }
@@ -176,6 +176,71 @@ public class CategoryModel : PageModel
                     new() { Name = "Single Kurti", Slug = "single-kurti", Icon = "bi-person-standing", Count = 12 },
                     new() { Name = "Kurti Set with Pant", Slug = "kurti-set", Icon = "bi-layers", Count = 10 },
                     new() { Name = "Anarkali & Long", Slug = "anarkali", Icon = "bi-magic", Count = 8 }
+                };
+                break;
+
+            case "lehenga-gown":
+            case "lehenga":
+            case "gown":
+                CategoryName = "Lehenga & Evening Gowns";
+                BengaliName = "লেহেঙ্গা ও গাউন";
+                Description = "Royal bridal lehenga cholis, sequined party gowns, and traditional zardozi crafted festival wear.";
+                BannerUrl = "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=1400&q=80";
+                SubCategories = new List<SubCategoryItem>
+                {
+                    new() { Name = "All Lehengas", Slug = "", Icon = "bi-grid-fill", Count = 25 },
+                    new() { Name = "Bridal Velvet", Slug = "bridal-lehenga", Icon = "bi-gem", Count = 10 },
+                    new() { Name = "Evening Gowns", Slug = "gowns", Icon = "bi-stars", Count = 15 }
+                };
+                break;
+
+            case "mens-panjabi":
+            case "panjabi":
+                CategoryName = "Men's Panjabi & Pajama Sets";
+                BengaliName = "পাঞ্জাবি কালেকশন";
+                Description = "Authentic Rajshahi silk, Dhakai Jamdani weave, and slub cotton designer Panjabis for Eid, Puja, and weddings.";
+                BannerUrl = "https://images.unsplash.com/photo-1621786062579-6125bf25208a?w=1400&q=80";
+                SubCategories = new List<SubCategoryItem>
+                {
+                    new() { Name = "All Panjabi", Slug = "", Icon = "bi-grid-fill", Count = 35 },
+                    new() { Name = "Kabli & Slub Cotton", Slug = "kabli", Icon = "bi-person", Count = 15 },
+                    new() { Name = "Silk Wedding Panjabi", Slug = "silk-panjabi", Icon = "bi-award", Count = 20 }
+                };
+                break;
+
+            case "mens-apparel":
+            case "mens-wear":
+                CategoryName = "Men's Apparel & Formal Wear";
+                BengaliName = "পুরুষদের পোশাক";
+                Description = "Executive Oxford shirts, Slub cotton short kurtas, formal chino trousers, and casual polo t-shirts.";
+                BannerUrl = "https://images.unsplash.com/photo-1617137968427-85924c800a22?w=1400&q=80";
+                SubCategories = new List<SubCategoryItem>
+                {
+                    new() { Name = "All Shirts & Pants", Slug = "", Icon = "bi-grid-fill", Count = 28 }
+                };
+                break;
+
+            case "kids-wear":
+            case "kids":
+                CategoryName = "Kids Wear & Baby Fashion";
+                BengaliName = "বাচ্চাদের পোশাক";
+                Description = "Adorable party frocks, festive mini Panjabis, comfortable cotton suits, and kids wedding attire.";
+                BannerUrl = "https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?w=1400&q=80";
+                SubCategories = new List<SubCategoryItem>
+                {
+                    new() { Name = "All Kids Wear", Slug = "", Icon = "bi-grid-fill", Count = 22 }
+                };
+                break;
+
+            case "footwear":
+            case "shoes":
+                CategoryName = "Footwear & Traditional Shoes";
+                BengaliName = "জুতা কালেকশন";
+                Description = "Handcrafted Nagra Juttis, genuine leather loafers, pearl embroidered wedges, and comfortable sandals.";
+                BannerUrl = "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=1400&q=80";
+                SubCategories = new List<SubCategoryItem>
+                {
+                    new() { Name = "All Footwear", Slug = "", Icon = "bi-grid-fill", Count = 26 }
                 };
                 break;
 
@@ -237,27 +302,15 @@ public class CategoryModel : PageModel
                 };
                 break;
 
-            case "new-arrival":
-            case "new-arrivals":
-                CategoryName = "New Arrivals & Season Specials";
-                BengaliName = "নতুন কালেকশন";
-                Description = "Freshly launched designs from Bangladesh's top independent fashion vendors, updated weekly.";
-                BannerUrl = "https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=1400&q=80";
+            case "home-handicraft":
+            case "handicraft":
+                CategoryName = "Home Decor & Handicrafts";
+                BengaliName = "হোম ডেকর ও হস্তশিল্প";
+                Description = "Traditional Nakshi Kantha quilts, antique brass tea sets, jute table runners, and terracotta wall hangings.";
+                BannerUrl = "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=1400&q=80";
                 SubCategories = new List<SubCategoryItem>
                 {
-                    new() { Name = "All New Arrivals", Slug = "", Icon = "bi-sparkles", Count = 40 }
-                };
-                break;
-
-            case "sale":
-            case "clearance":
-                CategoryName = "Special Clearance & Discount Sale";
-                BengaliName = "স্পেশাল সেল";
-                Description = "Unbeatable clearance discounts up to 50% OFF on premium sarees, 3-pieces, and jewelry.";
-                BannerUrl = "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?w=1400&q=80";
-                SubCategories = new List<SubCategoryItem>
-                {
-                    new() { Name = "All Sale Items", Slug = "", Icon = "bi-percent", Count = 35 }
+                    new() { Name = "All Handicrafts", Slug = "", Icon = "bi-grid-fill", Count = 24 }
                 };
                 break;
 
@@ -279,271 +332,175 @@ public class CategoryModel : PageModel
     {
         var list = new List<CategoryProductViewModel>();
 
-        if (categorySlug is "saree" or "sarees")
+        switch (categorySlug)
         {
-            list.AddRange(new[]
-            {
-                new CategoryProductViewModel
+            case "saree":
+            case "sarees":
+                list.AddRange(new[]
                 {
-                    Id = Guid.NewGuid(),
-                    Name = "Handwoven Dhakai Jamdani Saree (100 Count Pure Cotton)",
-                    Slug = "dhakai-jamdani-saree-100-count",
-                    VendorName = "Narayanganj Weaver Guild",
-                    CategoryName = "Saree",
-                    SubCategorySlug = "jamdani",
-                    Price = 6850,
-                    OriginalPrice = 8200,
-                    ImageUrl = "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=600&q=80",
-                    Rating = 4.9,
-                    ReviewCount = 42,
-                    IsNew = true,
-                    IsBestSeller = true,
-                    Material = "Pure Cotton & Gold Zari"
-                },
-                new CategoryProductViewModel
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Handwoven Dhakai Jamdani Saree (100 Count Pure Cotton)", Slug = "dhakai-jamdani-saree-100-count", VendorName = "Narayanganj Weaver Guild", CategoryName = "Saree", SubCategorySlug = "jamdani", Price = 6850, OriginalPrice = 8200, ImageUrl = "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=600&q=80", Rating = 4.9, ReviewCount = 42, IsNew = true, IsBestSeller = true, Material = "Pure Cotton & Gold Zari" },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Rajshahi Pure Katan Silk Saree with Heavy Zardozi Work", Slug = "rajshahi-katan-silk-saree", VendorName = "Silk Emporium Rajshahi", CategoryName = "Saree", SubCategorySlug = "katan", Price = 12500, OriginalPrice = 14800, ImageUrl = "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=600&q=80", Rating = 5.0, ReviewCount = 38, IsNew = false, IsBestSeller = true, Material = "100% Mulberry Silk" },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Floral Pastel Organza Party Saree with Unstitched Blouse", Slug = "floral-pastel-organza-saree", VendorName = "Nusrat Boutique", CategoryName = "Saree", SubCategorySlug = "organza", Price = 3950, OriginalPrice = 4500, ImageUrl = "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=600&q=80", Rating = 4.7, ReviewCount = 19, IsNew = true, IsBestSeller = false, Material = "Sheer Glass Organza" },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Tangail Handloom Soft Linen Cotton Daily Wear Saree", Slug = "tangail-handloom-linen-saree", VendorName = "Crafts of Bengal", CategoryName = "Saree", SubCategorySlug = "cotton", Price = 2450, OriginalPrice = 2900, ImageUrl = "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&q=80", Rating = 4.8, ReviewCount = 56, IsNew = false, IsBestSeller = true, Material = "Breathable Soft Cotton" },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Bridal Crimson Red Half-Silk Saree with Mirror & Cutwork", Slug = "bridal-crimson-red-half-silk-saree", VendorName = "Dhaka Heritage Saree", CategoryName = "Saree", SubCategorySlug = "bridal", Price = 8900, OriginalPrice = 10500, ImageUrl = "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=600&q=80", Rating = 4.9, ReviewCount = 27, IsNew = true, IsBestSeller = true, Material = "Half-Silk & Zari Thread" }
+                });
+                break;
+
+            case "three-piece":
+            case "three-pieces":
+            case "3-piece":
+                list.AddRange(new[]
                 {
-                    Id = Guid.NewGuid(),
-                    Name = "Rajshahi Pure Katan Silk Saree with Heavy Zardozi Work",
-                    Slug = "rajshahi-katan-silk-saree",
-                    VendorName = "Silk Emporium Rajshahi",
-                    CategoryName = "Saree",
-                    SubCategorySlug = "katan",
-                    Price = 12500,
-                    OriginalPrice = 14800,
-                    ImageUrl = "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=600&q=80",
-                    Rating = 5.0,
-                    ReviewCount = 38,
-                    IsNew = false,
-                    IsBestSeller = true,
-                    Material = "100% Mulberry Silk"
-                },
-                new CategoryProductViewModel
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Luxury Digital Print Pakistani Lawn 3-Piece Set", Slug = "luxury-lawn-3-piece-set", VendorName = "Nusrat Boutique", CategoryName = "Three Piece", SubCategorySlug = "lawn", Price = 3250, OriginalPrice = 3800, ImageUrl = "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=600&q=80", Rating = 4.8, ReviewCount = 34, IsNew = true, IsBestSeller = true, Material = "Swiss Lawn & Chiffon Dupatta" },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Embroidered Cotton Linen Salwar Kameez Suit", Slug = "embroidered-cotton-salwar-suit", VendorName = "Glamour Closet", CategoryName = "Three Piece", SubCategorySlug = "cotton-3p", Price = 2850, OriginalPrice = 3400, ImageUrl = "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&q=80", Rating = 4.7, ReviewCount = 22, IsNew = false, IsBestSeller = true, Material = "Pure Slub Cotton" },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Party Wear Organza 3-Piece with Heavy Pearl Dupatta", Slug = "party-organza-3-piece-pearl", VendorName = "Dhaka Heritage", CategoryName = "Three Piece", SubCategorySlug = "organza-3p", Price = 5400, OriginalPrice = 6200, ImageUrl = "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=600&q=80", Rating = 4.9, ReviewCount = 18, IsNew = true, IsBestSeller = false, Material = "Embroidered Organza" },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Designer Georgette Embroidered Anarkali 3-Piece Set", Slug = "designer-georgette-anarkali-3p", VendorName = "Simple Elegance", CategoryName = "Three Piece", SubCategorySlug = "lawn", Price = 4650, OriginalPrice = 5200, ImageUrl = "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=600&q=80", Rating = 4.8, ReviewCount = 29, IsNew = false, IsBestSeller = true, Material = "Faux Georgette" },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Swiss Voile Pure Cotton Unstitched 3-Piece Collection", Slug = "swiss-voile-unstitched-3p", VendorName = "Narayanganj Guild", CategoryName = "Three Piece", SubCategorySlug = "unstitched", Price = 2250, OriginalPrice = 2700, ImageUrl = "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=600&q=80", Rating = 4.6, ReviewCount = 15, IsNew = true, IsBestSeller = false, Material = "100% Swiss Voile" }
+                });
+                break;
+
+            case "kurti":
+            case "kurtis":
+                list.AddRange(new[]
                 {
-                    Id = Guid.NewGuid(),
-                    Name = "Floral Pastel Organza Party Saree with Unstitched Blouse",
-                    Slug = "floral-pastel-organza-saree",
-                    VendorName = "Nusrat Boutique",
-                    CategoryName = "Saree",
-                    SubCategorySlug = "organza",
-                    Price = 3950,
-                    OriginalPrice = 4500,
-                    ImageUrl = "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=600&q=80",
-                    Rating = 4.7,
-                    ReviewCount = 19,
-                    IsNew = true,
-                    IsBestSeller = false,
-                    Material = "Sheer Glass Organza"
-                },
-                new CategoryProductViewModel
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Premium Slub Cotton Printed Straight Kurti", Slug = "slub-cotton-straight-kurti", VendorName = "Nusrat Boutique", CategoryName = "Kurti", Price = 1450, OriginalPrice = 1750, ImageUrl = "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&q=80", Rating = 4.7, ReviewCount = 31, IsNew = true, IsBestSeller = true },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Designer Silk Anarkali Kurti with Chiffon Dupatta", Slug = "designer-silk-anarkali-kurti", VendorName = "Glamour Closet", CategoryName = "Kurti", Price = 2850, OriginalPrice = 3300, ImageUrl = "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=600&q=80", Rating = 4.9, ReviewCount = 24, IsNew = false, IsBestSeller = true },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Festive Embroidered Rayon Long Tunic Kurti", Slug = "festive-embroidered-rayon-kurti", VendorName = "Simple Elegance", CategoryName = "Kurti", Price = 1950, OriginalPrice = 2400, ImageUrl = "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=600&q=80", Rating = 4.6, ReviewCount = 19, IsNew = true, IsBestSeller = false },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Casual Daily Denim Indigo Block Print Kurti", Slug = "casual-daily-indigo-kurti", VendorName = "Crafts of Bengal", CategoryName = "Kurti", Price = 1250, OriginalPrice = 1500, ImageUrl = "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=600&q=80", Rating = 4.5, ReviewCount = 42, IsNew = false, IsBestSeller = false },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Hand-embroidered Chikankari White Cotton Kurti", Slug = "chikankari-white-cotton-kurti", VendorName = "Heritage Muslin", CategoryName = "Kurti", Price = 2200, OriginalPrice = 2600, ImageUrl = "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&q=80", Rating = 4.8, ReviewCount = 37, IsNew = true, IsBestSeller = true }
+                });
+                break;
+
+            case "lehenga-gown":
+            case "lehenga":
+            case "gown":
+                list.AddRange(new[]
                 {
-                    Id = Guid.NewGuid(),
-                    Name = "Tangail Handloom Soft Linen Cotton Daily Wear Saree",
-                    Slug = "tangail-handloom-linen-saree",
-                    VendorName = "Crafts of Bengal",
-                    CategoryName = "Saree",
-                    SubCategorySlug = "cotton",
-                    Price = 2450,
-                    OriginalPrice = 2900,
-                    ImageUrl = "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&q=80",
-                    Rating = 4.8,
-                    ReviewCount = 56,
-                    IsNew = false,
-                    IsBestSeller = true,
-                    Material = "Breathable Soft Cotton"
-                },
-                new CategoryProductViewModel
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Royal Crimson Velvet Bridal Lehenga Choli Set", Slug = "royal-crimson-velvet-bridal-lehenga", VendorName = "Rajshahi Silk House", CategoryName = "Lehenga & Gown", Price = 24500, OriginalPrice = 28000, ImageUrl = "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=600&q=80", Rating = 5.0, ReviewCount = 48, IsNew = true, IsBestSeller = true },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Pastel Pink Net Party Wear Designer Lehenga", Slug = "pastel-pink-net-party-lehenga", VendorName = "Nusrat Boutique", CategoryName = "Lehenga & Gown", Price = 16800, OriginalPrice = 19500, ImageUrl = "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=600&q=80", Rating = 4.9, ReviewCount = 29, IsNew = true, IsBestSeller = true },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Embroidered Georgette Floor-Length Anarkali Gown", Slug = "embroidered-georgette-anarkali-gown", VendorName = "Glamour Closet", CategoryName = "Lehenga & Gown", Price = 8500, OriginalPrice = 9800, ImageUrl = "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=600&q=80", Rating = 4.8, ReviewCount = 21, IsNew = false, IsBestSeller = false },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Mirror-Work Silk Indo-Western Evening Gown", Slug = "mirror-work-silk-evening-gown", VendorName = "Simple Elegance", CategoryName = "Lehenga & Gown", Price = 11200, OriginalPrice = 13000, ImageUrl = "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&q=80", Rating = 4.7, ReviewCount = 14, IsNew = true, IsBestSeller = false },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Organza Sequined Reception Lehenga Choli Set", Slug = "organza-sequined-reception-lehenga", VendorName = "Dhaka Heritage", CategoryName = "Lehenga & Gown", Price = 19500, OriginalPrice = 22500, ImageUrl = "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=600&q=80", Rating = 4.9, ReviewCount = 33, IsNew = false, IsBestSeller = true }
+                });
+                break;
+
+            case "mens-panjabi":
+            case "panjabi":
+                list.AddRange(new[]
                 {
-                    Id = Guid.NewGuid(),
-                    Name = "Bridal Crimson Red Half-Silk Saree with Mirror & Cutwork",
-                    Slug = "bridal-crimson-red-half-silk-saree",
-                    VendorName = "Dhaka Heritage Saree",
-                    CategoryName = "Saree",
-                    SubCategorySlug = "bridal",
-                    Price = 8900,
-                    OriginalPrice = 10500,
-                    ImageUrl = "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=600&q=80",
-                    Rating = 4.9,
-                    ReviewCount = 27,
-                    IsNew = true,
-                    IsBestSeller = true,
-                    Material = "Half-Silk & Zari Thread"
-                },
-                new CategoryProductViewModel
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Designer Embroidery Kabli Slub Cotton Panjabi", Slug = "designer-embroidery-kabli-panjabi", VendorName = "Narayanganj Guild", CategoryName = "Men's Panjabi", Price = 2850, OriginalPrice = 3400, ImageUrl = "https://images.unsplash.com/photo-1621786062579-6125bf25208a?w=600&q=80", Rating = 4.9, ReviewCount = 52, IsNew = true, IsBestSeller = true },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Rajshahi Silk Royal Wedding Panjabi & Pajama Set", Slug = "rajshahi-silk-royal-wedding-panjabi", VendorName = "Silk Emporium Rajshahi", CategoryName = "Men's Panjabi", Price = 6400, OriginalPrice = 7500, ImageUrl = "https://images.unsplash.com/photo-1617137968427-85924c800a22?w=600&q=80", Rating = 5.0, ReviewCount = 41, IsNew = false, IsBestSeller = true },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Premium Linen Casual Summer Panjabi for Men", Slug = "premium-linen-casual-panjabi", VendorName = "Crafts of Bengal", CategoryName = "Men's Panjabi", Price = 1950, OriginalPrice = 2300, ImageUrl = "https://images.unsplash.com/photo-1621786062579-6125bf25208a?w=600&q=80", Rating = 4.7, ReviewCount = 28, IsNew = true, IsBestSeller = false },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Dhakai Jamdani Weave Traditional White Panjabi", Slug = "dhakai-jamdani-weave-white-panjabi", VendorName = "Heritage Muslin", CategoryName = "Men's Panjabi", Price = 3650, OriginalPrice = 4200, ImageUrl = "https://images.unsplash.com/photo-1617137968427-85924c800a22?w=600&q=80", Rating = 4.8, ReviewCount = 36, IsNew = false, IsBestSeller = true },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Festive Jacquard Silk Maroon Panjabi Suit", Slug = "festive-jacquard-silk-maroon-panjabi", VendorName = "Nusrat Boutique", CategoryName = "Men's Panjabi", Price = 4200, OriginalPrice = 4900, ImageUrl = "https://images.unsplash.com/photo-1621786062579-6125bf25208a?w=600&q=80", Rating = 4.8, ReviewCount = 22, IsNew = true, IsBestSeller = false }
+                });
+                break;
+
+            case "mens-apparel":
+            case "mens-wear":
+                list.AddRange(new[]
                 {
-                    Id = Guid.NewGuid(),
-                    Name = "Designer Shimmering Georgette Sequence Party Saree",
-                    Slug = "designer-georgette-sequence-saree",
-                    VendorName = "Glamour Closet",
-                    CategoryName = "Saree",
-                    SubCategorySlug = "organza",
-                    Price = 4750,
-                    OriginalPrice = 5500,
-                    ImageUrl = "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=600&q=80",
-                    Rating = 4.6,
-                    ReviewCount = 15,
-                    IsNew = false,
-                    IsBestSeller = false,
-                    Material = "Chiffon Georgette"
-                },
-                new CategoryProductViewModel
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Formal Oxford Slim-Fit Cotton Executive Shirt", Slug = "formal-oxford-slim-fit-shirt", VendorName = "Verified Executive", CategoryName = "Men's Apparel", Price = 1850, OriginalPrice = 2200, ImageUrl = "https://images.unsplash.com/photo-1617137968427-85924c800a22?w=600&q=80", Rating = 4.8, ReviewCount = 39, IsNew = true, IsBestSeller = true },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Casual Denim Indigo Washed Jacket Shirt", Slug = "casual-denim-washed-jacket-shirt", VendorName = "Simple Elegance", CategoryName = "Men's Apparel", Price = 2450, OriginalPrice = 2900, ImageUrl = "https://images.unsplash.com/photo-1621786062579-6125bf25208a?w=600&q=80", Rating = 4.7, ReviewCount = 26, IsNew = false, IsBestSeller = true },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Traditional Handloom Khadi Cotton Short Kurta", Slug = "traditional-khadi-cotton-short-kurta", VendorName = "Crafts of Bengal", CategoryName = "Men's Apparel", Price = 1450, OriginalPrice = 1750, ImageUrl = "https://images.unsplash.com/photo-1617137968427-85924c800a22?w=600&q=80", Rating = 4.6, ReviewCount = 18, IsNew = true, IsBestSeller = false },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Premium Stretch Formal Chino Trousers for Men", Slug = "premium-stretch-chino-trousers", VendorName = "Glamour Closet", CategoryName = "Men's Apparel", Price = 2150, OriginalPrice = 2500, ImageUrl = "https://images.unsplash.com/photo-1621786062579-6125bf25208a?w=600&q=80", Rating = 4.7, ReviewCount = 31, IsNew = false, IsBestSeller = true },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Handwoven Cotton Casual Summer Polo Shirt", Slug = "handwoven-cotton-summer-polo-shirt", VendorName = "Nusrat Boutique", CategoryName = "Men's Apparel", Price = 1250, OriginalPrice = 1500, ImageUrl = "https://images.unsplash.com/photo-1617137968427-85924c800a22?w=600&q=80", Rating = 4.5, ReviewCount = 20, IsNew = true, IsBestSeller = false }
+                });
+                break;
+
+            case "kids-wear":
+            case "kids":
+                list.AddRange(new[]
                 {
-                    Id = Guid.NewGuid(),
-                    Name = "Authentic Pure Muslin Hand-Painted Collector's Saree",
-                    Slug = "authentic-muslin-hand-painted-saree",
-                    VendorName = "Heritage Muslin BD",
-                    CategoryName = "Saree",
-                    SubCategorySlug = "jamdani",
-                    Price = 15200,
-                    OriginalPrice = 17500,
-                    ImageUrl = "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=600&q=80",
-                    Rating = 5.0,
-                    ReviewCount = 12,
-                    IsNew = true,
-                    IsBestSeller = false,
-                    Material = "Ultra-Fine Dhakai Muslin"
-                },
-                new CategoryProductViewModel
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Little Princess Embroidered Party Frock Set", Slug = "little-princess-embroidered-frock", VendorName = "Nusrat Kids", CategoryName = "Kids Wear", Price = 1650, OriginalPrice = 1950, ImageUrl = "https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?w=600&q=80", Rating = 4.9, ReviewCount = 35, IsNew = true, IsBestSeller = true },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Kids Cotton Festive Panjabi Pajama Set for Boys", Slug = "kids-cotton-festive-panjabi-set", VendorName = "Crafts of Bengal", CategoryName = "Kids Wear", Price = 1450, OriginalPrice = 1750, ImageUrl = "https://images.unsplash.com/photo-1621786062579-6125bf25208a?w=600&q=80", Rating = 4.8, ReviewCount = 29, IsNew = false, IsBestSeller = true },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Baby Girl Cute Printed Cotton Dress with Hairband", Slug = "baby-girl-printed-cotton-dress", VendorName = "Simple Elegance", CategoryName = "Kids Wear", Price = 980, OriginalPrice = 1200, ImageUrl = "https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?w=600&q=80", Rating = 4.7, ReviewCount = 18, IsNew = true, IsBestSeller = false },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Junior Boys Formal Waistcoat & Shirt Set", Slug = "junior-boys-formal-waistcoat-set", VendorName = "Glamour Closet", CategoryName = "Kids Wear", Price = 1950, OriginalPrice = 2300, ImageUrl = "https://images.unsplash.com/photo-1617137968427-85924c800a22?w=600&q=80", Rating = 4.6, ReviewCount = 14, IsNew = false, IsBestSeller = false },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Traditional Mini Jamdani Kids Festive Dress", Slug = "traditional-mini-jamdani-kids-dress", VendorName = "Narayanganj Guild", CategoryName = "Kids Wear", Price = 1850, OriginalPrice = 2200, ImageUrl = "https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?w=600&q=80", Rating = 5.0, ReviewCount = 40, IsNew = true, IsBestSeller = true }
+                });
+                break;
+
+            case "footwear":
+            case "shoes":
+                list.AddRange(new[]
                 {
-                    Id = Guid.NewGuid(),
-                    Name = "Traditional Cotton Hand-Block Print Saree with Tassels",
-                    Slug = "traditional-cotton-block-print-saree",
-                    VendorName = "Simple Elegance",
-                    CategoryName = "Saree",
-                    SubCategorySlug = "cotton",
-                    Price = 1850,
-                    OriginalPrice = 2200,
-                    ImageUrl = "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&q=80",
-                    Rating = 4.5,
-                    ReviewCount = 31,
-                    IsNew = false,
-                    IsBestSeller = false,
-                    Material = "100% Combed Cotton"
-                }
-            });
-        }
-        else if (categorySlug is "three-piece" or "three-pieces" or "3-piece")
-        {
-            list.AddRange(new[]
-            {
-                new CategoryProductViewModel
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Traditional Handcrafted Nagra Jutti for Women", Slug = "traditional-handcrafted-nagra-jutti", VendorName = "Bengal Footwear", CategoryName = "Footwear", Price = 1850, OriginalPrice = 2200, ImageUrl = "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=600&q=80", Rating = 4.8, ReviewCount = 44, IsNew = true, IsBestSeller = true },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Genuine Leather Formal Loafer Shoes for Men", Slug = "genuine-leather-formal-loafers", VendorName = "Crafts of Bengal", CategoryName = "Footwear", Price = 3450, OriginalPrice = 4000, ImageUrl = "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=600&q=80", Rating = 4.9, ReviewCount = 37, IsNew = false, IsBestSeller = true },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Pearl & Zardozi Embroidered Bridal Kolhapuri Wedges", Slug = "pearl-zardozi-bridal-kolhapuri-wedges", VendorName = "Nusrat Boutique", CategoryName = "Footwear", Price = 2650, OriginalPrice = 3100, ImageUrl = "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=600&q=80", Rating = 4.7, ReviewCount = 19, IsNew = true, IsBestSeller = false },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Casual Comfortable Slip-on Canvas Sneakers", Slug = "casual-comfortable-canvas-sneakers", VendorName = "Simple Elegance", CategoryName = "Footwear", Price = 1450, OriginalPrice = 1750, ImageUrl = "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=600&q=80", Rating = 4.6, ReviewCount = 28, IsNew = false, IsBestSeller = false },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Velvet Party Block Heels with Ankle Strap", Slug = "velvet-party-block-heels", VendorName = "Glamour Closet", CategoryName = "Footwear", Price = 2250, OriginalPrice = 2600, ImageUrl = "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=600&q=80", Rating = 4.8, ReviewCount = 23, IsNew = true, IsBestSeller = true }
+                });
+                break;
+
+            case "jewelry":
+            case "jewellery":
+                list.AddRange(new[]
                 {
-                    Id = Guid.NewGuid(),
-                    Name = "Luxury Digital Print Pakistani Lawn 3-Piece Set",
-                    Slug = "luxury-lawn-3-piece-set",
-                    VendorName = "Nusrat Boutique",
-                    CategoryName = "Three Piece",
-                    SubCategorySlug = "lawn",
-                    Price = 3250,
-                    OriginalPrice = 3800,
-                    ImageUrl = "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=600&q=80",
-                    Rating = 4.8,
-                    ReviewCount = 34,
-                    IsNew = true,
-                    IsBestSeller = true,
-                    Material = "Swiss Lawn & Chiffon Dupatta"
-                },
-                new CategoryProductViewModel
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Gold-Plated Kundan Bridal Choker Necklace Set", Slug = "gold-plated-kundan-bridal-necklace", VendorName = "Bengal Jewels", CategoryName = "Jewelry", Price = 4850, OriginalPrice = 5800, ImageUrl = "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=600&q=80", Rating = 5.0, ReviewCount = 62, IsNew = true, IsBestSeller = true },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Traditional Antique Brass Jhumka Earrings for Women", Slug = "traditional-antique-brass-jhumka", VendorName = "Crafts of Bengal", CategoryName = "Jewelry", Price = 950, OriginalPrice = 1200, ImageUrl = "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=600&q=80", Rating = 4.8, ReviewCount = 49, IsNew = false, IsBestSeller = true },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Silver Replica Oxidized Tribal Statement Necklace", Slug = "silver-replica-oxidized-tribal-necklace", VendorName = "Heritage Ornaments", CategoryName = "Jewelry", Price = 1650, OriginalPrice = 1950, ImageUrl = "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=600&q=80", Rating = 4.7, ReviewCount = 21, IsNew = true, IsBestSeller = false },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Pearl & Cubic Zirconia Designer Bangle Set (Set of 4)", Slug = "pearl-cz-designer-bangle-set", VendorName = "Nusrat Boutique", CategoryName = "Jewelry", Price = 1450, OriginalPrice = 1750, ImageUrl = "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=600&q=80", Rating = 4.6, ReviewCount = 33, IsNew = false, IsBestSeller = false },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Handcrafted Stone Studded Matha Patti & Tikka Set", Slug = "handcrafted-stone-matha-patti-tikka", VendorName = "Bengal Jewels", CategoryName = "Jewelry", Price = 1250, OriginalPrice = 1500, ImageUrl = "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=600&q=80", Rating = 4.9, ReviewCount = 27, IsNew = true, IsBestSeller = true }
+                });
+                break;
+
+            case "bags":
+            case "handbags":
+                list.AddRange(new[]
                 {
-                    Id = Guid.NewGuid(),
-                    Name = "Embroidered Cotton Linen Salwar Kameez Suit",
-                    Slug = "embroidered-cotton-salwar-suit",
-                    VendorName = "Glamour Closet",
-                    CategoryName = "Three Piece",
-                    SubCategorySlug = "cotton-3p",
-                    Price = 2850,
-                    OriginalPrice = 3400,
-                    ImageUrl = "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&q=80",
-                    Rating = 4.7,
-                    ReviewCount = 22,
-                    IsNew = false,
-                    IsBestSeller = true,
-                    Material = "Pure Slub Cotton"
-                },
-                new CategoryProductViewModel
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Royal Zardozi Velvet Party Clutch Bag", Slug = "royal-zardozi-velvet-clutch-bag", VendorName = "Nusrat Boutique", CategoryName = "Bags & Purses", Price = 1950, OriginalPrice = 2400, ImageUrl = "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600&q=80", Rating = 4.9, ReviewCount = 38, IsNew = true, IsBestSeller = true },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Premium Genuine Leather Structured Ladies Tote Bag", Slug = "genuine-leather-structured-tote-bag", VendorName = "Crafts of Bengal", CategoryName = "Bags & Purses", Price = 3850, OriginalPrice = 4500, ImageUrl = "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600&q=80", Rating = 4.8, ReviewCount = 42, IsNew = false, IsBestSeller = true },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Handcrafted Potli Bag with Pearl Tassels", Slug = "handcrafted-potli-bag-pearl-tassels", VendorName = "Simple Elegance", CategoryName = "Bags & Purses", Price = 1250, OriginalPrice = 1500, ImageUrl = "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600&q=80", Rating = 4.7, ReviewCount = 19, IsNew = true, IsBestSeller = false },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Stylish Crossbody Canvas Travel Sling Bag", Slug = "stylish-crossbody-canvas-sling-bag", VendorName = "Glamour Closet", CategoryName = "Bags & Purses", Price = 1450, OriginalPrice = 1750, ImageUrl = "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600&q=80", Rating = 4.6, ReviewCount = 25, IsNew = false, IsBestSeller = false },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Designer Synthetic Leather Shoulder Handbag", Slug = "designer-synthetic-leather-shoulder-bag", VendorName = "Nusrat Boutique", CategoryName = "Bags & Purses", Price = 2250, OriginalPrice = 2700, ImageUrl = "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600&q=80", Rating = 4.8, ReviewCount = 31, IsNew = true, IsBestSeller = true }
+                });
+                break;
+
+            case "cosmetics":
+            case "beauty":
+                list.AddRange(new[]
                 {
-                    Id = Guid.NewGuid(),
-                    Name = "Party Wear Organza 3-Piece with Heavy Pearl Dupatta",
-                    Slug = "party-organza-3-piece-pearl",
-                    VendorName = "Dhaka Heritage",
-                    CategoryName = "Three Piece",
-                    SubCategorySlug = "organza-3p",
-                    Price = 5400,
-                    OriginalPrice = 6200,
-                    ImageUrl = "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=600&q=80",
-                    Rating = 4.9,
-                    ReviewCount = 18,
-                    IsNew = true,
-                    IsBestSeller = false,
-                    Material = "Embroidered Organza"
-                }
-            });
-        }
-        else
-        {
-            // Generic sample products for all other categories
-            list.AddRange(new[]
-            {
-                new CategoryProductViewModel
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Organic Kumkumadi Radiance Face Serum (30ml)", Slug = "organic-kumkumadi-radiance-serum", VendorName = "Botanical Beauty", CategoryName = "Cosmetics & Skincare", Price = 1650, OriginalPrice = 1950, ImageUrl = "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600&q=80", Rating = 4.9, ReviewCount = 54, IsNew = true, IsBestSeller = true },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Matte Velvet Hydrating Long-Lasting Lipstick", Slug = "matte-velvet-hydrating-lipstick", VendorName = "Glamour Cosmetics", CategoryName = "Cosmetics & Skincare", Price = 850, OriginalPrice = 1100, ImageUrl = "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600&q=80", Rating = 4.8, ReviewCount = 47, IsNew = false, IsBestSeller = true },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Pure Rosewater & Saffron Botanical Facial Toner", Slug = "pure-rosewater-saffron-facial-toner", VendorName = "Botanical Beauty", CategoryName = "Cosmetics & Skincare", Price = 750, OriginalPrice = 950, ImageUrl = "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600&q=80", Rating = 4.7, ReviewCount = 22, IsNew = true, IsBestSeller = false },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Deep Nourishing Ayurvedic Hair Growth Oil (200ml)", Slug = "deep-nourishing-ayurvedic-hair-oil", VendorName = "Herbal Care BD", CategoryName = "Cosmetics & Skincare", Price = 1250, OriginalPrice = 1500, ImageUrl = "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600&q=80", Rating = 4.9, ReviewCount = 38, IsNew = false, IsBestSeller = true },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Vitamin C Brightening Daily Moisturizer Cream", Slug = "vitamin-c-brightening-moisturizer-cream", VendorName = "Glamour Cosmetics", CategoryName = "Cosmetics & Skincare", Price = 1450, OriginalPrice = 1750, ImageUrl = "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=600&q=80", Rating = 4.8, ReviewCount = 29, IsNew = true, IsBestSeller = false }
+                });
+                break;
+
+            case "innerwear":
+                list.AddRange(new[]
                 {
-                    Id = Guid.NewGuid(),
-                    Name = $"Premium {CategoryName} - Edition 01",
-                    Slug = $"{categorySlug}-edition-01",
-                    VendorName = "Verified Premium Vendor",
-                    CategoryName = CategoryName,
-                    Price = 2450,
-                    OriginalPrice = 2950,
-                    ImageUrl = "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=600&q=80",
-                    Rating = 4.8,
-                    ReviewCount = 19,
-                    IsNew = true,
-                    IsBestSeller = true
-                },
-                new CategoryProductViewModel
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Premium Breathable Seamless Cotton Everyday Bra Set", Slug = "premium-seamless-cotton-bra-set", VendorName = "Comfort Lingerie", CategoryName = "Innerwear", Price = 950, OriginalPrice = 1200, ImageUrl = "https://images.unsplash.com/photo-1516762689617-e1cffcef479d?w=600&q=80", Rating = 4.8, ReviewCount = 32, IsNew = true, IsBestSeller = true },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Soft Satin Silk Nightwear Robe & Gown Set", Slug = "soft-satin-silk-nightwear-robe-set", VendorName = "Glamour Closet", CategoryName = "Innerwear", Price = 1850, OriginalPrice = 2200, ImageUrl = "https://images.unsplash.com/photo-1516762689617-e1cffcef479d?w=600&q=80", Rating = 4.9, ReviewCount = 27, IsNew = false, IsBestSeller = true },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "High-Waist Seamless Body Shaping Corset Shorts", Slug = "high-waist-seamless-body-shaper", VendorName = "Comfort Lingerie", CategoryName = "Innerwear", Price = 1250, OriginalPrice = 1500, ImageUrl = "https://images.unsplash.com/photo-1516762689617-e1cffcef479d?w=600&q=80", Rating = 4.7, ReviewCount = 18, IsNew = true, IsBestSeller = false },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Ultra-Soft Organic Cotton Comfy Pajama Sleepwear", Slug = "ultra-soft-organic-cotton-pajamas", VendorName = "Simple Elegance", CategoryName = "Innerwear", Price = 1450, OriginalPrice = 1750, ImageUrl = "https://images.unsplash.com/photo-1516762689617-e1cffcef479d?w=600&q=80", Rating = 4.6, ReviewCount = 21, IsNew = false, IsBestSeller = false },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Non-Padded Wireless Comfort T-Shirt Bra", Slug = "non-padded-wireless-t-shirt-bra", VendorName = "Comfort Lingerie", CategoryName = "Innerwear", Price = 850, OriginalPrice = 1050, ImageUrl = "https://images.unsplash.com/photo-1516762689617-e1cffcef479d?w=600&q=80", Rating = 4.8, ReviewCount = 29, IsNew = true, IsBestSeller = true }
+                });
+                break;
+
+            case "home-handicraft":
+            case "handicraft":
+                list.AddRange(new[]
                 {
-                    Id = Guid.NewGuid(),
-                    Name = $"Exclusive {CategoryName} - Festive Style",
-                    Slug = $"{categorySlug}-festive-style",
-                    VendorName = "Nusrat Boutique",
-                    CategoryName = CategoryName,
-                    Price = 3850,
-                    OriginalPrice = 4400,
-                    ImageUrl = "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=600&q=80",
-                    Rating = 4.9,
-                    ReviewCount = 28,
-                    IsNew = false,
-                    IsBestSeller = true
-                },
-                new CategoryProductViewModel
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Hand-blocked Nakshi Kantha Quilt (Pure Cotton King Size)", Slug = "hand-blocked-nakshi-kantha-quilt", VendorName = "Crafts of Bengal", CategoryName = "Home & Handicraft", Price = 4850, OriginalPrice = 5800, ImageUrl = "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=600&q=80", Rating = 5.0, ReviewCount = 46, IsNew = true, IsBestSeller = true },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Traditional Brass Antique Tea Set with Tray", Slug = "traditional-brass-antique-tea-set", VendorName = "Heritage Handicrafts", CategoryName = "Home & Handicraft", Price = 3650, OriginalPrice = 4200, ImageUrl = "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=600&q=80", Rating = 4.9, ReviewCount = 31, IsNew = false, IsBestSeller = true },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Jute Fiber Decorative Table Runner & Placemats", Slug = "jute-fiber-decorative-table-runner", VendorName = "Crafts of Bengal", CategoryName = "Home & Handicraft", Price = 1250, OriginalPrice = 1500, ImageUrl = "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=600&q=80", Rating = 4.7, ReviewCount = 19, IsNew = true, IsBestSeller = false },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Hand-Carved Wooden Jewelry Keepsake Box", Slug = "hand-carved-wooden-jewelry-box", VendorName = "Simple Elegance", CategoryName = "Home & Handicraft", Price = 1450, OriginalPrice = 1750, ImageUrl = "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=600&q=80", Rating = 4.8, ReviewCount = 24, IsNew = false, IsBestSeller = false },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = "Clay Terracotta Decorative Wall Hanging Plate Set", Slug = "clay-terracotta-decorative-wall-plates", VendorName = "Heritage Handicrafts", CategoryName = "Home & Handicraft", Price = 980, OriginalPrice = 1200, ImageUrl = "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=600&q=80", Rating = 4.9, ReviewCount = 38, IsNew = true, IsBestSeller = true }
+                });
+                break;
+
+            default:
+                list.AddRange(new[]
                 {
-                    Id = Guid.NewGuid(),
-                    Name = $"Handcrafted {CategoryName} Signature Designer Piece",
-                    Slug = $"{categorySlug}-signature-piece",
-                    VendorName = "Crafts of Bengal",
-                    CategoryName = CategoryName,
-                    Price = 4950,
-                    OriginalPrice = 5800,
-                    ImageUrl = "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&q=80",
-                    Rating = 4.7,
-                    ReviewCount = 15,
-                    IsNew = true,
-                    IsBestSeller = false
-                },
-                new CategoryProductViewModel
-                {
-                    Id = Guid.NewGuid(),
-                    Name = $"Daily Wear {CategoryName} Comfort Edition",
-                    Slug = $"{categorySlug}-daily-comfort",
-                    VendorName = "Simple Elegance",
-                    CategoryName = CategoryName,
-                    Price = 1650,
-                    OriginalPrice = 1950,
-                    ImageUrl = "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=600&q=80",
-                    Rating = 4.6,
-                    ReviewCount = 42,
-                    IsNew = false,
-                    IsBestSeller = false
-                }
-            });
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = $"Premium {CategoryName} - Artisanal Edition 01", Slug = $"{categorySlug}-edition-01", VendorName = "Verified Artisan Vendor", CategoryName = CategoryName, Price = 2450, OriginalPrice = 2950, ImageUrl = "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=600&q=80", Rating = 4.8, ReviewCount = 19, IsNew = true, IsBestSeller = true },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = $"Exclusive {CategoryName} - Festive Style", Slug = $"{categorySlug}-festive-style", VendorName = "Nusrat Boutique", CategoryName = CategoryName, Price = 3850, OriginalPrice = 4400, ImageUrl = "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=600&q=80", Rating = 4.9, ReviewCount = 28, IsNew = false, IsBestSeller = true },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = $"Handcrafted {CategoryName} Signature Piece", Slug = $"{categorySlug}-signature-piece", VendorName = "Crafts of Bengal", CategoryName = CategoryName, Price = 4950, OriginalPrice = 5800, ImageUrl = "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=600&q=80", Rating = 4.7, ReviewCount = 15, IsNew = true, IsBestSeller = false },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = $"Daily Wear {CategoryName} Comfort Edition", Slug = $"{categorySlug}-daily-comfort", VendorName = "Simple Elegance", CategoryName = CategoryName, Price = 1650, OriginalPrice = 1950, ImageUrl = "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=600&q=80", Rating = 4.6, ReviewCount = 42, IsNew = false, IsBestSeller = false },
+                    new CategoryProductViewModel { Id = Guid.NewGuid(), Name = $"Designer {CategoryName} Masterpiece Collection", Slug = $"{categorySlug}-masterpiece", VendorName = "Dhaka Heritage", CategoryName = CategoryName, Price = 5600, OriginalPrice = 6400, ImageUrl = "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=600&q=80", Rating = 5.0, ReviewCount = 31, IsNew = true, IsBestSeller = true }
+                });
+                break;
         }
 
         // Apply Subcategory Filter
