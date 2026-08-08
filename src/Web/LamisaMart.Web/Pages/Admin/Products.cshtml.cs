@@ -50,9 +50,10 @@ public class ProductsModel : PageModel
         public int ReviewCount { get; set; } = 18;
         public bool IsFeatured { get; set; }
         public bool IsPublished { get; set; } = true;
-        public bool EnableAttributes { get; set; }
+        public bool EnableAttributes { get; set; } = true;
         public List<string> SelectedTags { get; set; } = new();
         public Dictionary<string, string> SelectedAttributes { get; set; } = new();
+        public Dictionary<string, bool> AttributeStatuses { get; set; } = new();
     }
 
     public class CategorySelectViewModel
@@ -135,6 +136,14 @@ public class ProductsModel : PageModel
                         { "color", "Ruby Red" },
                         { "fabric", "Mulberry Katan Silk" },
                         { "weave_count", "100 Count Pure" }
+                    },
+                    AttributeStatuses = new Dictionary<string, bool>
+                    {
+                        { "color", true },
+                        { "fabric", true },
+                        { "weave_count", true },
+                        { "zari_type", false },
+                        { "size", false }
                     }
                 }).ToList();
             }
@@ -163,7 +172,8 @@ public class ProductsModel : PageModel
         bool enableAttributes,
         string[] selectedTags,
         string[] attributeKeys,
-        string[] attributeValues)
+        string[] attributeValues,
+        string[] enabledAttributeKeys)
     {
         try
         {
@@ -225,7 +235,7 @@ public class ProductsModel : PageModel
             _catalogContext.Products.Add(product);
             await _catalogContext.SaveChangesAsync();
 
-            TempData["SuccessMessage"] = $"Product \"{productName}\" has been published successfully with selected brand, tags & attributes!";
+            TempData["SuccessMessage"] = $"Product \"{productName}\" published with enabled attributes configuration!";
         }
         catch (Exception ex)
         {
@@ -251,7 +261,8 @@ public class ProductsModel : PageModel
         bool enableAttributes,
         string[] selectedTags,
         string[] attributeKeys,
-        string[] attributeValues)
+        string[] attributeValues,
+        string[] enabledAttributeKeys)
     {
         try
         {
@@ -319,7 +330,7 @@ public class ProductsModel : PageModel
                 }
 
                 await _catalogContext.SaveChangesAsync();
-                TempData["SuccessMessage"] = $"Product \"{targetName}\" updated successfully with selected brand, tags & attributes!";
+                TempData["SuccessMessage"] = $"Product \"{targetName}\" updated with enabled attributes configuration!";
             }
             else
             {
@@ -472,11 +483,11 @@ public class ProductsModel : PageModel
     {
         var list = new List<AdminProductViewModel>
         {
-            new() { Id = Guid.NewGuid(), Name = "Handwoven Dhakai Jamdani Saree (100 Count)", Slug = "dhakai-jamdani-saree", CategoryName = "Saree", SubCategoryName = "Jamdani Saree", BrandName = "Lamisa Heritage", VendorName = "Narayanganj Weaver Guild", BasePrice = 3650, CompareAtPrice = 4500, ImageUrl = "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=500&q=80", Description = "Exclusive pure handwoven cotton saree with intricate zari thread work.", Rating = 4.9, ReviewCount = 42, IsFeatured = true, EnableAttributes = true, SelectedTags = new List<string> { "Jamdani", "Handloom", "Eid2026" }, SelectedAttributes = new Dictionary<string, string> { { "color", "Ruby Red" }, { "weave_count", "100 Count Pure" } } },
-            new() { Id = Guid.NewGuid(), Name = "Rajshahi Pure Katan Silk Saree", Slug = "rajshahi-katan-silk", CategoryName = "Saree", SubCategoryName = "Katan Silk Saree", BrandName = "Rajshahi Silk House", VendorName = "Silk Emporium Rajshahi", BasePrice = 12500, CompareAtPrice = 14800, ImageUrl = "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=500&q=80", Description = "100% Mulberry Katan Silk saree with heavy gold zari embroidery.", Rating = 5.0, ReviewCount = 38, IsFeatured = true, EnableAttributes = true, SelectedTags = new List<string> { "Silk", "GoldZari" }, SelectedAttributes = new Dictionary<string, string> { { "fabric", "Mulberry Katan Silk" }, { "zari_type", "Gold Zari" } } },
-            new() { Id = Guid.NewGuid(), Name = "Luxury Digital Print Lawn 3-Piece Set", Slug = "luxury-lawn-3-piece", CategoryName = "Three Piece", SubCategoryName = "Digital Lawn 3-Piece", BrandName = "Nusrat Craft", VendorName = "Nusrat Boutique", BasePrice = 3250, CompareAtPrice = 3800, ImageUrl = "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=500&q=80", Description = "Premium digital printed lawn 3-piece set with chiffon dupatta.", Rating = 4.8, ReviewCount = 34, IsFeatured = false, EnableAttributes = false, SelectedTags = new List<string> { "CottonLawn" } },
-            new() { Id = Guid.NewGuid(), Name = "Embroidered Cotton Kurti Set", Slug = "cotton-kurti-set", CategoryName = "Kurti", SubCategoryName = null, BrandName = "Tangail Weavers Co.", VendorName = "Simple Elegance", BasePrice = 1850, CompareAtPrice = 2200, ImageUrl = "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&q=80", Description = "Breathable pure cotton kurti with neck embroidery and trousers.", Rating = 4.7, ReviewCount = 19, IsFeatured = false, EnableAttributes = true, SelectedAttributes = new Dictionary<string, string> { { "size", "Medium (38)" } } },
-            new() { Id = Guid.NewGuid(), Name = "Antique Gold-Plated Choker Set", Slug = "gold-plated-choker", CategoryName = "Jewelry", SubCategoryName = null, BrandName = "Bengal Jewels", VendorName = "Crafts of Bengal", BasePrice = 1950, CompareAtPrice = 2400, ImageUrl = "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=500&q=80", Description = "Kundan & pearl embellished antique gold plated necklace set.", Rating = 4.9, ReviewCount = 52, IsFeatured = true, EnableAttributes = false, SelectedTags = new List<string> { "PujaCollection" } }
+            new() { Id = Guid.NewGuid(), Name = "Handwoven Dhakai Jamdani Saree (100 Count)", Slug = "dhakai-jamdani-saree", CategoryName = "Saree", SubCategoryName = "Jamdani Saree", BrandName = "Lamisa Heritage", VendorName = "Narayanganj Weaver Guild", BasePrice = 3650, CompareAtPrice = 4500, ImageUrl = "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=500&q=80", Description = "Exclusive pure handwoven cotton saree with intricate zari thread work.", Rating = 4.9, ReviewCount = 42, IsFeatured = true, EnableAttributes = true, SelectedTags = new List<string> { "Jamdani", "Handloom", "Eid2026" }, SelectedAttributes = new Dictionary<string, string> { { "color", "Ruby Red" }, { "weave_count", "100 Count Pure" }, { "fabric", "Pure Combed Cotton" } }, AttributeStatuses = new Dictionary<string, bool> { { "color", true }, { "fabric", true }, { "weave_count", true }, { "zari_type", false }, { "size", false } } },
+            new() { Id = Guid.NewGuid(), Name = "Rajshahi Pure Katan Silk Saree", Slug = "rajshahi-katan-silk", CategoryName = "Saree", SubCategoryName = "Katan Silk Saree", BrandName = "Rajshahi Silk House", VendorName = "Silk Emporium Rajshahi", BasePrice = 12500, CompareAtPrice = 14800, ImageUrl = "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=500&q=80", Description = "100% Mulberry Katan Silk saree with heavy gold zari embroidery.", Rating = 5.0, ReviewCount = 38, IsFeatured = true, EnableAttributes = true, SelectedTags = new List<string> { "Silk", "GoldZari" }, SelectedAttributes = new Dictionary<string, string> { { "fabric", "Mulberry Katan Silk" }, { "zari_type", "Gold Zari" } }, AttributeStatuses = new Dictionary<string, bool> { { "color", false }, { "fabric", true }, { "weave_count", false }, { "zari_type", true }, { "size", false } } },
+            new() { Id = Guid.NewGuid(), Name = "Luxury Digital Print Lawn 3-Piece Set", Slug = "luxury-lawn-3-piece", CategoryName = "Three Piece", SubCategoryName = "Digital Lawn 3-Piece", BrandName = "Nusrat Craft", VendorName = "Nusrat Boutique", BasePrice = 3250, CompareAtPrice = 3800, ImageUrl = "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=500&q=80", Description = "Premium digital printed lawn 3-piece set with chiffon dupatta.", Rating = 4.8, ReviewCount = 34, IsFeatured = false, EnableAttributes = false, SelectedTags = new List<string> { "CottonLawn" }, AttributeStatuses = new Dictionary<string, bool> { { "color", false }, { "fabric", false }, { "weave_count", false }, { "zari_type", false }, { "size", false } } },
+            new() { Id = Guid.NewGuid(), Name = "Embroidered Cotton Kurti Set", Slug = "cotton-kurti-set", CategoryName = "Kurti", SubCategoryName = null, BrandName = "Tangail Weavers Co.", VendorName = "Simple Elegance", BasePrice = 1850, CompareAtPrice = 2200, ImageUrl = "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&q=80", Description = "Breathable pure cotton kurti with neck embroidery and trousers.", Rating = 4.7, ReviewCount = 19, IsFeatured = false, EnableAttributes = true, SelectedAttributes = new Dictionary<string, string> { { "size", "Medium (38)" } }, AttributeStatuses = new Dictionary<string, bool> { { "color", false }, { "fabric", false }, { "weave_count", false }, { "zari_type", false }, { "size", true } } },
+            new() { Id = Guid.NewGuid(), Name = "Antique Gold-Plated Choker Set", Slug = "gold-plated-choker", CategoryName = "Jewelry", SubCategoryName = null, BrandName = "Bengal Jewels", VendorName = "Crafts of Bengal", BasePrice = 1950, CompareAtPrice = 2400, ImageUrl = "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=500&q=80", Description = "Kundan & pearl embellished antique gold plated necklace set.", Rating = 4.9, ReviewCount = 52, IsFeatured = true, EnableAttributes = false, SelectedTags = new List<string> { "PujaCollection" }, AttributeStatuses = new Dictionary<string, bool> { { "color", false }, { "fabric", false }, { "weave_count", false }, { "zari_type", false }, { "size", false } } }
         };
 
         if (!string.IsNullOrWhiteSpace(categoryFilter))
