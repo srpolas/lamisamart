@@ -22,20 +22,29 @@
 
 <div class="card border-0 shadow-sm rounded-4 mb-5">
     <div class="card-body p-4">
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
             @Html.AntiForgeryToken()
 
             <!-- 1. Site Logo, Favicon & Site Title Image Section -->
             <div class="p-4 bg-light rounded-4 border mb-4">
-                <h5 class="fw-bold text-dark mb-1"><i class="bi bi-image me-2 text-danger"></i> Site Logo, Favicon & Site Title Image Settings</h5>
-                <p class="text-muted small mb-4">Configure image assets for the storefront header logo, browser tab icon (favicon), and social media title banner.</p>
+                <h5 class="fw-bold text-dark mb-1"><i class="bi bi-cloud-arrow-up me-2 text-danger"></i> Upload Site Logo, Favicon & Site Title Image</h5>
+                <p class="text-muted small mb-4">Select image files directly from your computer or enter an external image URL link.</p>
 
                 <div class="row g-4">
-                    <!-- Main Site Logo -->
+                    <!-- Main Site Logo Upload & URL -->
                     <div class="col-md-6">
                         <div class="card border-0 shadow-sm rounded-3 p-3 h-100 bg-white">
-                            <label class="form-label fw-bold text-dark mb-1"><i class="bi bi-flower1 me-1 text-danger"></i> Main Header Site Logo URL</label>
-                            <input type="text" asp-for="LogoUrl" class="form-control rounded-3 mb-3" placeholder="/images/logo.png or https://..." />
+                            <label class="form-label fw-bold text-dark mb-1"><i class="bi bi-flower1 me-1 text-danger"></i> Main Header Site Logo</label>
+                            
+                            <div class="mb-2">
+                                <label class="form-label small text-muted mb-1">Upload Image File (PNG / JPG / SVG)</label>
+                                <input type="file" asp-for="LogoFile" class="form-control rounded-3" accept="image/*" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label small text-muted mb-1">Or Enter Image URL Link</label>
+                                <input type="text" asp-for="LogoUrl" class="form-control form-control-sm rounded-3" placeholder="/images/logo.png or https://..." />
+                            </div>
 
                             <div class="text-muted small fw-semibold mb-2">Live Logo Preview:</div>
                             <div class="p-3 bg-light rounded-3 text-center border d-flex align-items-center justify-content-center" style="min-height: 80px;">
@@ -64,11 +73,20 @@
                         </div>
                     </div>
 
-                    <!-- Browser Favicon -->
+                    <!-- Browser Favicon Upload & URL -->
                     <div class="col-md-6">
                         <div class="card border-0 shadow-sm rounded-3 p-3 h-100 bg-white">
-                            <label class="form-label fw-bold text-dark mb-1"><i class="bi bi-bookmark-star me-1 text-warning"></i> Browser Tab Favicon Icon URL</label>
-                            <input type="text" asp-for="FaviconUrl" class="form-control rounded-3 mb-3" placeholder="/favicon.ico or /images/favicon.png" />
+                            <label class="form-label fw-bold text-dark mb-1"><i class="bi bi-bookmark-star me-1 text-warning"></i> Browser Tab Favicon Icon</label>
+                            
+                            <div class="mb-2">
+                                <label class="form-label small text-muted mb-1">Upload Favicon File (.ico / .png)</label>
+                                <input type="file" asp-for="FaviconFile" class="form-control rounded-3" accept="image/x-icon,image/png,image/jpeg" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label small text-muted mb-1">Or Enter Favicon URL Link</label>
+                                <input type="text" asp-for="FaviconUrl" class="form-control form-control-sm rounded-3" placeholder="/favicon.ico or /images/favicon.png" />
+                            </div>
 
                             <div class="text-muted small fw-semibold mb-2">Favicon Icon Preview:</div>
                             <div class="p-3 bg-light rounded-3 border d-flex align-items-center gap-3" style="min-height: 80px;">
@@ -76,18 +94,27 @@
                                     <img src="@(string.IsNullOrWhiteSpace(Model.FaviconUrl) ? "/favicon.ico" : Model.FaviconUrl)" alt="Favicon" style="width: 28px; height: 28px;" onerror="this.src='/favicon.ico'" />
                                 </div>
                                 <div>
-                                    <div class="fw-bold small text-dark">Browser Tab Preview</div>
-                                    <div class="text-muted extra-small">Shows on Chrome, Safari, & Mobile Bookmarks</div>
+                                    <div class="fw-bold small text-dark">Browser Tab Icon Preview</div>
+                                    <div class="text-muted extra-small">Appears on Chrome, Safari, & Mobile Shortcuts</div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Site Title Image / OpenGraph Banner -->
+                    <!-- Site Title Image / OpenGraph Banner Upload & URL -->
                     <div class="col-md-6">
                         <div class="card border-0 shadow-sm rounded-3 p-3 h-100 bg-white">
-                            <label class="form-label fw-bold text-dark mb-1"><i class="bi bi-card-image me-1 text-primary"></i> Site Title Image / OpenGraph Banner URL</label>
-                            <input type="text" asp-for="SiteTitleImageUrl" class="form-control rounded-3 mb-3" placeholder="/images/site-title-banner.jpg" />
+                            <label class="form-label fw-bold text-dark mb-1"><i class="bi bi-card-image me-1 text-primary"></i> Site Title Image / OpenGraph Banner</label>
+
+                            <div class="mb-2">
+                                <label class="form-label small text-muted mb-1">Upload Banner Image File</label>
+                                <input type="file" asp-for="SiteTitleFile" class="form-control rounded-3" accept="image/*" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label small text-muted mb-1">Or Enter Banner Image URL Link</label>
+                                <input type="text" asp-for="SiteTitleImageUrl" class="form-control form-control-sm rounded-3" placeholder="/images/site-title-banner.jpg" />
+                            </div>
 
                             <div class="text-muted small fw-semibold mb-2">Title Banner Preview:</div>
                             <div class="p-2 bg-light rounded-3 text-center border overflow-hidden" style="min-height: 80px;">
@@ -96,11 +123,11 @@
                         </div>
                     </div>
 
-                    <!-- Site Name & Bengali Subtitle -->
+                    <!-- Store Name & Bengali Subtitle -->
                     <div class="col-md-6">
                         <div class="card border-0 shadow-sm rounded-3 p-3 h-100 bg-white">
                             <label class="form-label fw-bold text-dark mb-1"><i class="bi bi-type me-1 text-success"></i> Store Name & Subtitle Text</label>
-                            <div class="row g-2">
+                            <div class="row g-2 pt-2">
                                 <div class="col-6">
                                     <label class="form-label small text-muted mb-1">Primary Title</label>
                                     <input type="text" asp-for="SiteName" class="form-control rounded-3" placeholder="LAMISA MART" />
@@ -188,7 +215,7 @@
 
             <div class="pt-4 border-top mt-4 text-end">
                 <button type="submit" class="btn btn-danger rounded-pill px-4 py-2 fw-bold shadow-sm">
-                    <i class="bi bi-floppy me-1"></i> Save Logo, Favicon & Header Settings
+                    <i class="bi bi-cloud-arrow-up me-1"></i> Upload & Save Header Settings
                 </button>
             </div>
         </form>

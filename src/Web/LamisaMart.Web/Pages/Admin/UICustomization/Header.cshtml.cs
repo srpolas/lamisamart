@@ -7,6 +7,13 @@ namespace LamisaMart.Web.Pages.Admin.UICustomization;
 [Authorize(Roles = "SuperAdmin,SuperUser,Admin")]
 public class HeaderModel : PageModel
 {
+    private readonly IWebHostEnvironment _environment;
+
+    public HeaderModel(IWebHostEnvironment environment)
+    {
+        _environment = environment;
+    }
+
     public static HeaderSettingsStore Settings { get; set; } = new();
 
     public class HeaderSettingsStore
@@ -49,6 +56,11 @@ public class HeaderModel : PageModel
     [BindProperty] public bool ShowWishlistIcon { get; set; } = true;
     [BindProperty] public bool ShowCartDrawer { get; set; } = true;
 
+    // File Upload Bindings
+    [BindProperty] public IFormFile? LogoFile { get; set; }
+    [BindProperty] public IFormFile? FaviconFile { get; set; }
+    [BindProperty] public IFormFile? SiteTitleFile { get; set; }
+
     public void OnGet()
     {
         HeaderStyle = Settings.HeaderStyle;
@@ -69,8 +81,47 @@ public class HeaderModel : PageModel
         ShowCartDrawer = Settings.ShowCartDrawer;
     }
 
-    public IActionResult OnPost()
+    public async Task<IActionResult> OnPostAsync()
     {
+        var uploadsFolder = Path.Combine(_environment.WebRootPath, "uploads", "branding");
+        Directory.CreateDirectory(uploadsFolder);
+
+        // Upload Logo Image File
+        if (LogoFile != null && LogoFile.Length > 0)
+        {
+            var fileName = $"logo_{Guid.NewGuid():N}{Path.GetExtension(LogoFile.FileName)}";
+            var filePath = Path.Combine(uploadsFolder, fileName);
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await LogoFile.CopyToAsync(stream);
+            }
+            LogoUrl = $"/uploads/branding/{fileName}";
+        }
+
+        // Upload Favicon Icon File
+        if (FaviconFile != null && FaviconFile.Length > 0)
+        {
+            var fileName = $"favicon_{Guid.NewGuid():N}{Path.GetExtension(FaviconFile.FileName)}";
+            var filePath = Path.Combine(uploadsFolder, fileName);
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await FaviconFile.CopyToAsync(stream);
+            }
+            FaviconUrl = $"/uploads/branding/{fileName}";
+        }
+
+        // Upload Site Title Banner Image File
+        if (SiteTitleFile != null && SiteTitleFile.Length > 0)
+        {
+            var fileName = $"banner_{Guid.NewGuid():N}{Path.GetExtension(SiteTitleFile.FileName)}";
+            var filePath = Path.Combine(uploadsFolder, fileName);
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await SiteTitleFile.CopyToAsync(stream);
+            }
+            SiteTitleImageUrl = $"/uploads/branding/{fileName}";
+        }
+
         Settings.HeaderStyle = HeaderStyle ?? "Classic";
         Settings.StickyHeader = StickyHeader;
         Settings.EnableTopBanner = EnableTopBanner;
@@ -88,7 +139,7 @@ public class HeaderModel : PageModel
         Settings.ShowWishlistIcon = ShowWishlistIcon;
         Settings.ShowCartDrawer = ShowCartDrawer;
 
-        TempData["SuccessMessage"] = "Site Logo, Favicon, Site Title Image & Header Settings saved and published live!";
+        TempData["SuccessMessage"] = "Site Logo, Favicon, Site Title Image & Header Settings uploaded and published live!";
         return RedirectToPage();
     }
 }
