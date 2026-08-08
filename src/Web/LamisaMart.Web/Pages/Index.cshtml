@@ -4,12 +4,18 @@
     ViewData["Title"] = "Home";
 }
 
-@if (Model.PageLayout != null && Model.PageLayout.Sections.Any())
+@if (Model.PageLayout != null && Model.PageLayout.Sections != null && Model.PageLayout.Sections.Any())
 {
     @foreach (var section in Model.PageLayout.Sections)
     {
-        <!-- Dynamically load partials based on CMS SectionType -->
-        @await Html.PartialAsync($"Sections/_{section.SectionType}", section.ContentPayloadJson)
+        try
+        {
+            @await Html.PartialAsync($"Shared/Sections/_{section.SectionType}", section.ContentPayloadJson)
+        }
+        catch
+        {
+            <!-- Fallback if partial section fails to render -->
+        }
     }
 }
 else

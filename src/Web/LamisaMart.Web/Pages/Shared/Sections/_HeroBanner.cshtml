@@ -1,0 +1,43 @@
+@model string
+@{
+    // Parse JSON payload or fallback
+    string title = "প্রতিদিনের সাজে, লমিসা মার্ট।";
+    string subtitle = "Everyday Elegance, Authentic Bangladeshi Craftsmanship.";
+    string buttonText = "SHOP NOW";
+    string buttonLink = "/category/saree";
+    string imageUrl = "/images/LamisaMart_design_concept.png";
+
+    if (!string.IsNullOrWhiteSpace(Model))
+    {
+        try
+        {
+            using var doc = System.Text.Json.JsonDocument.Parse(Model);
+            var root = doc.RootElement;
+            if (root.TryGetProperty("title", out var t)) title = t.GetString() ?? title;
+            if (root.TryGetProperty("subtitle", out var s)) subtitle = s.GetString() ?? subtitle;
+            if (root.TryGetProperty("buttonText", out var bt)) buttonText = bt.GetString() ?? buttonText;
+            if (root.TryGetProperty("buttonLink", out var bl)) buttonLink = bl.GetString() ?? buttonLink;
+            if (root.TryGetProperty("imageUrl", out var img)) imageUrl = img.GetString() ?? imageUrl;
+        }
+        catch { }
+    }
+}
+
+<section class="container-fluid p-0 bg-light my-3 my-md-4">
+    <div class="container py-4 py-lg-5">
+        <div class="row align-items-center g-4">
+            <div class="col-lg-6 ps-lg-5 text-center text-lg-start">
+                <h1 class="display-5 fw-bold text-danger mb-2" style="color: #B83256 !important; font-family: 'Hind Siliguri', sans-serif;">
+                    @Html.Raw(title.Replace("\n", "<br/>"))
+                </h1>
+                <p class="fs-5 text-secondary fw-medium mb-4">@subtitle</p>
+                <a href="@buttonLink" class="lm-btn-primary px-4 py-3 fs-6">
+                    @buttonText <i class="bi bi-chevron-right ms-1"></i>
+                </a>
+            </div>
+            <div class="col-lg-6 text-center">
+                <img src="@imageUrl" alt="Hero Banner" class="img-fluid rounded-4 shadow-sm" style="max-height: 380px; width: 100%; object-fit: cover; object-position: top;" />
+            </div>
+        </div>
+    </div>
+</section>
