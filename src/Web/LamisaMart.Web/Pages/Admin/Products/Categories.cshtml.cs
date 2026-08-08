@@ -12,11 +12,13 @@ namespace LamisaMart.Web.Pages.Admin.Products;
 public class CategoriesModel : PageModel
 {
     private readonly ICatalogDbContext _catalogContext;
+    private readonly IWebHostEnvironment _environment;
     private readonly ILogger<CategoriesModel> _logger;
 
-    public CategoriesModel(ICatalogDbContext catalogContext, ILogger<CategoriesModel> logger)
+    public CategoriesModel(ICatalogDbContext catalogContext, IWebHostEnvironment environment, ILogger<CategoriesModel> logger)
     {
         _catalogContext = catalogContext;
+        _environment = environment;
         _logger = logger;
     }
 
@@ -89,7 +91,12 @@ public class CategoriesModel : PageModel
         }
     }
 
-    public async Task<IActionResult> OnPostCreateCategoryAsync(string categoryName, string imageUrl, bool isFeatured, Guid? parentCategoryId)
+    public async Task<IActionResult> OnPostCreateCategoryAsync(
+        string categoryName,
+        IFormFile? categoryImageFile,
+        string? imageUrl,
+        bool isFeatured,
+        Guid? parentCategoryId)
     {
         try
         {
@@ -97,6 +104,22 @@ public class CategoriesModel : PageModel
             {
                 TempData["ErrorMessage"] = "Category name cannot be empty.";
                 return RedirectToPage();
+            }
+
+            string finalImageUrl = imageUrl?.Trim() ?? string.Empty;
+
+            // Process uploaded category image file if provided
+            if (categoryImageFile != null && categoryImageFile.Length > 0)
+            {
+                var uploadsFolder = Path.Combine(_environment.WebRootPath, "uploads", "categories");
+                Directory.CreateDirectory(uploadsFolder);
+                var fileName = $"cat_{Guid.NewGuid():N}{Path.GetExtension(categoryImageFile.FileName)}";
+                var filePath = Path.Combine(uploadsFolder, fileName);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await categoryImageFile.CopyToAsync(stream);
+                }
+                finalImageUrl = $"/uploads/categories/{fileName}";
             }
 
             var slug = GenerateSlug(categoryName);
@@ -107,7 +130,7 @@ public class CategoriesModel : PageModel
                 Id = Guid.NewGuid(),
                 Name = categoryName.Trim(),
                 Slug = slug,
-                ImageUrl = string.IsNullOrWhiteSpace(imageUrl) ? GetDefaultCategoryImage(slug) : imageUrl.Trim(),
+                ImageUrl = string.IsNullOrWhiteSpace(finalImageUrl) ? GetDefaultCategoryImage(slug) : finalImageUrl,
                 IsActive = true,
                 IsFeatured = isFeatured,
                 ParentCategoryId = finalParentId,
@@ -117,7 +140,7 @@ public class CategoriesModel : PageModel
             _catalogContext.Categories.Add(category);
             await _catalogContext.SaveChangesAsync();
 
-            TempData["SuccessMessage"] = $"Category '{categoryName}' created successfully!";
+            TempData["SuccessMessage"] = $"Category '{categoryName}' created successfully with image!";
         }
         catch (Exception ex)
         {
@@ -128,7 +151,14 @@ public class CategoriesModel : PageModel
         return RedirectToPage();
     }
 
-    public async Task<IActionResult> OnPostEditCategoryAsync(Guid categoryId, string categoryName, string slug, string imageUrl, bool isFeatured, Guid? parentCategoryId)
+    public async Task<IActionResult> OnPostEditCategoryAsync(
+        Guid categoryId,
+        string categoryName,
+        string slug,
+        IFormFile? editCategoryImageFile,
+        string? imageUrl,
+        bool isFeatured,
+        Guid? parentCategoryId)
     {
         try
         {
@@ -136,6 +166,22 @@ public class CategoriesModel : PageModel
             {
                 TempData["ErrorMessage"] = "Category name cannot be empty.";
                 return RedirectToPage();
+            }
+
+            string finalImageUrl = imageUrl?.Trim() ?? string.Empty;
+
+            // Process uploaded category image file if provided
+            if (editCategoryImageFile != null && editCategoryImageFile.Length > 0)
+            {
+                var uploadsFolder = Path.Combine(_environment.WebRootPath, "uploads", "categories");
+                Directory.CreateDirectory(uploadsFolder);
+                var fileName = $"cat_{Guid.NewGuid():N}{Path.GetExtension(editCategoryImageFile.FileName)}";
+                var filePath = Path.Combine(uploadsFolder, fileName);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await editCategoryImageFile.CopyToAsync(stream);
+                }
+                finalImageUrl = $"/uploads/categories/{fileName}";
             }
 
             var targetSlug = !string.IsNullOrWhiteSpace(slug) ? GenerateSlug(slug) : GenerateSlug(categoryName);
@@ -152,7 +198,7 @@ public class CategoriesModel : PageModel
                     Id = categoryId != Guid.Empty ? categoryId : Guid.NewGuid(),
                     Name = targetName,
                     Slug = targetSlug,
-                    ImageUrl = string.IsNullOrWhiteSpace(imageUrl) ? GetDefaultCategoryImage(targetSlug) : imageUrl.Trim(),
+                    ImageUrl = string.IsNullOrWhiteSpace(finalImageUrl) ? GetDefaultCategoryImage(targetSlug) : finalImageUrl,
                     IsActive = true,
                     IsFeatured = isFeatured,
                     ParentCategoryId = finalParentId,
@@ -164,13 +210,16 @@ public class CategoriesModel : PageModel
             {
                 cat.Name = targetName;
                 cat.Slug = targetSlug;
-                cat.ImageUrl = string.IsNullOrWhiteSpace(imageUrl) ? GetDefaultCategoryImage(targetSlug) : imageUrl.Trim();
+                if (!string.IsNullOrWhiteSpace(finalImageUrl))
+                {
+                    cat.ImageUrl = finalImageUrl;
+                }
                 cat.IsFeatured = isFeatured;
                 cat.ParentCategoryId = finalParentId;
             }
 
             await _catalogContext.SaveChangesAsync();
-            TempData["SuccessMessage"] = $"Category '{targetName}' updated successfully!";
+            TempData["SuccessMessage"] = $"Category '{targetName}' updated successfully with image!";
         }
         catch (Exception ex)
         {

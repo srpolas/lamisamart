@@ -1,18 +1,18 @@
 @page "/Admin/Products/Categories"
 @model LamisaMart.Web.Pages.Admin.Products.CategoriesModel
 @{
-    ViewData["Title"] = "Product Categories - LamisaMart Admin";
+    ViewData["Title"] = "Storefront Category Management - LamisaMart Admin";
     Layout = "_AdminLayout";
 }
 
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
     <div>
-        <h3 class="fw-bold text-dark m-0">Product Category & Subcategory Management</h3>
-        <p class="text-muted small mb-0">Manage main catalog categories, create subcategories, change banner pictures, and edit URL slugs.</p>
+        <h3 class="fw-bold text-dark m-0">Storefront Category & Sub-category Management</h3>
+        <p class="text-muted small mb-0">Organize product categories, upload category banner images, configure parent/child relationships, and toggle homepage feature badges.</p>
     </div>
     <div>
-        <button type="button" class="btn btn-danger btn-sm rounded-pill px-4 py-2 fw-bold shadow-sm" data-bs-toggle="modal" data-bs-target="#addCategoryModal">
-            <i class="bi bi-plus-lg me-1"></i> Add New Category
+        <button type="button" class="btn btn-danger btn-sm rounded-pill px-4 py-2 fw-bold shadow-sm" data-bs-toggle="modal" data-bs-target="#createCategoryModal">
+            <i class="bi bi-plus-circle me-1"></i> Add New Category
         </button>
     </div>
 </div>
@@ -33,109 +33,106 @@
     </div>
 }
 
+<!-- Search Bar -->
 <div class="card border-0 shadow-sm rounded-4 mb-4">
     <div class="card-body p-3">
-        <form method="get" action="/Admin/Products/Categories" class="row g-2 align-items-center">
-            <div class="col-12 col-md-6 ms-auto">
-                <div class="input-group input-group-sm">
-                    <input type="text" name="searchQuery" value="@Model.SearchQuery" class="form-control bg-light border-0 py-2" placeholder="Search category or subcategory..." />
-                    <button class="btn btn-outline-secondary bg-light border-0" type="submit"><i class="bi bi-search"></i></button>
+        <form method="get" class="row g-2 align-items-center">
+            <div class="col-md-9">
+                <div class="position-relative">
+                    <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                    <input type="text" asp-for="SearchQuery" class="form-control rounded-pill ps-5" placeholder="Search categories by name or slug..." />
                 </div>
+            </div>
+            <div class="col-md-3 text-end">
+                <button type="submit" class="btn btn-dark rounded-pill px-4 w-100 fw-semibold">Search</button>
             </div>
         </form>
     </div>
 </div>
 
+<!-- Category Data Table -->
 <div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-5">
     <div class="table-responsive">
         <table class="table table-hover align-middle mb-0">
-            <thead class="bg-light text-muted small border-bottom">
+            <thead class="bg-light border-bottom">
                 <tr>
-                    <th class="ps-4 py-3">Category Name</th>
-                    <th class="py-3">Category Level</th>
-                    <th class="py-3">URL Route Slug</th>
-                    <th class="py-3 text-center">Products</th>
-                    <th class="py-3 text-center">Featured</th>
-                    <th class="py-3 text-center">Status</th>
-                    <th class="pe-4 py-3 text-end">Actions</th>
+                    <th class="ps-4 py-3 text-muted small fw-bold">CATEGORY IMAGE & NAME</th>
+                    <th class="py-3 text-muted small fw-bold">SLUG</th>
+                    <th class="py-3 text-muted small fw-bold">TYPE</th>
+                    <th class="py-3 text-muted small fw-bold">PRODUCTS</th>
+                    <th class="py-3 text-muted small fw-bold">FEATURED</th>
+                    <th class="py-3 text-muted small fw-bold">STATUS</th>
+                    <th class="py-3 text-muted small fw-bold text-end pe-4">ACTIONS</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var cat in Model.CategoriesList)
                 {
-                    <tr class="@(cat.IsSubCategory ? "bg-light bg-opacity-50" : "")">
-                        <td class="ps-4">
+                    <tr>
+                        <td class="ps-4 py-3">
                             <div class="d-flex align-items-center gap-3">
-                                @if (cat.IsSubCategory)
-                                {
-                                    <span class="ps-3 text-muted"><i class="bi bi-arrow-return-right"></i></span>
-                                }
-                                <img src="@cat.ImageUrl" alt="@cat.Name" class="rounded-3 object-fit-cover shadow-sm" style="width: 44px; height: 44px;" />
+                                <img src="@cat.ImageUrl" alt="@cat.Name" class="rounded-3 border object-fit-cover p-1 bg-white shadow-sm" style="width: 46px; height: 46px;" onerror="this.src='https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=100&q=80'" />
                                 <div>
-                                    <h6 class="fw-bold text-dark mb-0 fs-7">@cat.Name</h6>
+                                    <div class="fw-bold text-dark fs-6">
+                                        @if (cat.IsSubCategory)
+                                        {
+                                            <span class="text-muted fw-normal me-1">&mdash;</span>
+                                        }
+                                        @cat.Name
+                                    </div>
                                     @if (cat.IsSubCategory)
                                     {
-                                        <small class="text-muted fs-7">Subcategory</small>
+                                        <small class="badge bg-light text-muted border fs-8">Parent: @cat.ParentCategoryName</small>
                                     }
                                 </div>
                             </div>
                         </td>
+                        <td><code class="text-danger fw-bold fs-8">/category/@cat.Slug</code></td>
                         <td>
                             @if (cat.IsSubCategory)
                             {
-                                <span class="badge bg-info-subtle text-info border border-info-subtle rounded-pill fs-7">
-                                    <i class="bi bi-diagram-2 me-1"></i> Subcategory of @cat.ParentCategoryName
-                                </span>
+                                <span class="badge bg-info-subtle text-info border border-info-subtle rounded-pill px-2.5 py-1 fs-8">Sub-Category</span>
                             }
                             else
                             {
-                                <span class="badge bg-secondary-subtle text-dark border rounded-pill fs-7">
-                                    <i class="bi bi-folder2-open me-1"></i> Main Category
-                                </span>
+                                <span class="badge bg-primary-subtle text-primary border border-primary-subtle rounded-pill px-2.5 py-1 fs-8">Main Category</span>
                             }
                         </td>
-                        <td class="fs-7 text-muted">/category/@cat.Slug</td>
-                        <td class="text-center fw-bold text-dark fs-7">@cat.ProductCount Items</td>
-                        <td class="text-center">
+                        <td><span class="badge bg-secondary-subtle text-secondary border rounded-pill px-3 py-1.5 fw-bold fs-8">@cat.ProductCount Items</span></td>
+                        <td>
                             @if (cat.IsFeatured)
                             {
-                                <span class="badge bg-warning text-dark fw-bold rounded-pill">Featured</span>
+                                <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2.5 py-1 fs-8"><i class="bi bi-star-fill me-1"></i> Featured</span>
                             }
                             else
                             {
-                                <span class="badge bg-light text-muted border rounded-pill">Standard</span>
+                                <span class="badge bg-light text-muted border rounded-pill px-2.5 py-1 fs-8">Standard</span>
                             }
                         </td>
-                        <td class="text-center">
-                            <form method="post" asp-page-handler="ToggleActive" class="d-inline">
-                                <input type="hidden" name="categoryId" value="@cat.Id" />
-                                @if (cat.IsActive)
-                                {
-                                    <button type="submit" class="btn btn-sm btn-success-subtle text-success border border-success-subtle rounded-pill px-3 py-0 fs-7">Active</button>
-                                }
-                                else
-                                {
-                                    <button type="submit" class="btn btn-sm btn-secondary-subtle text-secondary border rounded-pill px-2 py-0 fs-7">Disabled</button>
-                                }
-                            </form>
+                        <td>
+                            @if (cat.IsActive)
+                            {
+                                <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-2.5 py-1 fs-8">Active</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary-subtle text-secondary border rounded-pill px-2.5 py-1 fs-8">Disabled</span>
+                            }
                         </td>
-                        <td class="pe-4 text-end">
-                            <div class="d-flex justify-content-end gap-1">
-                                <button type="button" class="btn btn-sm btn-outline-secondary rounded-circle p-0 d-inline-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" 
-                                        title="Edit Category & Change Picture"
-                                        data-id="@cat.Id"
-                                        data-name="@cat.Name"
-                                        data-slug="@cat.Slug"
-                                        data-image="@cat.ImageUrl"
-                                        data-featured="@(cat.IsFeatured ? "true" : "false")"
-                                        data-parent="@(cat.ParentCategoryId?.ToString() ?? "")"
-                                        onclick="openEditCategoryModalFromData(this)">
-                                    <i class="bi bi-pencil"></i>
+                        <td class="text-end pe-4">
+                            <button type="button" class="btn btn-sm btn-outline-primary rounded-pill px-3 me-1 fw-semibold"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#editCategoryModal"
+                                    onclick="populateEditCategoryModal('@cat.Id', '@cat.Name', '@cat.Slug', '@cat.ImageUrl', @(cat.IsFeatured ? "true" : "false"), '@(cat.ParentCategoryId?.ToString() ?? "")')">
+                                <i class="bi bi-pencil me-1"></i> Edit
+                            </button>
+                            <form method="post" asp-page-handler="ToggleActive" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="categoryId" value="@cat.Id" />
+                                <button type="submit" class="btn btn-sm btn-outline-warning text-dark rounded-circle p-0 d-inline-flex align-items-center justify-content-center" style="width:32px; height:32px;" title="Toggle Active">
+                                    <i class="bi bi-arrow-repeat"></i>
                                 </button>
-                                <a href="/category/@cat.Slug" target="_blank" class="btn btn-sm btn-outline-primary rounded-circle p-0 d-inline-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" title="View Storefront Category">
-                                    <i class="bi bi-box-arrow-up-right"></i>
-                                </a>
-                            </div>
+                            </form>
                         </td>
                     </tr>
                 }
@@ -144,48 +141,58 @@
     </div>
 </div>
 
-<!-- Modal: Add Category -->
-<div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+<!-- Modal: Create Category -->
+<div class="modal fade" id="createCategoryModal" tabindex="-1" aria-labelledby="createCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content rounded-4 border-0 shadow">
             <div class="modal-header border-bottom-0 pb-0">
-                <h5 class="modal-title fw-bold text-dark" id="addCategoryModalLabel">Add New Category / Subcategory</h5>
+                <h5 class="modal-title fw-bold text-dark" id="createCategoryModalLabel"><i class="bi bi-plus-circle me-1 text-danger"></i> Add New Category</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-4">
-                <form method="post" asp-page-handler="CreateCategory">
+                <form method="post" asp-page-handler="CreateCategory" enctype="multipart/form-data">
                     @Html.AntiForgeryToken()
 
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold small text-dark">Parent Category (Optional)</label>
-                        <select name="parentCategoryId" class="form-select rounded-3">
-                            <option value="">-- None (Main Category) --</option>
-                            @foreach (var parentCat in Model.MainCategoriesList)
-                            {
-                                <option value="@parentCat.Id">@parentCat.Name</option>
-                            }
-                        </select>
-                        <div class="form-text fs-7">Select a parent category to create a Subcategory. Select 'None' for a Main Category.</div>
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small text-dark">Category Name <span class="text-danger">*</span></label>
+                            <input type="text" name="categoryName" class="form-control rounded-3" placeholder="e.g. Jamdani Saree" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small text-dark">Parent Category (Optional)</label>
+                            <select name="parentCategoryId" class="form-select rounded-3">
+                                <option value="">-- None (Top Level Main Category) --</option>
+                                @foreach (var mainCat in Model.MainCategoriesList)
+                                {
+                                    <option value="@mainCat.Id">@mainCat.Name</option>
+                                }
+                            </select>
+                        </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold small text-dark">Category Name <span class="text-danger">*</span></label>
-                        <input type="text" name="categoryName" class="form-control rounded-3" placeholder="e.g. Dhakai Jamdani" required />
+                    <div class="p-3 bg-light rounded-3 border mb-3">
+                        <label class="form-label fw-bold text-dark mb-1"><i class="bi bi-image me-1 text-danger"></i> Category Image Source</label>
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted mb-1">Option A: Upload Image File</label>
+                                <input type="file" name="categoryImageFile" class="form-control rounded-3" accept="image/*" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted mb-1">Option B: Enter Image URL</label>
+                                <input type="text" name="imageUrl" class="form-control rounded-3" placeholder="https://images.unsplash.com/... or /images/cat.jpg" />
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold small text-dark">Category Banner Image URL</label>
-                        <input type="text" name="imageUrl" class="form-control rounded-3" placeholder="https://images.unsplash.com/..." value="https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=500&q=80" />
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" name="isFeatured" value="true" id="chkFeaturedCreateCat" checked />
+                        <label class="form-check-label fw-bold text-dark small" for="chkFeaturedCreateCat">Feature on Homepage Category Grid</label>
                     </div>
 
-                    <div class="mb-3 form-check form-switch">
-                        <input class="form-check-input" type="checkbox" name="isFeatured" value="true" id="catFeaturedCheck" checked />
-                        <label class="form-check-label fw-bold text-dark small" for="catFeaturedCheck">Promote on Storefront Navigation Bar</label>
-                    </div>
-
-                    <div class="pt-3">
-                        <button type="submit" class="btn btn-danger w-100 rounded-pill py-2 fw-bold shadow-sm">
-                            <i class="bi bi-check-circle me-1"></i> Save Category
+                    <div class="pt-3 border-top text-end">
+                        <button type="button" class="btn btn-light rounded-pill me-2 px-3 fw-semibold" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-danger rounded-pill px-4 fw-bold shadow-sm">
+                            <i class="bi bi-cloud-arrow-up me-1"></i> Upload & Create Category
                         </button>
                     </div>
                 </form>
@@ -194,61 +201,64 @@
     </div>
 </div>
 
-<!-- Modal: Edit Category (Change Picture & Properties) -->
+<!-- Modal: Edit Category -->
 <div class="modal fade" id="editCategoryModal" tabindex="-1" aria-labelledby="editCategoryModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content rounded-4 border-0 shadow">
             <div class="modal-header border-bottom-0 pb-0">
-                <h5 class="modal-title fw-bold text-dark" id="editCategoryModalLabel">Edit Category & Image</h5>
+                <h5 class="modal-title fw-bold text-dark" id="editCategoryModalLabel"><i class="bi bi-pencil-square me-1 text-danger"></i> Edit Category Details</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-4">
-                <form method="post" asp-page-handler="EditCategory">
+                <form method="post" asp-page-handler="EditCategory" enctype="multipart/form-data">
                     @Html.AntiForgeryToken()
-                    <input type="hidden" name="categoryId" id="editCategoryId" />
+                    <input type="hidden" id="editCategoryId" name="categoryId" />
+
+                    <div class="row g-3 mb-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small text-dark">Category Name <span class="text-danger">*</span></label>
+                            <input type="text" id="editCategoryName" name="categoryName" class="form-control rounded-3" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small text-dark">Category Slug</label>
+                            <input type="text" id="editCategorySlug" name="slug" class="form-control rounded-3" />
+                        </div>
+                    </div>
 
                     <div class="mb-3">
-                        <label class="form-label fw-semibold small text-dark">Parent Category (Optional)</label>
-                        <select name="parentCategoryId" id="editParentCategoryId" class="form-select rounded-3">
-                            <option value="">-- None (Main Category) --</option>
-                            @foreach (var parentCat in Model.MainCategoriesList)
+                        <label class="form-label fw-semibold small text-dark">Parent Category</label>
+                        <select id="editParentCategoryId" name="parentCategoryId" class="form-select rounded-3">
+                            <option value="">-- None (Top Level Main Category) --</option>
+                            @foreach (var mainCat in Model.MainCategoriesList)
                             {
-                                <option value="@parentCat.Id">@parentCat.Name</option>
+                                <option value="@mainCat.Id">@mainCat.Name</option>
                             }
                         </select>
-                        <div class="form-text fs-7">Select 'None' for a Main Category, or pick a parent to convert to Subcategory.</div>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold small text-dark">Category Name <span class="text-danger">*</span></label>
-                        <input type="text" name="categoryName" id="editCategoryName" class="form-control rounded-3" required />
+                    <div class="p-3 bg-light rounded-3 border mb-3">
+                        <label class="form-label fw-bold text-dark mb-1"><i class="bi bi-image me-1 text-danger"></i> Category Image Source</label>
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted mb-1">Option A: Upload New Image File</label>
+                                <input type="file" name="editCategoryImageFile" class="form-control rounded-3" accept="image/*" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted mb-1">Option B: Image URL</label>
+                                <input type="text" id="editImageUrl" name="imageUrl" class="form-control rounded-3" />
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold small text-dark">URL Route Slug</label>
-                        <input type="text" name="slug" id="editCategorySlug" class="form-control rounded-3" />
+                    <div class="form-check form-switch mb-3">
+                        <input class="form-check-input" type="checkbox" id="editIsFeatured" name="isFeatured" value="true" />
+                        <label class="form-check-label fw-bold text-dark small" for="editIsFeatured">Feature on Homepage Category Grid</label>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold small text-dark">Category Picture Image URL <span class="text-danger">*</span></label>
-                        <input type="text" name="imageUrl" id="editCategoryImageUrl" class="form-control rounded-3" placeholder="https://images.unsplash.com/..." required oninput="previewEditImage(this.value)" />
-                        <div class="form-text fs-7">Enter direct image link (e.g. Unsplash CDN or direct image URL).</div>
-                    </div>
-                    
-                    <!-- Live Image Preview Box -->
-                    <div class="mb-3 text-center bg-light p-2 rounded-3 border">
-                        <span class="d-block small text-muted mb-1">Image Preview:</span>
-                        <img id="editCategoryPreviewImg" src="" alt="Preview" class="rounded-3 object-fit-cover shadow-sm" style="width: 120px; height: 120px;" />
-                    </div>
-
-                    <div class="mb-3 form-check form-switch">
-                        <input class="form-check-input" type="checkbox" name="isFeatured" value="true" id="editIsFeaturedCheck" />
-                        <label class="form-check-label fw-bold text-dark small" for="editIsFeaturedCheck">Promote on Storefront Navigation Bar</label>
-                    </div>
-
-                    <div class="pt-3">
-                        <button type="submit" class="btn btn-danger w-100 rounded-pill py-2 fw-bold shadow-sm">
-                            <i class="bi bi-floppy me-1"></i> Save Changes
+                    <div class="pt-3 border-top text-end">
+                        <button type="button" class="btn btn-light rounded-pill me-2 px-3 fw-semibold" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-danger rounded-pill px-4 fw-bold shadow-sm">
+                            <i class="bi bi-floppy me-1"></i> Save Category Changes
                         </button>
                     </div>
                 </form>
@@ -259,36 +269,13 @@
 
 @section Scripts {
     <script>
-        function openEditCategoryModalFromData(btn) {
-            const id = btn.getAttribute('data-id') || '';
-            const name = btn.getAttribute('data-name') || '';
-            const slug = btn.getAttribute('data-slug') || '';
-            const imageUrl = btn.getAttribute('data-image') || '';
-            const isFeatured = btn.getAttribute('data-featured') === 'true';
-            const parentId = btn.getAttribute('data-parent') || '';
-
+        function populateEditCategoryModal(id, name, slug, img, featured, parentId) {
             document.getElementById('editCategoryId').value = id;
             document.getElementById('editCategoryName').value = name;
             document.getElementById('editCategorySlug').value = slug;
-            document.getElementById('editCategoryImageUrl').value = imageUrl;
-            document.getElementById('editIsFeaturedCheck').checked = isFeatured;
-
-            const parentSelect = document.getElementById('editParentCategoryId');
-            if (parentSelect) {
-                parentSelect.value = parentId;
-            }
-
-            previewEditImage(imageUrl);
-
-            const modal = new bootstrap.Modal(document.getElementById('editCategoryModal'));
-            modal.show();
-        }
-
-        function previewEditImage(url) {
-            const img = document.getElementById('editCategoryPreviewImg');
-            if (img) {
-                img.src = url || 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=300&q=80';
-            }
+            document.getElementById('editImageUrl').value = img;
+            document.getElementById('editIsFeatured').checked = featured;
+            document.getElementById('editParentCategoryId').value = parentId || "";
         }
     </script>
 }

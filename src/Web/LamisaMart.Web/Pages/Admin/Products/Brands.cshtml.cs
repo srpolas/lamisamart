@@ -8,10 +8,12 @@ namespace LamisaMart.Web.Pages.Admin.Products;
 [Authorize(Roles = "SuperAdmin,SuperUser,Admin")]
 public class BrandsModel : PageModel
 {
+    private readonly IWebHostEnvironment _environment;
     private readonly ILogger<BrandsModel> _logger;
 
-    public BrandsModel(ILogger<BrandsModel> logger)
+    public BrandsModel(IWebHostEnvironment environment, ILogger<BrandsModel> logger)
     {
+        _environment = environment;
         _logger = logger;
     }
 
@@ -45,7 +47,12 @@ public class BrandsModel : PageModel
         BrandsList = GetSampleBrands(SearchQuery);
     }
 
-    public IActionResult OnPostCreateBrand(string brandName, string logoUrl, bool isFeatured, string[] selectedVendors)
+    public async Task<IActionResult> OnPostCreateBrandAsync(
+        string brandName,
+        IFormFile? brandLogoFile,
+        string? logoUrl,
+        bool isFeatured,
+        string[] selectedVendors)
     {
         if (string.IsNullOrWhiteSpace(brandName))
         {
@@ -53,12 +60,35 @@ public class BrandsModel : PageModel
             return RedirectToPage();
         }
 
+        string finalLogoUrl = logoUrl?.Trim() ?? string.Empty;
+
+        // Process uploaded brand logo file if provided
+        if (brandLogoFile != null && brandLogoFile.Length > 0)
+        {
+            var uploadsFolder = Path.Combine(_environment.WebRootPath, "uploads", "brands");
+            Directory.CreateDirectory(uploadsFolder);
+            var fileName = $"brand_{Guid.NewGuid():N}{Path.GetExtension(brandLogoFile.FileName)}";
+            var filePath = Path.Combine(uploadsFolder, fileName);
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await brandLogoFile.CopyToAsync(stream);
+            }
+            finalLogoUrl = $"/uploads/brands/{fileName}";
+        }
+
         var vendorCount = selectedVendors != null ? selectedVendors.Length : 0;
-        TempData["SuccessMessage"] = $"Brand '{brandName.Trim()}' created successfully and authorized for {vendorCount} vendor(s)!";
+        TempData["SuccessMessage"] = $"Brand '{brandName.Trim()}' created successfully with logo and authorized for {vendorCount} vendor(s)!";
         return RedirectToPage();
     }
 
-    public IActionResult OnPostEditBrand(Guid brandId, string brandName, string slug, string logoUrl, bool isFeatured, string[] selectedVendors)
+    public async Task<IActionResult> OnPostEditBrandAsync(
+        Guid brandId,
+        string brandName,
+        string slug,
+        IFormFile? editBrandLogoFile,
+        string? logoUrl,
+        bool isFeatured,
+        string[] selectedVendors)
     {
         if (string.IsNullOrWhiteSpace(brandName))
         {
@@ -66,8 +96,24 @@ public class BrandsModel : PageModel
             return RedirectToPage();
         }
 
+        string finalLogoUrl = logoUrl?.Trim() ?? string.Empty;
+
+        // Process uploaded brand logo file if provided
+        if (editBrandLogoFile != null && editBrandLogoFile.Length > 0)
+        {
+            var uploadsFolder = Path.Combine(_environment.WebRootPath, "uploads", "brands");
+            Directory.CreateDirectory(uploadsFolder);
+            var fileName = $"brand_{Guid.NewGuid():N}{Path.GetExtension(editBrandLogoFile.FileName)}";
+            var filePath = Path.Combine(uploadsFolder, fileName);
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await editBrandLogoFile.CopyToAsync(stream);
+            }
+            finalLogoUrl = $"/uploads/brands/{fileName}";
+        }
+
         var vendorCount = selectedVendors != null ? selectedVendors.Length : 0;
-        TempData["SuccessMessage"] = $"Brand '{brandName.Trim()}' updated successfully with {vendorCount} authorized vendor(s)!";
+        TempData["SuccessMessage"] = $"Brand '{brandName.Trim()}' updated successfully with logo and {vendorCount} authorized vendor(s)!";
         return RedirectToPage();
     }
 

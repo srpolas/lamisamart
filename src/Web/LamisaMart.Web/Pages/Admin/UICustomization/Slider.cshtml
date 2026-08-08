@@ -9,11 +9,11 @@
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
     <div>
         <h3 class="fw-bold text-dark m-0">Storefront Hero Slider & Banner Customization</h3>
-        <p class="text-muted small mb-0">Manage home page hero banner slides, custom images, headline text, promotional badges, and action buttons.</p>
+        <p class="text-muted small mb-0">Manage home page hero banner slides with direct image uploads or URL links, headline text, promotional badges, and action buttons.</p>
     </div>
     <div>
         <button type="button" class="btn btn-danger btn-sm rounded-pill px-4 py-2 fw-bold shadow-sm" data-bs-toggle="modal" data-bs-target="#addSlideModal">
-            <i class="bi bi-plus-circle me-1"></i> Add New Hero Slide
+            <i class="bi bi-cloud-arrow-up me-1"></i> Add New Hero Slide
         </button>
     </div>
 </div>
@@ -123,17 +123,25 @@
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content rounded-4 border-0 shadow">
             <div class="modal-header border-bottom-0 pb-0">
-                <h5 class="modal-title fw-bold text-dark" id="addSlideModalLabel"><i class="bi bi-plus-circle me-1 text-danger"></i> Add New Hero Banner Slide</h5>
+                <h5 class="modal-title fw-bold text-dark" id="addSlideModalLabel"><i class="bi bi-cloud-arrow-up me-1 text-danger"></i> Add New Hero Banner Slide</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-4">
-                <form method="post" asp-page-handler="AddSlide">
+                <form method="post" asp-page-handler="AddSlide" enctype="multipart/form-data">
                     @Html.AntiForgeryToken()
 
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold small text-dark">Slide Background Image URL <span class="text-danger">*</span></label>
-                        <input type="text" name="imageUrl" class="form-control rounded-3" placeholder="/images/banner1.jpg or https://images.unsplash.com/..." required />
-                        <div class="form-text fs-8 text-muted">Recommended resolution: 1200x500px or high resolution banner photo.</div>
+                    <div class="p-3 bg-light rounded-3 border mb-3">
+                        <label class="form-label fw-bold text-dark mb-1"><i class="bi bi-image me-1 text-danger"></i> Slide Image Source</label>
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted mb-1">Option A: Upload Image File</label>
+                                <input type="file" name="slideFile" class="form-control rounded-3" accept="image/*" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted mb-1">Option B: Enter Image URL Link</label>
+                                <input type="text" name="imageUrl" class="form-control rounded-3" placeholder="/images/banner1.jpg or https://..." />
+                            </div>
+                        </div>
                     </div>
 
                     <div class="row g-3 mb-3">
@@ -181,7 +189,7 @@
                     <div class="pt-3 border-top text-end">
                         <button type="button" class="btn btn-light rounded-pill me-2 px-3 fw-semibold" data-bs-dismiss="modal">Cancel</button>
                         <button type="submit" class="btn btn-danger rounded-pill px-4 fw-bold shadow-sm">
-                            <i class="bi bi-floppy me-1"></i> Create Slide
+                            <i class="bi bi-cloud-arrow-up me-1"></i> Upload & Create Slide
                         </button>
                     </div>
                 </form>
@@ -195,17 +203,26 @@
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content rounded-4 border-0 shadow">
             <div class="modal-header border-bottom-0 pb-0">
-                <h5 class="modal-title fw-bold text-dark" id="editSlideModalLabel"><i class="bi bi-pencil-square me-1 text-danger"></i> Edit Hero Slide & Overlay Text</h5>
+                <h5 class="modal-title fw-bold text-dark" id="editSlideModalLabel"><i class="bi bi-pencil-square me-1 text-danger"></i> Edit Hero Slide & Image</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-4">
-                <form method="post" asp-page-handler="EditSlide">
+                <form method="post" asp-page-handler="EditSlide" enctype="multipart/form-data">
                     @Html.AntiForgeryToken()
                     <input type="hidden" id="editSlideId" name="id" />
 
-                    <div class="mb-3">
-                        <label class="form-label fw-semibold small text-dark">Slide Background Image URL <span class="text-danger">*</span></label>
-                        <input type="text" id="editImageUrl" name="imageUrl" class="form-control rounded-3" required />
+                    <div class="p-3 bg-light rounded-3 border mb-3">
+                        <label class="form-label fw-bold text-dark mb-1"><i class="bi bi-image me-1 text-danger"></i> Slide Image Source</label>
+                        <div class="row g-2">
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted mb-1">Option A: Upload New Image File</label>
+                                <input type="file" name="editSlideFile" class="form-control rounded-3" accept="image/*" />
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label small text-muted mb-1">Option B: Image URL Link</label>
+                                <input type="text" id="editImageUrl" name="imageUrl" class="form-control rounded-3" />
+                            </div>
+                        </div>
                     </div>
 
                     <div class="row g-3 mb-3">

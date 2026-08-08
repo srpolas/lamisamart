@@ -7,6 +7,13 @@ namespace LamisaMart.Web.Pages.Admin.UICustomization;
 [Authorize(Roles = "SuperAdmin,SuperUser,Admin")]
 public class SliderModel : PageModel
 {
+    private readonly IWebHostEnvironment _environment;
+
+    public SliderModel(IWebHostEnvironment environment)
+    {
+        _environment = environment;
+    }
+
     public static List<HeroSlideItem> SlidesStore { get; set; } = InitDefaultSlides();
 
     public class HeroSlideItem
@@ -30,26 +37,43 @@ public class SliderModel : PageModel
         SlidesList = SlidesStore.OrderBy(s => s.SortOrder).ToList();
     }
 
-    public IActionResult OnPostAddSlide(
-        string imageUrl,
-        string badgeText,
-        string title,
-        string subtitle,
-        string buttonText,
-        string buttonLink,
-        string textAlignment,
+    public async Task<IActionResult> OnPostAddSlideAsync(
+        IFormFile? slideFile,
+        string? imageUrl,
+        string? badgeText,
+        string? title,
+        string? subtitle,
+        string? buttonText,
+        string? buttonLink,
+        string? textAlignment,
         int sortOrder)
     {
-        if (string.IsNullOrWhiteSpace(imageUrl) || string.IsNullOrWhiteSpace(title))
+        string finalImageUrl = imageUrl?.Trim() ?? string.Empty;
+
+        // Process uploaded image file if provided
+        if (slideFile != null && slideFile.Length > 0)
         {
-            TempData["ErrorMessage"] = "Slider image URL and slide title are required.";
+            var uploadsFolder = Path.Combine(_environment.WebRootPath, "uploads", "slider");
+            Directory.CreateDirectory(uploadsFolder);
+            var fileName = $"slide_{Guid.NewGuid():N}{Path.GetExtension(slideFile.FileName)}";
+            var filePath = Path.Combine(uploadsFolder, fileName);
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await slideFile.CopyToAsync(stream);
+            }
+            finalImageUrl = $"/uploads/slider/{fileName}";
+        }
+
+        if (string.IsNullOrWhiteSpace(finalImageUrl) || string.IsNullOrWhiteSpace(title))
+        {
+            TempData["ErrorMessage"] = "Please select an image file or provide an Image URL, and enter a slide title.";
             return RedirectToPage();
         }
 
         var newSlide = new HeroSlideItem
         {
             Id = Guid.NewGuid(),
-            ImageUrl = imageUrl.Trim(),
+            ImageUrl = finalImageUrl,
             BadgeText = badgeText?.Trim() ?? "",
             Title = title.Trim(),
             Subtitle = subtitle?.Trim() ?? "",
@@ -61,28 +85,46 @@ public class SliderModel : PageModel
         };
 
         SlidesStore.Add(newSlide);
-        TempData["SuccessMessage"] = $"New Hero Slider slide '{newSlide.Title}' added successfully!";
+        TempData["SuccessMessage"] = $"New Hero Slider slide '{newSlide.Title}' uploaded & added successfully!";
         return RedirectToPage();
     }
 
-    public IActionResult OnPostEditSlide(
+    public async Task<IActionResult> OnPostEditSlideAsync(
         Guid id,
-        string imageUrl,
-        string badgeText,
-        string title,
-        string subtitle,
-        string buttonText,
-        string buttonLink,
-        string textAlignment,
+        IFormFile? editSlideFile,
+        string? imageUrl,
+        string? badgeText,
+        string? title,
+        string? subtitle,
+        string? buttonText,
+        string? buttonLink,
+        string? textAlignment,
         int sortOrder,
         bool isActive)
     {
         var slide = SlidesStore.FirstOrDefault(s => s.Id == id);
         if (slide != null)
         {
-            slide.ImageUrl = imageUrl.Trim();
+            // Process uploaded image file if provided
+            if (editSlideFile != null && editSlideFile.Length > 0)
+            {
+                var uploadsFolder = Path.Combine(_environment.WebRootPath, "uploads", "slider");
+                Directory.CreateDirectory(uploadsFolder);
+                var fileName = $"slide_{Guid.NewGuid():N}{Path.GetExtension(editSlideFile.FileName)}";
+                var filePath = Path.Combine(uploadsFolder, fileName);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await editSlideFile.CopyToAsync(stream);
+                }
+                slide.ImageUrl = $"/uploads/slider/{fileName}";
+            }
+            else if (!string.IsNullOrWhiteSpace(imageUrl))
+            {
+                slide.ImageUrl = imageUrl.Trim();
+            }
+
             slide.BadgeText = badgeText?.Trim() ?? "";
-            slide.Title = title.Trim();
+            if (!string.IsNullOrWhiteSpace(title)) slide.Title = title.Trim();
             slide.Subtitle = subtitle?.Trim() ?? "";
             slide.ButtonText = buttonText?.Trim() ?? "SHOP NOW";
             slide.ButtonLink = buttonLink?.Trim() ?? "/category/saree";
