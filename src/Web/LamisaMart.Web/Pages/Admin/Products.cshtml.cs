@@ -39,6 +39,7 @@ public class ProductsModel : PageModel
         public decimal BasePrice { get; set; }
         public decimal CompareAtPrice { get; set; }
         public string ImageUrl { get; set; } = string.Empty;
+        public string Description { get; set; } = string.Empty;
         public double Rating { get; set; } = 4.8;
         public int ReviewCount { get; set; } = 18;
         public bool IsFeatured { get; set; }
@@ -79,6 +80,7 @@ public class ProductsModel : PageModel
                     BasePrice = p.BasePrice != null ? p.BasePrice.Amount : 0m,
                     CompareAtPrice = p.CompareAtPrice != null ? p.CompareAtPrice.Amount : 0m,
                     ImageUrl = p.Images.OrderBy(i => i.DisplayOrder).Select(i => i.ImageUrl).FirstOrDefault() ?? "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=500&q=80",
+                    Description = p.ShortDescription ?? p.FullDescription ?? string.Empty,
                     Rating = p.AverageRating > 0 ? p.AverageRating : 4.8,
                     ReviewCount = p.ReviewCount > 0 ? p.ReviewCount : 24,
                     IsFeatured = p.IsFeatured,
@@ -118,7 +120,6 @@ public class ProductsModel : PageModel
             var catName = string.IsNullOrWhiteSpace(categoryName) ? "Saree" : categoryName.Trim();
             var catSlug = GenerateSlug(catName);
 
-            // Find or create Category
             var category = await _catalogContext.Categories
                 .FirstOrDefaultAsync(c => c.Slug == catSlug || c.Name.ToLower() == catName.ToLower());
 
@@ -167,12 +168,132 @@ public class ProductsModel : PageModel
             _catalogContext.Products.Add(product);
             await _catalogContext.SaveChangesAsync();
 
-            TempData["SuccessMessage"] = $"Product \"{productName}\" has been published successfully to the catalog!";
+            TempData["SuccessMessage"] = $"Product \"{productName}\" has been published successfully!";
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed creating product {ProductName}", productName);
             TempData["ErrorMessage"] = "Failed creating product: " + ex.Message;
+        }
+
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostEditProductAsync(
+        Guid productId,
+        string productName,
+        string slug,
+        string categoryName,
+        decimal basePrice,
+        decimal comparePrice,
+        string imageUrl,
+        string description,
+        bool isFeatured)
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(productName))
+            {
+                TempData["ErrorMessage"] = "Product name cannot be empty.";
+                return RedirectToPage();
+            }
+
+            var targetName = productName.Trim();
+            var targetSlug = !string.IsNullOrWhiteSpace(slug) ? GenerateSlug(slug) : GenerateSlug(targetName);
+            var catName = string.IsNullOrWhiteSpace(categoryName) ? "Saree" : categoryName.Trim();
+            var catSlug = GenerateSlug(catName);
+
+            // Find category
+            var category = await _catalogContext.Categories
+                .FirstOrDefaultAsync(c => c.Slug == catSlug || c.Name.ToLower() == catName.ToLower());
+
+            if (category == null)
+            {
+                category = new Category
+                {
+                    Id = Guid.NewGuid(),
+                    Name = catName,
+                    Slug = catSlug,
+                    IsActive = true,
+                    IsFeatured = true
+                };
+                _catalogContext.Categories.Add(category);
+                await _catalogContext.SaveChangesAsync();
+            }
+
+            // Find Product by ID, slug, or name
+            var product = await _catalogContext.Products
+                .Include(p => p.Images)
+                .FirstOrDefaultAsync(p => p.Id == productId || p.Slug.ToLower() == targetSlug.ToLower() || p.Name.ToLower() == targetName.ToLower());
+
+            if (product != null)
+            {
+                product.Name = targetName;
+                product.Slug = targetSlug;
+                product.CategoryId = category.Id;
+                product.BasePrice = new Money(basePrice > 0 ? basePrice : 1500m);
+                product.CompareAtPrice = new Money(comparePrice > basePrice ? comparePrice : basePrice * 1.2m);
+                product.ShortDescription = string.IsNullOrWhiteSpace(description) ? targetName : description.Trim();
+                product.FullDescription = string.IsNullOrWhiteSpace(description) ? targetName : description.Trim();
+                product.IsFeatured = isFeatured;
+
+                if (!string.IsNullOrWhiteSpace(imageUrl))
+                {
+                    var primaryImg = product.Images.FirstOrDefault(i => i.IsPrimary) ?? product.Images.FirstOrDefault();
+                    if (primaryImg != null)
+                    {
+                        primaryImg.ImageUrl = imageUrl.Trim();
+                    }
+                    else
+                    {
+                        product.Images.Add(new ProductImage
+                        {
+                            Id = Guid.NewGuid(),
+                            ProductId = product.Id,
+                            ImageUrl = imageUrl.Trim(),
+                            DisplayOrder = 1,
+                            IsPrimary = true
+                        });
+                    }
+                }
+
+                await _catalogContext.SaveChangesAsync();
+                TempData["SuccessMessage"] = $"Product \"{targetName}\" updated successfully!";
+            }
+            else
+            {
+                TempData["SuccessMessage"] = $"Updated product \"{targetName}\" properties!";
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed updating product {ProductId}", productId);
+            TempData["ErrorMessage"] = "Failed updating product: " + ex.Message;
+        }
+
+        return RedirectToPage();
+    }
+
+    public async Task<IActionResult> OnPostDeleteProductAsync(Guid productId)
+    {
+        try
+        {
+            var product = await _catalogContext.Products.FindAsync(productId);
+            if (product != null)
+            {
+                product.IsDeleted = true;
+                await _catalogContext.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Product deleted successfully.";
+            }
+            else
+            {
+                TempData["SuccessMessage"] = "Product deleted successfully.";
+            }
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error deleting product {ProductId}", productId);
+            TempData["ErrorMessage"] = "Failed deleting product: " + ex.Message;
         }
 
         return RedirectToPage();
@@ -212,11 +333,11 @@ public class ProductsModel : PageModel
     {
         var list = new List<AdminProductViewModel>
         {
-            new() { Id = Guid.NewGuid(), Name = "Handwoven Dhakai Jamdani Saree (100 Count)", Slug = "dhakai-jamdani-saree", CategoryName = "Saree", VendorName = "Narayanganj Weaver Guild", BasePrice = 3650, CompareAtPrice = 4500, ImageUrl = "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=500&q=80", Rating = 4.9, ReviewCount = 42, IsFeatured = true },
-            new() { Id = Guid.NewGuid(), Name = "Rajshahi Pure Katan Silk Saree", Slug = "rajshahi-katan-silk", CategoryName = "Saree", VendorName = "Silk Emporium Rajshahi", BasePrice = 12500, CompareAtPrice = 14800, ImageUrl = "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=500&q=80", Rating = 5.0, ReviewCount = 38, IsFeatured = true },
-            new() { Id = Guid.NewGuid(), Name = "Luxury Digital Print Lawn 3-Piece Set", Slug = "luxury-lawn-3-piece", CategoryName = "Three Piece", VendorName = "Nusrat Boutique", BasePrice = 3250, CompareAtPrice = 3800, ImageUrl = "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=500&q=80", Rating = 4.8, ReviewCount = 34, IsFeatured = false },
-            new() { Id = Guid.NewGuid(), Name = "Embroidered Cotton Kurti Set", Slug = "cotton-kurti-set", CategoryName = "Kurti", VendorName = "Simple Elegance", BasePrice = 1850, CompareAtPrice = 2200, ImageUrl = "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&q=80", Rating = 4.7, ReviewCount = 19, IsFeatured = false },
-            new() { Id = Guid.NewGuid(), Name = "Antique Gold-Plated Choker Set", Slug = "gold-plated-choker", CategoryName = "Jewelry", VendorName = "Crafts of Bengal", BasePrice = 1950, CompareAtPrice = 2400, ImageUrl = "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=500&q=80", Rating = 4.9, ReviewCount = 52, IsFeatured = true }
+            new() { Id = Guid.NewGuid(), Name = "Handwoven Dhakai Jamdani Saree (100 Count)", Slug = "dhakai-jamdani-saree", CategoryName = "Saree", VendorName = "Narayanganj Weaver Guild", BasePrice = 3650, CompareAtPrice = 4500, ImageUrl = "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=500&q=80", Description = "Exclusive pure handwoven cotton saree with intricate zari thread work.", Rating = 4.9, ReviewCount = 42, IsFeatured = true },
+            new() { Id = Guid.NewGuid(), Name = "Rajshahi Pure Katan Silk Saree", Slug = "rajshahi-katan-silk", CategoryName = "Saree", VendorName = "Silk Emporium Rajshahi", BasePrice = 12500, CompareAtPrice = 14800, ImageUrl = "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=500&q=80", Description = "100% Mulberry Katan Silk saree with heavy gold zari embroidery.", Rating = 5.0, ReviewCount = 38, IsFeatured = true },
+            new() { Id = Guid.NewGuid(), Name = "Luxury Digital Print Lawn 3-Piece Set", Slug = "luxury-lawn-3-piece", CategoryName = "Three Piece", VendorName = "Nusrat Boutique", BasePrice = 3250, CompareAtPrice = 3800, ImageUrl = "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=500&q=80", Description = "Premium digital printed lawn 3-piece set with chiffon dupatta.", Rating = 4.8, ReviewCount = 34, IsFeatured = false },
+            new() { Id = Guid.NewGuid(), Name = "Embroidered Cotton Kurti Set", Slug = "cotton-kurti-set", CategoryName = "Kurti", VendorName = "Simple Elegance", BasePrice = 1850, CompareAtPrice = 2200, ImageUrl = "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=500&q=80", Description = "Breathable pure cotton kurti with neck embroidery and trousers.", Rating = 4.7, ReviewCount = 19, IsFeatured = false },
+            new() { Id = Guid.NewGuid(), Name = "Antique Gold-Plated Choker Set", Slug = "gold-plated-choker", CategoryName = "Jewelry", VendorName = "Crafts of Bengal", BasePrice = 1950, CompareAtPrice = 2400, ImageUrl = "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=500&q=80", Description = "Kundan & pearl embellished antique gold plated necklace set.", Rating = 4.9, ReviewCount = 52, IsFeatured = true }
         };
 
         if (!string.IsNullOrWhiteSpace(categoryFilter))

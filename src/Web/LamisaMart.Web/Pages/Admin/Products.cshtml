@@ -8,7 +8,7 @@
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
     <div>
         <h3 class="fw-bold text-dark m-0">Products Catalog Management</h3>
-        <p class="text-muted small mb-0">Browse all published products, add new items, toggle featured promotions, and manage catalog.</p>
+        <p class="text-muted small mb-0">Browse all published products, add new items, edit details, toggle featured promotions, and manage catalog.</p>
     </div>
     <div class="d-flex gap-2">
         <button type="button" class="btn btn-danger btn-sm rounded-pill px-4 py-2 fw-bold shadow-sm" data-bs-toggle="modal" data-bs-target="#addProductModal">
@@ -110,6 +110,7 @@
                             </td>
                             <td class="text-center">
                                 <form method="post" asp-page-handler="ToggleFeatured" class="d-inline">
+                                    @Html.AntiForgeryToken()
                                     <input type="hidden" name="productId" value="@product.Id" />
                                     @if (product.IsFeatured)
                                     {
@@ -133,9 +134,34 @@
                                 }
                             </td>
                             <td class="pe-4 text-end">
-                                <a href="/Product/@product.Slug" target="_blank" class="btn btn-sm btn-outline-primary rounded-circle p-0 d-inline-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" title="Preview Storefront">
-                                    <i class="bi bi-box-arrow-up-right"></i>
-                                </a>
+                                <div class="d-flex justify-content-end gap-1">
+                                    <button type="button" class="btn btn-sm btn-outline-secondary rounded-circle p-0 d-inline-flex align-items-center justify-content-center" style="width: 32px; height: 32px;"
+                                            title="Edit Product Details"
+                                            data-id="@product.Id"
+                                            data-name="@product.Name"
+                                            data-slug="@product.Slug"
+                                            data-category="@product.CategoryName"
+                                            data-price="@product.BasePrice"
+                                            data-compareprice="@product.CompareAtPrice"
+                                            data-image="@product.ImageUrl"
+                                            data-description="@product.Description"
+                                            data-featured="@(product.IsFeatured ? "true" : "false")"
+                                            onclick="openEditProductModalFromData(this)">
+                                        <i class="bi bi-pencil"></i>
+                                    </button>
+
+                                    <form method="post" asp-page-handler="DeleteProduct" class="d-inline" onsubmit="return confirm('Delete product &quot;@product.Name&quot;?');">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="productId" value="@product.Id" />
+                                        <button type="submit" class="btn btn-sm btn-outline-danger rounded-circle p-0 d-inline-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" title="Delete Product">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+
+                                    <a href="/Product/@product.Slug" target="_blank" class="btn btn-sm btn-outline-primary rounded-circle p-0 d-inline-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" title="Preview Storefront">
+                                        <i class="bi bi-box-arrow-up-right"></i>
+                                    </a>
+                                </div>
                             </td>
                         </tr>
                     }
@@ -164,7 +190,8 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-4">
-                <form method="post" action="/Admin/Products?handler=CreateProduct">
+                <form method="post" asp-page-handler="CreateProduct">
+                    @Html.AntiForgeryToken()
                     <div class="row g-3">
                         <div class="col-md-8">
                             <label class="form-label fw-semibold small text-dark">Product Title / Name <span class="text-danger">*</span></label>
@@ -176,8 +203,16 @@
                                 <option value="Saree" selected>Saree</option>
                                 <option value="Three Piece">Three Piece</option>
                                 <option value="Kurti">Kurti</option>
+                                <option value="Lehenga & Gown">Lehenga & Gown</option>
+                                <option value="Men's Panjabi">Men's Panjabi</option>
+                                <option value="Men's Apparel">Men's Apparel</option>
+                                <option value="Kids Wear">Kids Wear</option>
+                                <option value="Footwear">Footwear</option>
+                                <option value="Bags & Purses">Bags & Purses</option>
                                 <option value="Jewelry">Jewelry</option>
-                                <option value="Cosmetics">Cosmetics</option>
+                                <option value="Innerwear">Innerwear</option>
+                                <option value="Cosmetics & Skincare">Cosmetics & Skincare</option>
+                                <option value="Home & Handicraft">Home & Handicraft</option>
                             </select>
                         </div>
 
@@ -226,3 +261,131 @@
         </div>
     </div>
 </div>
+
+<!-- Modal: Edit Product -->
+<div class="modal fade" id="editProductModal" tabindex="-1" aria-labelledby="editProductModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content rounded-4 border-0 shadow">
+            <div class="modal-header border-bottom-0 pb-0">
+                <h5 class="modal-title fw-bold text-dark" id="editProductModalLabel">Edit Product Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form method="post" asp-page-handler="EditProduct">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="productId" id="editProductId" />
+
+                    <div class="row g-3">
+                        <div class="col-md-8">
+                            <label class="form-label fw-semibold small text-dark">Product Title / Name <span class="text-danger">*</span></label>
+                            <input type="text" name="productName" id="editProductName" class="form-control rounded-3" required />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold small text-dark">Category <span class="text-danger">*</span></label>
+                            <select name="categoryName" id="editProductCategory" class="form-select rounded-3" required>
+                                <option value="Saree">Saree</option>
+                                <option value="Three Piece">Three Piece</option>
+                                <option value="Kurti">Kurti</option>
+                                <option value="Lehenga & Gown">Lehenga & Gown</option>
+                                <option value="Men's Panjabi">Men's Panjabi</option>
+                                <option value="Men's Apparel">Men's Apparel</option>
+                                <option value="Kids Wear">Kids Wear</option>
+                                <option value="Footwear">Footwear</option>
+                                <option value="Bags & Purses">Bags & Purses</option>
+                                <option value="Jewelry">Jewelry</option>
+                                <option value="Innerwear">Innerwear</option>
+                                <option value="Cosmetics & Skincare">Cosmetics & Skincare</option>
+                                <option value="Home & Handicraft">Home & Handicraft</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold small text-dark">URL Route Slug</label>
+                            <input type="text" name="slug" id="editProductSlug" class="form-control rounded-3" placeholder="dhakai-jamdani-saree" />
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold small text-dark">Selling Price (BDT) <span class="text-danger">*</span></label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0">৳</span>
+                                <input type="number" name="basePrice" id="editProductPrice" step="50" class="form-control rounded-end-3" required />
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold small text-dark">Compare-At Price (BDT)</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-light border-end-0">৳</span>
+                                <input type="number" name="comparePrice" id="editProductComparePrice" step="50" class="form-control rounded-end-3" />
+                            </div>
+                        </div>
+
+                        <div class="col-md-8">
+                            <label class="form-label fw-semibold small text-dark">Primary Image URL <span class="text-danger">*</span></label>
+                            <input type="text" name="imageUrl" id="editProductImageUrl" class="form-control rounded-3" required oninput="previewEditProductImg(this.value)" />
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <span class="d-block small text-muted mb-1">Image Preview:</span>
+                            <img id="editProductPreviewImg" src="" alt="Preview" class="rounded-3 object-fit-cover shadow-sm border" style="width: 60px; height: 75px;" />
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-semibold small text-dark">Product Description & Specs</label>
+                            <textarea name="description" id="editProductDescription" class="form-control rounded-3" rows="3"></textarea>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="form-check form-switch pt-2">
+                                <input class="form-check-input" type="checkbox" name="isFeatured" value="true" id="editProductIsFeatured" />
+                                <label class="form-check-label fw-bold text-dark small" for="editProductIsFeatured">Promote on Storefront Homepage (Featured Badge)</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-4 border-top mt-3 text-end">
+                        <button type="button" class="btn btn-outline-secondary rounded-pill px-4 me-2" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-danger rounded-pill px-4 py-2 fw-bold shadow-sm">
+                            <i class="bi bi-floppy me-1"></i> Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function openEditProductModalFromData(btn) {
+            const id = btn.getAttribute('data-id') || '';
+            const name = btn.getAttribute('data-name') || '';
+            const slug = btn.getAttribute('data-slug') || '';
+            const category = btn.getAttribute('data-category') || 'Saree';
+            const price = btn.getAttribute('data-price') || '0';
+            const comparePrice = btn.getAttribute('data-compareprice') || '0';
+            const image = btn.getAttribute('data-image') || '';
+            const description = btn.getAttribute('data-description') || '';
+            const isFeatured = btn.getAttribute('data-featured') === 'true';
+
+            document.getElementById('editProductId').value = id;
+            document.getElementById('editProductName').value = name;
+            document.getElementById('editProductSlug').value = slug;
+            document.getElementById('editProductCategory').value = category;
+            document.getElementById('editProductPrice').value = price;
+            document.getElementById('editProductComparePrice').value = comparePrice;
+            document.getElementById('editProductImageUrl').value = image;
+            document.getElementById('editProductDescription').value = description;
+            document.getElementById('editProductIsFeatured').checked = isFeatured;
+
+            previewEditProductImg(image);
+
+            const modal = new bootstrap.Modal(document.getElementById('editProductModal'));
+            modal.show();
+        }
+
+        function previewEditProductImg(url) {
+            const img = document.getElementById('editProductPreviewImg');
+            if (img) {
+                img.src = url || 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=500&q=80';
+            }
+        }
+    </script>
+}
