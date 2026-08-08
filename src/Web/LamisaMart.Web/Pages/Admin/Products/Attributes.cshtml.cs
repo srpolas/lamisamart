@@ -41,7 +41,19 @@ public class AttributesModel : PageModel
             return RedirectToPage();
         }
 
-        TempData["SuccessMessage"] = $"Attribute '{name}' added successfully!";
+        TempData["SuccessMessage"] = $"Attribute '{name.Trim()}' added successfully!";
+        return RedirectToPage();
+    }
+
+    public IActionResult OnPostEditAttribute(Guid attributeId, string name, string code, string values)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            TempData["ErrorMessage"] = "Attribute name is required.";
+            return RedirectToPage();
+        }
+
+        TempData["SuccessMessage"] = $"Attribute '{name.Trim()}' updated successfully!";
         return RedirectToPage();
     }
 
