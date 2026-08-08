@@ -1,122 +1,303 @@
 @page "{slug?}"
 @model ProductModel
 @{
-    ViewData["Title"] = "Product Details";
+    ViewData["Title"] = Model.Product.Name;
 }
 
 <div class="container my-3 my-md-5 py-2 py-md-4">
     <div class="row gx-lg-5">
-        <!-- Product Images -->
+        <!-- Product Images Column -->
         <div class="col-lg-6 mb-4 mb-lg-0">
-            <div class="position-relative bg-light rounded-4 overflow-hidden shadow-sm" style="max-height: 480px; aspect-ratio: 4/5;">
-                <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=800&q=80" alt="Premium Silk Saree" class="img-fluid w-100 h-100 object-fit-cover" id="mainImage" />
-                <button class="btn btn-light position-absolute top-0 end-0 m-3 rounded-circle shadow-sm" style="width:40px;height:40px;" aria-label="Wishlist"><i class="bi bi-heart text-danger"></i></button>
+            <!-- Main Product Image -->
+            <div class="position-relative bg-light rounded-4 overflow-hidden shadow-sm" style="max-height: 520px; aspect-ratio: 4/5;">
+                <img src="@Model.Product.GalleryImages.FirstOrDefault()" alt="@Model.Product.Name" class="img-fluid w-100 h-100 object-fit-cover transition-transform duration-300" id="mainImage" />
+                
+                <button type="button" class="btn btn-light position-absolute top-0 end-0 m-3 rounded-circle shadow-sm p-0 d-flex align-items-center justify-content-center" 
+                        style="width:42px; height:42px;" title="Wishlist" onclick="toggleWishlist(this)">
+                    <i class="bi bi-heart text-danger fs-5"></i>
+                </button>
+                <span class="badge bg-danger position-absolute top-0 start-0 m-3 px-3 py-2 rounded-pill shadow-sm fw-bold">
+                    Save @Model.Product.DiscountPercent% OFF
+                </span>
             </div>
-            <!-- Thumbnails -->
-            <div class="d-flex gap-2 gap-md-3 mt-3 overflow-auto pb-2">
-                <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=150&q=80" class="rounded-3 border border-2 border-danger shadow-sm cursor-pointer" style="width: 70px; height: 70px; object-fit: cover;" />
-                <img src="https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=150&q=80" class="rounded-3 border border-1 cursor-pointer opacity-75 hover-opacity-100" style="width: 70px; height: 70px; object-fit: cover;" />
-                <img src="https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=150&q=80" class="rounded-3 border border-1 cursor-pointer opacity-75 hover-opacity-100" style="width: 70px; height: 70px; object-fit: cover;" />
-            </div>
+
+            <!-- Thumbnail Gallery List -->
+            @if (Model.Product.GalleryImages != null && Model.Product.GalleryImages.Any())
+            {
+                <div class="d-flex gap-2 gap-md-3 mt-3 overflow-x-auto pb-2 scrollbar-hidden">
+                    @for (int i = 0; i < Model.Product.GalleryImages.Count; i++)
+                    {
+                        var imgUrl = Model.Product.GalleryImages[i];
+                        <img src="@imgUrl" 
+                             alt="Thumbnail @(i+1)" 
+                             class="rounded-3 border border-2 cursor-pointer thumbnail-img @(i == 0 ? "border-danger shadow-sm active-thumb" : "border-light opacity-75")" 
+                             style="width: 76px; height: 76px; object-fit: cover;" 
+                             onclick="switchMainImage('@imgUrl', this)" />
+                    }
+                </div>
+            }
         </div>
 
-        <!-- Product Info -->
+        <!-- Product Information Column -->
         <div class="col-lg-6">
+            <!-- Breadcrumbs -->
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb fs-sm small">
                     <li class="breadcrumb-item"><a href="/" class="text-decoration-none text-muted">Home</a></li>
-                    <li class="breadcrumb-item"><a href="/category/saree" class="text-decoration-none text-muted">Saree</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Premium Silk Saree</li>
+                    <li class="breadcrumb-item"><a href="/category/@Model.Product.CategoryName.ToLower()" class="text-decoration-none text-muted">@Model.Product.CategoryName</a></li>
+                    <li class="breadcrumb-item active text-dark fw-semibold" aria-current="page">@Model.Product.Name</li>
                 </ol>
             </nav>
 
-            <h1 class="display-6 fw-bold mb-2 text-dark fs-3 fs-md-2" style="font-family: 'Hind Siliguri', sans-serif;">Premium Jamdani Silk Saree</h1>
+            <h1 class="display-6 fw-bold mb-2 text-dark fs-3 fs-md-2">@Model.Product.Name</h1>
             
-            <div class="d-flex align-items-center mb-3 flex-wrap gap-1">
-                <div class="text-warning me-1">
-                    <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i>
+            <div class="d-flex align-items-center mb-3 flex-wrap gap-2">
+                <div class="text-warning fs-7">
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-fill"></i>
+                    <i class="bi bi-star-half"></i>
                 </div>
-                <span class="text-muted small">(128 Reviews)</span>
-                <span class="mx-2 text-muted d-none d-sm-inline">|</span>
-                <span class="text-success small fw-medium"><i class="bi bi-check-circle me-1"></i> In Stock</span>
+                <span class="fw-bold text-dark fs-7">@Model.Product.Rating.ToString("0.0")</span>
+                <span class="text-muted small">(@Model.Product.ReviewCount Verified Customer Reviews)</span>
+                <span class="text-muted d-none d-sm-inline">•</span>
+                <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1 fs-7">
+                    <i class="bi bi-check-circle-fill me-1"></i> In Stock & Ready to Ship
+                </span>
             </div>
 
-            <div class="mb-3 mb-md-4">
-                <span class="fs-2 fw-bold text-danger me-2">৳ 3,650</span>
-                <span class="text-muted text-decoration-line-through fs-5">৳ 4,500</span>
-                <span class="badge bg-danger ms-2 px-2 py-1 align-middle">Save 19%</span>
+            <!-- Price Box -->
+            <div class="p-3 bg-light rounded-4 mb-4 border d-flex align-items-baseline gap-3">
+                <span class="fs-2 fw-extrabold text-danger" id="displayPrice">৳ @Model.Product.Price.ToString("N0")</span>
+                @if (Model.Product.OriginalPrice > Model.Product.Price)
+                {
+                    <span class="text-muted text-decoration-line-through fs-5">৳ @Model.Product.OriginalPrice.ToString("N0")</span>
+                }
+                <span class="badge bg-danger ms-auto px-2 py-1 align-middle rounded-pill fw-bold">
+                    Save ৳ @((Model.Product.OriginalPrice - Model.Product.Price).ToString("N0"))
+                </span>
             </div>
 
+            <!-- Description -->
             <p class="text-secondary mb-4 small fs-md-6" style="line-height: 1.6;">
-                Exclusive premium Jamdani silk saree perfect for weddings and festive occasions. Comes with an unstitched blouse piece. Woven with pure golden zari thread directly by artisans in Narayanganj.
+                @Model.Product.Description
             </p>
 
             <hr class="text-muted opacity-25 my-4" />
 
-            <!-- Variants (Color/Size) -->
-            <div class="mb-4">
-                <label class="fw-semibold mb-2 small">Select Color:</label>
-                <div class="d-flex gap-2">
-                    <div class="rounded-circle border border-2 border-danger p-1 cursor-pointer">
-                        <div class="rounded-circle" style="width:28px; height:28px; background-color: #B83256;"></div>
+            <!-- Color Swatch Selection Section -->
+            @if (Model.Product.ColorVariants != null && Model.Product.ColorVariants.Any())
+            {
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <label class="fw-bold text-dark small m-0">
+                            Select Color: <span class="text-danger" id="selectedColorName">@Model.Product.ColorVariants[0].ColorName</span>
+                        </label>
+                        <span class="text-muted fs-7"><i class="bi bi-palette me-1"></i> @Model.Product.ColorVariants.Count Variations Available</span>
                     </div>
-                    <div class="rounded-circle border border-1 p-1 cursor-pointer">
-                        <div class="rounded-circle" style="width:28px; height:28px; background-color: #1A365D;"></div>
-                    </div>
-                    <div class="rounded-circle border border-1 p-1 cursor-pointer">
-                        <div class="rounded-circle" style="width:28px; height:28px; background-color: #047857;"></div>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Add to Cart Action (Desktop / Main view) -->
-            <div class="row g-2 mb-3 mt-4">
-                <div class="col-4 col-sm-3">
-                    <div class="input-group input-group-lg">
-                        <button class="btn btn-outline-secondary px-2 bg-light fs-6" type="button">-</button>
-                        <input type="text" class="form-control text-center fw-bold bg-light fs-6 px-1" value="1" readonly>
-                        <button class="btn btn-outline-secondary px-2 bg-light fs-6" type="button">+</button>
+                    <div class="d-flex gap-3 align-items-center flex-wrap">
+                        @for (int i = 0; i < Model.Product.ColorVariants.Count; i++)
+                        {
+                            var variant = Model.Product.ColorVariants[i];
+                            <div class="color-swatch-item rounded-circle p-1 cursor-pointer border border-2 transition-all @(i == 0 ? "border-danger active-swatch shadow-sm" : "border-transparent")" 
+                                 onclick="selectColorVariant('@variant.ColorName', '@variant.ImageUrl', @variant.Price, this)" 
+                                 title="@variant.ColorName">
+                                <div class="rounded-circle shadow-inner" style="width:34px; height:34px; background-color: @variant.HexCode;"></div>
+                            </div>
+                        }
                     </div>
                 </div>
-                <div class="col-8 col-sm-9">
-                    <button class="lm-btn-primary w-100 h-100 fs-6 py-3">
-                        <i class="bi bi-cart3 me-1"></i> ADD TO CART
-                    </button>
+            }
+
+            <!-- Quantity & Actions Section -->
+            <div class="mb-4">
+                <label class="fw-bold text-dark small mb-2 d-block">Quantity:</label>
+                <div class="row g-3 align-items-center">
+                    <div class="col-5 col-sm-4 col-md-3">
+                        <div class="input-group input-group-lg border rounded-3 overflow-hidden bg-light">
+                            <button class="btn btn-light px-3 fw-bold fs-5 border-0 text-dark" type="button" onclick="changeQuantity(-1)">-</button>
+                            <input type="text" id="quantityInput" class="form-control text-center fw-bold bg-light border-0 fs-6 px-1" value="1" readonly />
+                            <button class="btn btn-light px-3 fw-bold fs-5 border-0 text-dark" type="button" onclick="changeQuantity(1)">+</button>
+                        </div>
+                    </div>
+                    <div class="col-7 col-sm-8 col-md-9">
+                        <button type="button" class="btn btn-danger btn-lg w-100 rounded-pill py-3 fw-bold shadow-sm d-flex align-items-center justify-content-center gap-2"
+                                onclick="handleAddToCart()">
+                            <i class="bi bi-cart-plus fs-5"></i> ADD TO CART
+                        </button>
+                    </div>
                 </div>
             </div>
             
             <div class="mb-4">
-                 <button class="btn btn-dark w-100 fs-6 fw-bold py-3 text-uppercase rounded-3">
-                    BUY IT NOW
+                <button type="button" class="btn btn-dark w-100 btn-lg fw-bold py-3 text-uppercase rounded-pill shadow-sm" onclick="handleBuyNow()">
+                    <i class="bi bi-lightning-fill text-warning me-1"></i> BUY IT NOW
                 </button>
             </div>
 
-            <div class="p-3 bg-light rounded-3 d-flex gap-3 align-items-center">
-                <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=100&q=80" class="rounded-circle" style="width:48px; height:48px;" />
-                <div>
-                    <div class="small text-muted">Sold by</div>
-                    <a href="/shop/nusrat-boutique" class="fw-bold text-dark text-decoration-none small fs-md-6">Nusrat Boutique <i class="bi bi-patch-check-fill text-primary"></i></a>
+            <!-- Artisan / Vendor Card -->
+            <div class="p-3 bg-light rounded-4 d-flex align-items-center justify-content-between border">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="rounded-circle bg-danger-subtle text-danger p-2 fw-bold d-flex align-items-center justify-content-center" style="width: 48px; height: 48px;">
+                        LM
+                    </div>
+                    <div>
+                        <div class="small text-muted fs-7">Authentic Verified Seller</div>
+                        <a href="/shop/@Model.Product.VendorSlug" class="fw-bold text-dark text-decoration-none small fs-md-6">
+                            @Model.Product.VendorName <i class="bi bi-patch-check-fill text-primary"></i>
+                        </a>
+                    </div>
                 </div>
+                <a href="/category/saree" class="btn btn-sm btn-outline-secondary rounded-pill px-3 fw-semibold">
+                    View Store
+                </a>
             </div>
 
+            <!-- Product Specs Table -->
+            <div class="mt-4 pt-3 border-top">
+                <h6 class="fw-bold text-dark mb-3">Product Specifications</h6>
+                <div class="row g-2 small text-muted">
+                    <div class="col-6"><strong>Fabric Material:</strong> @Model.Product.Fabric</div>
+                    <div class="col-6"><strong>Weaving Origin:</strong> @Model.Product.Origin</div>
+                    <div class="col-6"><strong>Standard Length:</strong> @Model.Product.Length</div>
+                    <div class="col-6"><strong>Return Policy:</strong> 7 Days Easy Returns</div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
 
 <!-- Floating Action Bar for Mobile Screens -->
-<div class="lm-mobile-sticky-cta d-md-none">
-    <div class="d-flex gap-2 w-100 align-items-center">
+<div class="lm-mobile-sticky-cta d-md-none position-fixed bottom-0 start-0 w-100 bg-white p-3 border-top shadow-lg z-3">
+    <div class="d-flex gap-3 w-100 align-items-center">
         <div>
-            <div class="small text-muted" style="font-size: 10px;">Total Price</div>
-            <div class="fw-bold text-danger">৳ 3,650</div>
+            <div class="text-muted fs-7">Total Amount</div>
+            <div class="fw-extrabold text-danger fs-5" id="mobileDisplayPrice">৳ @Model.Product.Price.ToString("N0")</div>
         </div>
-        <button class="lm-btn-primary flex-grow-1 py-2 fs-6">
-            <i class="bi bi-cart3 me-1"></i> ADD TO CART
+        <button type="button" class="btn btn-danger flex-grow-1 py-3 fw-bold rounded-pill shadow-sm" onclick="handleAddToCart()">
+            <i class="bi bi-bag-plus me-1"></i> ADD TO CART
         </button>
+    </div>
+</div>
+
+<!-- Toast Notification container for Add to Cart -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3 z-3">
+    <div id="cartToast" class="toast align-items-center text-bg-success border-0 rounded-3 shadow-lg" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body d-flex align-items-center gap-2">
+                <i class="bi bi-check-circle-fill fs-5"></i>
+                <span id="toastMessage">Item added to your cart!</span>
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
     </div>
 </div>
 
 <style>
     .cursor-pointer { cursor: pointer; }
-    .hover-opacity-100:hover { opacity: 1 !important; transition: 0.2s ease; }
+    .color-swatch-item { transition: all 0.2s ease; }
+    .color-swatch-item:hover { transform: scale(1.15); }
+    .active-swatch { border-color: #E11D48 !important; transform: scale(1.15); }
+    .active-thumb { border-color: #E11D48 !important; opacity: 1 !important; }
+    .thumbnail-img { transition: all 0.2s ease; }
+    .thumbnail-img:hover { opacity: 1 !important; }
 </style>
+
+@section Scripts {
+    <script>
+        const unitPrice = @Model.Product.Price;
+        let currentQty = 1;
+        let selectedColor = "@(Model.Product.ColorVariants != null && Model.Product.ColorVariants.Any() ? Model.Product.ColorVariants[0].ColorName : "")";
+
+        function switchMainImage(imageUrl, thumbEl) {
+            const mainImg = document.getElementById('mainImage');
+            if (mainImg) mainImg.src = imageUrl;
+
+            document.querySelectorAll('.thumbnail-img').forEach(el => {
+                el.classList.remove('border-danger', 'shadow-sm', 'active-thumb');
+                el.classList.add('border-light', 'opacity-75');
+            });
+
+            if (thumbEl) {
+                thumbEl.classList.remove('border-light', 'opacity-75');
+                thumbEl.classList.add('border-danger', 'shadow-sm', 'active-thumb');
+            }
+        }
+
+        function selectColorVariant(colorName, imageUrl, price, swatchEl) {
+            selectedColor = colorName;
+            const nameEl = document.getElementById('selectedColorName');
+            if (nameEl) nameEl.innerText = colorName;
+
+            document.querySelectorAll('.color-swatch-item').forEach(el => {
+                el.classList.remove('border-danger', 'active-swatch', 'shadow-sm');
+                el.classList.add('border-transparent');
+            });
+
+            if (swatchEl) {
+                swatchEl.classList.remove('border-transparent');
+                swatchEl.classList.add('border-danger', 'active-swatch', 'shadow-sm');
+            }
+
+            if (imageUrl) {
+                const mainImg = document.getElementById('mainImage');
+                if (mainImg) mainImg.src = imageUrl;
+            }
+        }
+
+        function changeQuantity(delta) {
+            const qtyInput = document.getElementById('quantityInput');
+            if (!qtyInput) return;
+
+            let qty = parseInt(qtyInput.value) || 1;
+            qty += delta;
+            if (qty < 1) qty = 1;
+            if (qty > 10) qty = 10;
+
+            qtyInput.value = qty;
+            currentQty = qty;
+
+            updatePriceDisplay();
+        }
+
+        function updatePriceDisplay() {
+            const totalPrice = unitPrice * currentQty;
+            const formatted = '৳ ' + totalPrice.toLocaleString('en-US');
+
+            const priceEl = document.getElementById('displayPrice');
+            if (priceEl) priceEl.innerText = formatted;
+
+            const mobilePriceEl = document.getElementById('mobileDisplayPrice');
+            if (mobilePriceEl) mobilePriceEl.innerText = formatted;
+        }
+
+        function handleAddToCart() {
+            const toastEl = document.getElementById('cartToast');
+            const toastMsg = document.getElementById('toastMessage');
+            const prodName = "@Model.Product.Name";
+
+            if (toastEl && toastMsg) {
+                toastMsg.innerText = `Added (${currentQty}x) "${prodName}" [Color: ${selectedColor}] to your cart!`;
+                const toast = new bootstrap.Toast(toastEl);
+                toast.show();
+            }
+        }
+
+        function handleBuyNow() {
+            window.location.href = '/Checkout?item=' + encodeURIComponent('@Model.Product.Name') + '&qty=' + currentQty + '&color=' + encodeURIComponent(selectedColor);
+        }
+
+        function toggleWishlist(btn) {
+            const icon = btn.querySelector('i');
+            if (icon.classList.contains('bi-heart')) {
+                icon.classList.remove('bi-heart');
+                icon.classList.add('bi-heart-fill');
+            } else {
+                icon.classList.remove('bi-heart-fill');
+                icon.classList.add('bi-heart');
+            }
+        }
+    </script>
+}
