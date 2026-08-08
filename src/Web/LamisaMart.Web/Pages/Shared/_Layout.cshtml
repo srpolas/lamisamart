@@ -1,152 +1,114 @@
+@using LamisaMart.Web.Pages.Admin.UICustomization
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0" />
-    <title>@ViewData["Title"] - লমিসা মার্ট | LamisaMart</title>
-    
-    <!-- SEO Meta Tags -->
-    <meta name="description" content="LamisaMart is a premium Bangladeshi multi-vendor marketplace specializing in women's fashion, sarees, kurtis, cosmetics, and jewelry." />
-    <meta name="keywords" content="LamisaMart, e-commerce, bangladesh, saree, kurti, women fashion, online shopping" />
-    <meta name="author" content="LamisaMart" />
-    <meta property="og:title" content="@ViewData["Title"] - LamisaMart" />
-    <meta property="og:description" content="Shop premium women's fashion and accessories from top vendors across Bangladesh." />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://lamisamart.com/" />
-    <meta property="og:image" content="/images/LamisaMart_design_concept.png" />
-    <meta name="twitter:card" content="summary_large_image" />
-    
-    <!-- PWA Manifest & Icons -->
-    <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#B83256" />
-    <link rel="apple-touch-icon" href="/images/icons/icon-192x192.png" />
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Lamisa Mart | Premium Women's Fashion & Lifestyle Marketplace</title>
     <!-- Bootstrap 5 CSS & Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-    
-    <!-- LamisaMart Design System -->
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <style>
+        .lm-top-bar { background-color: #0F172A; color: #94A3B8; font-size: 0.8rem; padding: 6px 0; }
+        .lm-header { background: #ffffff; border-bottom: 1px solid #E2E8F0; padding: 12px 0; position: sticky; top: 0; z-index: 1030; }
+        .lm-logo-container { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .lm-logo-badge { background: linear-gradient(135deg, #E11D48 0%, #9F1239 100%); color: white; font-weight: 800; font-size: 1.2rem; width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(225, 29, 72, 0.25); }
+        .lm-logo-text { display: flex; flex-direction: column; }
+        .lm-logo-title { font-weight: 800; font-size: 1.1rem; color: #0F172A; letter-spacing: -0.5px; line-height: 1; }
+        .lm-logo-bengali { font-size: 0.75rem; color: #E11D48; font-weight: 600; }
+        .lm-search-box { position: relative; width: 100%; max-width: 480px; }
+        .lm-search-input { border-radius: 25px; padding-left: 20px; padding-right: 45px; height: 42px; border: 1.5px solid #CBD5E1; font-size: 0.9rem; }
+        .lm-search-input:focus { border-color: #E11D48; box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.15); }
+        .lm-search-btn { position: absolute; right: 4px; top: 4px; border-radius: 50%; width: 34px; height: 34px; border: none; background: #E11D48; color: white; display: flex; align-items: center; justify-content: center; }
+        .lm-action-badge { position: absolute; top: -6px; right: -8px; background: #E11D48; color: white; font-size: 0.65rem; font-weight: 700; border-radius: 50%; min-width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; border: 2px solid white; }
+        .lm-main-nav { background: #FAF7F2; border-bottom: 1px solid #E2E8F0; overflow-x: auto; white-space: nowrap; }
+        .lm-main-nav-inner { display: flex; gap: 4px; padding: 0 15px; }
+        .lm-nav-link { padding: 10px 16px; color: #334155; font-weight: 600; font-size: 0.85rem; text-decoration: none; display: inline-block; transition: all 0.2s; }
+        .lm-nav-link:hover, .lm-nav-link.active { color: #E11D48; background: rgba(225, 29, 72, 0.06); }
+        .lm-btn-primary { background: linear-gradient(135deg, #E11D48 0%, #BE123C 100%); color: white; font-weight: 600; border-radius: 25px; padding: 10px 24px; border: none; transition: all 0.2s; box-shadow: 0 4px 14px rgba(225, 29, 72, 0.3); }
+        .lm-btn-primary:hover { background: linear-gradient(135deg, #BE123C 0%, #9F1239 100%); color: white; transform: translateY(-1px); box-shadow: 0 6px 18px rgba(225, 29, 72, 0.4); }
+        
+        /* Mobile Sticky Navigation Bar */
+        .lm-mobile-bottom-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff; border-top: 1px solid #E2E8F0; z-index: 1040; padding: 6px 0; box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08); }
+        .lm-action-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-decoration: none; color: #64748B; font-size: 0.7rem; font-weight: 500; position: relative; }
+        .lm-action-item.active, .lm-action-item:hover { color: #E11D48; }
+        .lm-action-icon { font-size: 1.25rem; margin-bottom: 2px; }
+
+        @@media (max-width: 991.98px) {
+            .lm-mobile-bottom-nav { display: flex; }
+            body { padding-bottom: 60px; }
+        }
+    </style>
 </head>
 <body>
-    <!-- 1. Top Announcement Bar -->
-    <div class="lm-topbar">
-        <div class="lm-topbar-content">
-            <div class="lm-topbar-item">
-                <i class="bi bi-truck"></i>
-                <span>Free Delivery over ৳1500</span>
+    <!-- Top Bar -->
+    <div class="lm-top-bar">
+        <div class="container d-flex justify-content-between align-items-center">
+            <div class="d-flex align-items-center gap-3">
+                <span><i class="bi bi-telephone-fill text-danger me-1"></i> Helpline: @FooterModel.StoreSettings.SupportPhone</span>
+                <span class="d-none d-md-inline"><i class="bi bi-truck me-1"></i> Cash on Delivery Nationwide</span>
             </div>
-            <div class="lm-topbar-center">
-                <div class="lm-topbar-item"><i class="bi bi-patch-check"></i> 100% Original Products</div>
-                <div>|</div>
-                <div class="lm-topbar-item"><i class="bi bi-arrow-counterclockwise"></i> Easy Returns & Exchange</div>
-            </div>
-            <div class="d-flex align-items-center gap-2">
-                <div class="lm-topbar-item">
-                    <span>বাংলা</span> | <span class="opacity-75">EN</span>
-                </div>
-                <button id="pwaInstallBtn" class="btn btn-sm btn-outline-light rounded-pill px-2 py-0 ms-1" style="display: none; border-color: #FAF7F2; font-size: 0.75rem;">
-                    <i class="bi bi-download"></i> Install
-                </button>
+            <div class="d-flex align-items-center gap-3">
+                <a href="/Admin" class="text-warning text-decoration-none fw-bold" style="font-size: 0.8rem;">
+                    <i class="bi bi-shield-lock-fill me-1"></i> Admin Portal
+                </a>
+                <a href="/vendor/register" class="text-light text-decoration-none d-none d-sm-inline">Become a Vendor</a>
+                <a href="/contact" class="text-light text-decoration-none">Help & Contact</a>
             </div>
         </div>
     </div>
 
-    <!-- 2. Main Header -->
+    <!-- Header -->
     <header class="lm-header">
-        <div class="lm-header-container">
-            <!-- Mobile Menu Toggle Button -->
-            <button class="lm-mobile-toggle" type="button" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu" aria-label="Toggle navigation">
-                <i class="bi bi-list"></i>
-            </button>
+        <div class="container">
+            <div class="d-flex align-items-center justify-content-between gap-3">
+                <!-- Logo -->
+                <a href="/" class="lm-logo-container">
+                    <div class="lm-logo-badge">LM</div>
+                    <div class="lm-logo-text">
+                        <span class="lm-logo-title">LAMISA MART</span>
+                        <span class="lm-logo-bengali">লমিসা মার্ট</span>
+                    </div>
+                </a>
 
-            <!-- Logo -->
-            <a href="/" class="lm-logo-container">
-                <div class="lm-logo-badge">LM</div>
-                <div class="lm-logo-text">
-                    <span class="lm-logo-title">LAMISA MART</span>
-                    <span class="lm-logo-bengali">লমিসা মার্ট</span>
-                    <span class="lm-logo-tagline">প্রতিদিনের সাজে, লমিসা মার্ট।</span>
+                <!-- Search Bar -->
+                <div class="lm-search-box d-none d-md-block">
+                    <form action="/category/search" method="get">
+                        <input type="text" name="q" class="form-control lm-search-input" placeholder="Search Jamdani Sarees, Three Pieces, Kurtis, Jewelry..." />
+                        <button type="submit" class="lm-search-btn" title="Search"><i class="bi bi-search"></i></button>
+                    </form>
                 </div>
-            </a>
 
-            <!-- Search Bar (Desktop) -->
-            <form action="/search" method="get" class="lm-search-box">
-                <input type="text" name="q" class="lm-search-input" placeholder="Search for sarees, kurtis, makeup..." aria-label="Search" />
-                <button type="submit" class="lm-search-btn" aria-label="Submit Search"><i class="bi bi-search"></i></button>
-            </form>
+                <!-- Action Icons -->
+                <div class="d-flex align-items-center gap-3">
+                    <a href="/account/wishlist" class="text-dark position-relative text-decoration-none d-none d-sm-block p-1" title="Wishlist">
+                        <i class="bi bi-heart fs-4"></i>
+                        <span class="lm-action-badge">0</span>
+                    </a>
+                    <a href="/cart" class="text-dark position-relative text-decoration-none p-1" title="Cart">
+                        <i class="bi bi-bag fs-4"></i>
+                        <span class="lm-action-badge">2</span>
+                    </a>
+                    <a href="/account/login" class="btn btn-outline-dark rounded-pill px-3 py-1 fw-bold fs-7 d-none d-md-inline-block">
+                        <i class="bi bi-person me-1"></i> Sign In
+                    </a>
+                </div>
+            </div>
 
-            <!-- Header Actions -->
-            <div class="lm-header-actions">
-                <a href="/account/wishlist" class="lm-action-item" title="Wishlist">
-                    <i class="bi bi-heart lm-action-icon"></i>
-                    <span>Wishlist</span>
-                </a>
-                <a href="/account/login" class="lm-action-item" title="Account">
-                    <i class="bi bi-person lm-action-icon"></i>
-                    <span>Account</span>
-                </a>
-                <a href="/cart" class="lm-action-item" title="Cart">
-                    <i class="bi bi-bag lm-action-icon"></i>
-                    <span class="lm-badge">2</span>
-                    <span>Cart</span>
-                </a>
+            <!-- Mobile Search Bar -->
+            <div class="mt-2 d-md-none">
+                <form action="/category/search" method="get" class="position-relative">
+                    <input type="text" name="q" class="form-control lm-search-input" placeholder="Search products..." />
+                    <button type="submit" class="lm-search-btn" title="Search"><i class="bi bi-search"></i></button>
+                </form>
             </div>
         </div>
     </header>
 
-    <!-- Mobile Search Row (Shown only on small mobile devices) -->
-    <div class="lm-mobile-search-row d-md-none">
-        <form action="/search" method="get" class="position-relative">
-            <input type="text" name="q" class="lm-search-input py-2 fs-6" placeholder="Search for sarees, kurtis, cosmetics..." aria-label="Search" />
-            <button type="submit" class="lm-search-btn" aria-label="Submit Search"><i class="bi bi-search"></i></button>
-        </form>
-    </div>
-
-    <!-- 3. Offcanvas Navigation Drawer for Mobile -->
-    <div class="offcanvas offcanvas-start lm-offcanvas-menu" tabindex="-1" id="mobileMenu" aria-labelledby="mobileMenuLabel">
-        <div class="offcanvas-header lm-drawer-header">
-            <div class="d-flex align-items-center gap-2">
-                <div class="lm-logo-badge border-white text-white bg-transparent" style="width:38px; height:38px; font-size:14px;">LM</div>
-                <div>
-                    <h6 class="mb-0 fw-bold text-white">LAMISA MART</h6>
-                    <small class="text-white-50" style="font-size: 11px;">Women's Fashion Marketplace</small>
-                </div>
-            </div>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-        </div>
-        <div class="offcanvas-body p-0">
-            <div class="p-3 bg-light border-bottom d-flex align-items-center justify-content-between">
-                <span class="small fw-semibold text-muted">Language / ভাষা</span>
-                <div class="btn-group btn-group-sm">
-                    <button type="button" class="btn btn-danger btn-sm active">বাংলা</button>
-                    <button type="button" class="btn btn-outline-secondary btn-sm">English</button>
-                </div>
-            </div>
-            
-            <div class="lm-drawer-nav">
-                <div class="p-2 px-3 small fw-bold text-uppercase text-muted bg-light">Categories</div>
-                <a href="/" class="nav-link"><span><i class="bi bi-house-door me-2 text-danger"></i> Home</span> <i class="bi bi-chevron-right small text-muted"></i></a>
-                <a href="/category/new-arrival" class="nav-link"><span><i class="bi bi-sparkles me-2 text-warning"></i> New Arrivals</span> <span class="badge bg-danger rounded-pill">Hot</span></a>
-                <a href="/category/saree" class="nav-link"><span><i class="bi bi-tag me-2 text-danger"></i> Sarees & Ethnic</span> <i class="bi bi-chevron-right small text-muted"></i></a>
-                <a href="/category/three-piece" class="nav-link"><span><i class="bi bi-grid me-2 text-primary"></i> Three Piece</span> <i class="bi bi-chevron-right small text-muted"></i></a>
-                <a href="/category/kurti" class="nav-link"><span><i class="bi bi-bag-heart me-2 text-success"></i> Kurtis & Tunics</span> <i class="bi bi-chevron-right small text-muted"></i></a>
-                <a href="/category/innerwear" class="nav-link"><span><i class="bi bi-heart me-2 text-info"></i> Innerwear</span> <i class="bi bi-chevron-right small text-muted"></i></a>
-                <a href="/category/jewelry" class="nav-link"><span><i class="bi bi-gem me-2 text-warning"></i> Jewelry & Ornaments</span> <i class="bi bi-chevron-right small text-muted"></i></a>
-                <a href="/category/bags" class="nav-link"><span><i class="bi bi-bag me-2 text-secondary"></i> Handbags & Purses</span> <i class="bi bi-chevron-right small text-muted"></i></a>
-                <a href="/category/cosmetics" class="nav-link"><span><i class="bi bi-palette me-2 text-danger"></i> Cosmetics & Beauty</span> <i class="bi bi-chevron-right small text-muted"></i></a>
-                <a href="/category/sale" class="nav-link text-danger fw-bold"><span><i class="bi bi-percent me-2"></i> Special Clearance Sale</span> <span class="badge bg-danger">Up to 50%</span></a>
-                
-                <div class="p-2 px-3 small fw-bold text-uppercase text-muted bg-light mt-2">Portals & Account</div>
-                <a href="/Vendor" class="nav-link text-dark"><span><i class="bi bi-shop me-2 text-primary"></i> Vendor Dashboard</span> <i class="bi bi-arrow-up-right small text-muted"></i></a>
-                <a href="/Admin" class="nav-link text-dark"><span><i class="bi bi-shield-lock me-2 text-secondary"></i> Admin Panel</span> <i class="bi bi-arrow-up-right small text-muted"></i></a>
-            </div>
-        </div>
-    </div>
-
-    <!-- 4. Category Navigation Bar (Desktop Horizontal Scroll) -->
-    <nav class="lm-nav">
-        <div class="lm-nav-container">
+    <!-- Navigation Bar -->
+    <nav class="lm-main-nav">
+        <div class="container lm-main-nav-inner">
             <a href="/" class="lm-nav-link active">HOME</a>
             <a href="/category/new-arrival" class="lm-nav-link">NEW ARRIVAL</a>
             <a href="/category/saree" class="lm-nav-link">SAREE</a>
@@ -179,8 +141,8 @@
                             <span class="lm-logo-bengali">লমিসা মার্ট</span>
                         </div>
                     </div>
-                    <p class="small text-muted">Premium Bangladeshi multi-vendor marketplace for women's fashion, clothing, accessories, and beauty products.</p>
-                    <p class="small text-muted mb-0">© 2026 Lamisa Mart. All Rights Reserved.</p>
+                    <p class="small text-muted mb-2">@FooterModel.StoreSettings.FooterAboutText</p>
+                    <p class="small text-muted mb-0">@FooterModel.StoreSettings.CopyrightText</p>
                 </div>
                 <div class="col-lg-3 col-md-6 col-6">
                     <h6 class="fw-bold mb-3">SHOP CATEGORIES</h6>
@@ -195,20 +157,35 @@
                 <div class="col-lg-3 col-md-6 col-6">
                     <h6 class="fw-bold mb-3">CUSTOMER SERVICE</h6>
                     <ul class="list-unstyled small text-muted lh-lg mb-0">
-                        <li><i class="bi bi-telephone me-1"></i> +880 1234-567890</li>
-                        <li><i class="bi bi-envelope me-1"></i> support@lamisamart.bd</li>
-                        <li><i class="bi bi-clock me-1"></i> Mon - Sat: 10AM - 9PM</li>
-                        <li><i class="bi bi-geo-alt me-1"></i> Dhanmondi, Dhaka</li>
+                        <li><i class="bi bi-telephone me-1 text-danger"></i> @FooterModel.StoreSettings.SupportPhone</li>
+                        <li><i class="bi bi-envelope me-1 text-primary"></i> @FooterModel.StoreSettings.SupportEmail</li>
+                        <li><i class="bi bi-clock me-1 text-warning"></i> @FooterModel.StoreSettings.BusinessHours</li>
+                        <li><i class="bi bi-geo-alt me-1 text-danger"></i> @FooterModel.StoreSettings.StoreLocation</li>
                     </ul>
                 </div>
                 <div class="col-lg-3 col-md-6">
                     <h6 class="fw-bold mb-3">WE ACCEPT</h6>
                     <div class="d-flex flex-wrap gap-2 align-items-center mb-3">
-                        <span class="badge bg-danger p-2">bKash</span>
-                        <span class="badge bg-warning text-dark p-2">Nagad</span>
-                        <span class="badge bg-primary p-2">VISA</span>
-                        <span class="badge bg-secondary p-2">Mastercard</span>
-                        <span class="badge bg-success p-2">BanglaQR</span>
+                        @if (FooterModel.StoreSettings.ShowBkash)
+                        {
+                            <span class="badge bg-danger p-2">bKash</span>
+                        }
+                        @if (FooterModel.StoreSettings.ShowNagad)
+                        {
+                            <span class="badge bg-warning text-dark p-2">Nagad</span>
+                        }
+                        @if (FooterModel.StoreSettings.ShowVisa)
+                        {
+                            <span class="badge bg-primary p-2">VISA</span>
+                        }
+                        @if (FooterModel.StoreSettings.ShowMastercard)
+                        {
+                            <span class="badge bg-secondary p-2">Mastercard</span>
+                        }
+                        @if (FooterModel.StoreSettings.ShowBanglaQR)
+                        {
+                            <span class="badge bg-success p-2">BanglaQR</span>
+                        }
                     </div>
                 </div>
             </div>

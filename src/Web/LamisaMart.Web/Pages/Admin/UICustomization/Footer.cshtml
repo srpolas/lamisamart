@@ -7,8 +7,8 @@
 
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
     <div>
-        <h3 class="fw-bold text-dark m-0">Footer UI Customization</h3>
-        <p class="text-muted small mb-0">Configure store summary text, social media channels, payment badges, and footer copyright notice.</p>
+        <h3 class="fw-bold text-dark m-0">Footer UI Customization & Live Editor</h3>
+        <p class="text-muted small mb-0">Configure storefront footer branding, customer service hotline/email, operating hours, payment badges, and social media channels.</p>
     </div>
 </div>
 
@@ -25,13 +25,36 @@
         <form method="post">
             @Html.AntiForgeryToken()
 
+            <!-- 1. Store Summary & Branding -->
+            <h6 class="fw-bold text-dark mb-3"><i class="bi bi-shop me-1 text-danger"></i> Store Summary & Branding</h6>
             <div class="mb-4">
-                <label class="form-label fw-semibold small text-dark">Store Description & Heritage Summary</label>
+                <label class="form-label fw-semibold small text-dark">Store Summary Description Text</label>
                 <textarea asp-for="FooterAboutText" class="form-control rounded-3" rows="3"></textarea>
             </div>
 
-            <!-- Social Links -->
-            <h6 class="fw-bold text-dark border-top pt-3 mb-3"><i class="bi bi-share me-1 text-primary"></i> Social Media Profiles & Channels</h6>
+            <!-- 2. Customer Service Info (Phone, Email, Hours, Location) -->
+            <h6 class="fw-bold text-dark border-top pt-3 mb-3"><i class="bi bi-headset me-1 text-primary"></i> Customer Service Contact Details</h6>
+            <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold small text-dark"><i class="bi bi-telephone me-1 text-success"></i> Customer Support Phone / Helpline</label>
+                    <input type="text" asp-for="SupportPhone" class="form-control rounded-3" placeholder="+880 9610-123456" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold small text-dark"><i class="bi bi-envelope me-1 text-danger"></i> Support Email Address</label>
+                    <input type="text" asp-for="SupportEmail" class="form-control rounded-3" placeholder="support@lamisamart.bd" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold small text-dark"><i class="bi bi-clock me-1 text-warning"></i> Business Operating Hours</label>
+                    <input type="text" asp-for="BusinessHours" class="form-control rounded-3" placeholder="Mon - Sat: 10AM - 9PM" />
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-semibold small text-dark"><i class="bi bi-geo-alt me-1 text-danger"></i> Physical Store Location / Address</label>
+                    <input type="text" asp-for="StoreLocation" class="form-control rounded-3" placeholder="Dhanmondi, Dhaka" />
+                </div>
+            </div>
+
+            <!-- 3. Social Profiles -->
+            <h6 class="fw-bold text-dark border-top pt-3 mb-3"><i class="bi bi-share me-1 text-primary"></i> Social Media Channels & Profiles</h6>
             <div class="row g-3 mb-4">
                 <div class="col-md-6">
                     <label class="form-label fw-semibold small text-dark"><i class="bi bi-facebook me-1 text-primary"></i> Facebook Page URL</label>
@@ -51,31 +74,50 @@
                 </div>
             </div>
 
-            <!-- Footer Toggles -->
-            <h6 class="fw-bold text-dark border-top pt-3 mb-3"><i class="bi bi-layout-south me-1 text-primary"></i> Footer Display Elements</h6>
+            <!-- 4. Payment Badges (We Accept) -->
+            <h6 class="fw-bold text-dark border-top pt-3 mb-3"><i class="bi bi-credit-card-2-front me-1 text-primary"></i> Accepted Payment Method Badges ("WE ACCEPT")</h6>
             <div class="row g-3 mb-4">
-                <div class="col-md-6">
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" asp-for="ShowPaymentIconsBar" id="chkPayIcons" />
-                        <label class="form-check-label small fw-bold text-dark" for="chkPayIcons">Show Accepted Payment Logos (bKash, Nagad, Visa, COD)</label>
+                <div class="col-md-4">
+                    <div class="form-check form-switch pt-1">
+                        <input class="form-check-input" type="checkbox" asp-for="ShowBkash" id="chkBkash" />
+                        <label class="form-check-label fw-bold text-danger small" for="chkBkash">bKash Badge</label>
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" type="checkbox" asp-for="EnableNewsletterFooter" id="chkNews" />
-                        <label class="form-check-label small fw-bold text-dark" for="chkNews">Show Email Newsletter Subscription Box in Footer</label>
+                <div class="col-md-4">
+                    <div class="form-check form-switch pt-1">
+                        <input class="form-check-input" type="checkbox" asp-for="ShowNagad" id="chkNagad" />
+                        <label class="form-check-label fw-bold text-warning small" for="chkNagad">Nagad Badge</label>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-check form-switch pt-1">
+                        <input class="form-check-input" type="checkbox" asp-for="ShowVisa" id="chkVisa" />
+                        <label class="form-check-label fw-bold text-primary small" for="chkVisa">VISA Card Badge</label>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-check form-switch pt-1">
+                        <input class="form-check-input" type="checkbox" asp-for="ShowMastercard" id="chkMaster" />
+                        <label class="form-check-label fw-bold text-secondary small" for="chkMaster">Mastercard Badge</label>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-check form-switch pt-1">
+                        <input class="form-check-input" type="checkbox" asp-for="ShowBanglaQR" id="chkBangla" />
+                        <label class="form-check-label fw-bold text-success small" for="chkBangla">BanglaQR / COD Badge</label>
                     </div>
                 </div>
             </div>
 
-            <div class="mb-3">
+            <!-- 5. Copyright Notice -->
+            <div class="mb-3 border-top pt-3">
                 <label class="form-label fw-semibold small text-dark">Bottom Copyright Text Notice</label>
                 <input type="text" asp-for="CopyrightText" class="form-control rounded-3" />
             </div>
 
             <div class="pt-4 border-top mt-4 text-end">
                 <button type="submit" class="btn btn-danger rounded-pill px-4 py-2 fw-bold shadow-sm">
-                    <i class="bi bi-floppy me-1"></i> Save Footer Customizations
+                    <i class="bi bi-floppy me-1"></i> Save & Publish Footer
                 </button>
             </div>
         </form>
