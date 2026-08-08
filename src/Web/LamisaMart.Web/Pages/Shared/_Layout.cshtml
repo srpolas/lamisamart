@@ -29,6 +29,9 @@
         .lm-btn-primary { background: linear-gradient(135deg, #E11D48 0%, #BE123C 100%); color: white; font-weight: 600; border-radius: 25px; padding: 10px 24px; border: none; transition: all 0.2s; box-shadow: 0 4px 14px rgba(225, 29, 72, 0.3); }
         .lm-btn-primary:hover { background: linear-gradient(135deg, #BE123C 0%, #9F1239 100%); color: white; transform: translateY(-1px); box-shadow: 0 6px 18px rgba(225, 29, 72, 0.4); }
         
+        .lm-social-icon-btn { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .lm-social-icon-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,0,0,0.12) !important; }
+
         /* Mobile Sticky Navigation Bar */
         .lm-mobile-bottom-nav { display: none; position: fixed; bottom: 0; left: 0; right: 0; background: #ffffff; border-top: 1px solid #E2E8F0; z-index: 1040; padding: 6px 0; box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08); }
         .lm-action-item { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; text-decoration: none; color: #64748B; font-size: 0.7rem; font-weight: 500; position: relative; }
@@ -141,9 +144,39 @@
                             <span class="lm-logo-bengali">লমিসা মার্ট</span>
                         </div>
                     </div>
-                    <p class="small text-muted mb-2">@FooterModel.StoreSettings.FooterAboutText</p>
+                    <p class="small text-muted mb-3">@FooterModel.StoreSettings.FooterAboutText</p>
+                    
+                    <!-- Social Media Links Icons -->
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        @if (!string.IsNullOrWhiteSpace(FooterModel.StoreSettings.FacebookUrl))
+                        {
+                            <a href="@FooterModel.StoreSettings.FacebookUrl" target="_blank" class="btn btn-sm btn-light border text-primary rounded-circle p-0 d-inline-flex align-items-center justify-content-center lm-social-icon-btn shadow-sm" style="width:38px; height:38px;" title="Facebook Page">
+                                <i class="bi bi-facebook fs-5"></i>
+                            </a>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(FooterModel.StoreSettings.InstagramUrl))
+                        {
+                            <a href="@FooterModel.StoreSettings.InstagramUrl" target="_blank" class="btn btn-sm btn-light border text-danger rounded-circle p-0 d-inline-flex align-items-center justify-content-center lm-social-icon-btn shadow-sm" style="width:38px; height:38px;" title="Instagram Profile">
+                                <i class="bi bi-instagram fs-5"></i>
+                            </a>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(FooterModel.StoreSettings.YoutubeUrl))
+                        {
+                            <a href="@FooterModel.StoreSettings.YoutubeUrl" target="_blank" class="btn btn-sm btn-light border text-danger rounded-circle p-0 d-inline-flex align-items-center justify-content-center lm-social-icon-btn shadow-sm" style="width:38px; height:38px;" title="YouTube Channel">
+                                <i class="bi bi-youtube fs-5"></i>
+                            </a>
+                        }
+                        @if (!string.IsNullOrWhiteSpace(FooterModel.StoreSettings.WhatsappNumber))
+                        {
+                            <a href="https://wa.me/@FooterModel.StoreSettings.WhatsappNumber.Replace("+", "").Replace(" ", "")" target="_blank" class="btn btn-sm btn-light border text-success rounded-circle p-0 d-inline-flex align-items-center justify-content-center lm-social-icon-btn shadow-sm" style="width:38px; height:38px;" title="WhatsApp Support">
+                                <i class="bi bi-whatsapp fs-5"></i>
+                            </a>
+                        }
+                    </div>
+
                     <p class="small text-muted mb-0">@FooterModel.StoreSettings.CopyrightText</p>
                 </div>
+
                 <div class="col-lg-3 col-md-6 col-6">
                     <h6 class="fw-bold mb-3">SHOP CATEGORIES</h6>
                     <ul class="list-unstyled small text-muted lh-lg mb-0">
@@ -154,6 +187,7 @@
                         <li><a href="/category/cosmetics">Cosmetics & Perfumes</a></li>
                     </ul>
                 </div>
+
                 <div class="col-lg-3 col-md-6 col-6">
                     <h6 class="fw-bold mb-3">CUSTOMER SERVICE</h6>
                     <ul class="list-unstyled small text-muted lh-lg mb-0">
@@ -163,8 +197,9 @@
                         <li><i class="bi bi-geo-alt me-1 text-danger"></i> @FooterModel.StoreSettings.StoreLocation</li>
                     </ul>
                 </div>
+
                 <div class="col-lg-3 col-md-6">
-                    <h6 class="fw-bold mb-3">WE ACCEPT</h6>
+                    <h6 class="fw-bold mb-3">CONNECT & WE ACCEPT</h6>
                     <div class="d-flex flex-wrap gap-2 align-items-center mb-3">
                         @if (FooterModel.StoreSettings.ShowBkash)
                         {
