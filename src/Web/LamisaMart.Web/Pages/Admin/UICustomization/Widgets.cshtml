@@ -1,0 +1,85 @@
+@page "/Admin/UICustomization/Widgets"
+@model LamisaMart.Web.Pages.Admin.UICustomization.WidgetsModel
+@{
+    ViewData["Title"] = "Interactive UI Widgets - LamisaMart Admin";
+    Layout = "_AdminLayout";
+}
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+        <h3 class="fw-bold text-dark m-0">Interactive UI Widgets</h3>
+        <p class="text-muted small mb-0">Manage floating WhatsApp chat button, live purchase toast popups, scroll-to-top buttons, and promo modals.</p>
+    </div>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show rounded-4 p-3 shadow-sm mb-4" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="card border-0 shadow-sm rounded-4 mb-5">
+    <div class="card-body p-4">
+        <form method="post">
+            @Html.AntiForgeryToken()
+
+            <!-- WhatsApp Widget -->
+            <div class="p-3 bg-light rounded-4 border mb-4">
+                <div class="form-check form-switch mb-3">
+                    <input class="form-check-input" type="checkbox" asp-for="EnableWhatsappChatWidget" id="chkWa" />
+                    <label class="form-check-label fw-bold text-success" for="chkWa"><i class="bi bi-whatsapp me-1"></i> Floating WhatsApp Live Chat Widget</label>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold small text-dark">WhatsApp Number (with Country Code)</label>
+                        <input type="text" asp-for="WhatsappChatNumber" class="form-control rounded-3" placeholder="8801700000000" />
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold small text-dark">Greeting Popup Message</label>
+                        <input type="text" asp-for="WhatsappChatGreeting" class="form-control rounded-3" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Sales Toasts -->
+            <div class="p-3 bg-light rounded-4 border mb-4">
+                <div class="form-check form-switch mb-3">
+                    <input class="form-check-input" type="checkbox" asp-for="EnableLiveSalesToasts" id="chkSalesToast" />
+                    <label class="form-check-label fw-bold text-primary" for="chkSalesToast"><i class="bi bi-bag-check me-1"></i> Live Recent Purchase Social Proof Popups</label>
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-semibold small text-dark">Popup Interval (Seconds between popups)</label>
+                        <input type="number" asp-for="SalesToastIntervalSeconds" class="form-control rounded-3" />
+                    </div>
+                </div>
+            </div>
+
+            <!-- Scroll to top & Promo modal -->
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <div class="form-check form-switch pt-2">
+                        <input class="form-check-input" type="checkbox" asp-for="EnableBackToTopButton" id="chkScroll" />
+                        <label class="form-check-label fw-bold text-dark" for="chkScroll">Enable Floating Back-to-Top Button</label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-check form-switch pt-2">
+                        <input class="form-check-input" type="checkbox" asp-for="EnableNewsletterModal" id="chkNewsModal" />
+                        <label class="form-check-label fw-bold text-dark" for="chkNewsModal">Enable Newsletter Discount Popup Modal</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-4 border-top mt-4 text-end">
+                <button type="submit" class="btn btn-danger rounded-pill px-4 py-2 fw-bold shadow-sm">
+                    <i class="bi bi-floppy me-1"></i> Save Interactive Widgets
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

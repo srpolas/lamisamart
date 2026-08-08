@@ -107,6 +107,32 @@
                     </div>
                 </li>
 
+                <!-- UI Customization Main Menu with Submenus -->
+                @{
+                    var isUiActive = currentPage.StartsWith("/Admin/UICustomization");
+                }
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center justify-content-between cursor-pointer @(isUiActive ? "active" : "")" 
+                       data-bs-toggle="collapse" href="#uiCustomSubmenu" role="button" aria-expanded="@(isUiActive ? "true" : "false")">
+                        <span><i class="bi bi-palette"></i> UI Customization</span>
+                        <i class="bi bi-chevron-down fs-7"></i>
+                    </a>
+                    <div class="collapse @(isUiActive ? "show" : "")" id="uiCustomSubmenu">
+                        <a href="/Admin/UICustomization/Header" class="submenu-link @(currentPage == "/Admin/UICustomization/Header" ? "active" : "")">
+                            <i class="bi bi-layout-sidebar me-1"></i> Header
+                        </a>
+                        <a href="/Admin/UICustomization/Footer" class="submenu-link @(currentPage == "/Admin/UICustomization/Footer" ? "active" : "")">
+                            <i class="bi bi-layout-south me-1"></i> Footer
+                        </a>
+                        <a href="/Admin/UICustomization/Widgets" class="submenu-link @(currentPage == "/Admin/UICustomization/Widgets" ? "active" : "")">
+                            <i class="bi bi-window-stack me-1"></i> Widgets
+                        </a>
+                        <a href="/Admin/UICustomization/Settings" class="submenu-link @(currentPage == "/Admin/UICustomization/Settings" ? "active" : "")">
+                            <i class="bi bi-sliders me-1"></i> Setting
+                        </a>
+                    </div>
+                </li>
+
                 <!-- Pages Main Menu -->
                 @{
                     var isPagesActive = currentPage.StartsWith("/Admin/Pages");
