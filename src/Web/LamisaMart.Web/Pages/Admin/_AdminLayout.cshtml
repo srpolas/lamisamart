@@ -13,9 +13,13 @@
     <style>
         body { background-color: #F8F9FA; font-family: 'Inter', system-ui, -apple-system, sans-serif; }
         .admin-sidebar { width: 260px; min-height: 100vh; background-color: #0F172A; color: white; position: fixed; top: 0; left: 0; z-index: 1040; transition: transform 0.3s ease; }
-        .admin-sidebar .nav-link { color: rgba(255,255,255,0.75); padding: 12px 20px; transition: all 0.2s; font-weight: 500; font-size: 0.9rem; }
+        .admin-sidebar .nav-link { color: rgba(255,255,255,0.75); padding: 10px 20px; transition: all 0.2s; font-weight: 500; font-size: 0.9rem; }
         .admin-sidebar .nav-link:hover, .admin-sidebar .nav-link.active { background-color: rgba(255,255,255,0.1); color: #ffffff; border-left: 4px solid #E11D48; }
         .admin-sidebar .nav-link i { margin-right: 12px; width: 20px; text-align: center; font-size: 1.1rem; }
+        
+        .admin-sidebar .submenu-link { color: rgba(255,255,255,0.65); padding: 8px 15px 8px 48px; font-size: 0.85rem; display: block; text-decoration: none; transition: all 0.2s; }
+        .admin-sidebar .submenu-link:hover, .admin-sidebar .submenu-link.active { color: #ffffff; background-color: rgba(225, 29, 72, 0.15); border-left: 3px solid #E11D48; }
+
         .admin-main { margin-left: 260px; padding: 24px; transition: margin-left 0.3s ease; min-height: 100vh; }
         
         .card-stat { transition: transform 0.2s ease, box-shadow 0.2s ease; }
@@ -56,11 +60,40 @@
                         <i class="bi bi-cart3"></i> Platform Orders
                     </a>
                 </li>
+
+                <!-- Product Main Menu with Submenus -->
+                @{
+                    var currentPage = ViewContext.RouteData.Values["page"]?.ToString() ?? "";
+                    var isProductActive = currentPage.StartsWith("/Admin/Products");
+                }
                 <li class="nav-item">
-                    <a href="/Admin/Products" class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/Admin/Products" ? "active" : "")">
-                        <i class="bi bi-box-seam"></i> Products Catalog
+                    <a class="nav-link d-flex align-items-center justify-content-between cursor-pointer @(isProductActive ? "active" : "")" 
+                       data-bs-toggle="collapse" href="#productSubmenu" role="button" aria-expanded="@(isProductActive ? "true" : "false")">
+                        <span><i class="bi bi-box-seam"></i> Product</span>
+                        <i class="bi bi-chevron-down fs-7"></i>
                     </a>
+                    <div class="collapse @(isProductActive ? "show" : "")" id="productSubmenu">
+                        <a href="/Admin/Products" class="submenu-link @(currentPage == "/Admin/Products" ? "active" : "")">
+                            <i class="bi bi-card-list me-1"></i> All Products
+                        </a>
+                        <a href="/Admin/Products/Brands" class="submenu-link @(currentPage == "/Admin/Products/Brands" ? "active" : "")">
+                            <i class="bi bi-award me-1"></i> Brands
+                        </a>
+                        <a href="/Admin/Products/Categories" class="submenu-link @(currentPage == "/Admin/Products/Categories" ? "active" : "")">
+                            <i class="bi bi-grid-3x3-gap me-1"></i> Category
+                        </a>
+                        <a href="/Admin/Products/Tags" class="submenu-link @(currentPage == "/Admin/Products/Tags" ? "active" : "")">
+                            <i class="bi bi-tags me-1"></i> Tags
+                        </a>
+                        <a href="/Admin/Products/Attributes" class="submenu-link @(currentPage == "/Admin/Products/Attributes" ? "active" : "")">
+                            <i class="bi bi-sliders me-1"></i> Attributes
+                        </a>
+                        <a href="/Admin/Products/Reviews" class="submenu-link @(currentPage == "/Admin/Products/Reviews" ? "active" : "")">
+                            <i class="bi bi-star-half me-1"></i> Reviews
+                        </a>
+                    </div>
                 </li>
+
                 <li class="nav-item">
                     <a href="/Admin/Accounting" class="nav-link @(ViewContext.RouteData.Values["page"]?.ToString() == "/Admin/Accounting" ? "active" : "")">
                         <i class="bi bi-calculator"></i> Accounting Ledger
