@@ -1,0 +1,52 @@
+@page "/Admin/Users/AccessLogs"
+@model LamisaMart.Web.Pages.Admin.Users.AccessLogsModel
+@{
+    ViewData["Title"] = "Access Logs & Security Audit - LamisaMart Admin";
+    Layout = "_AdminLayout";
+}
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+        <h3 class="fw-bold text-dark m-0">Access Logs & Security Audit Trail</h3>
+        <p class="text-muted small mb-0">Monitor staff activities, controller invocations, order status changes, and IP audit trails.</p>
+    </div>
+</div>
+
+<div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-5">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0 fs-7">
+            <thead class="bg-light text-muted border-bottom">
+                <tr>
+                    <th class="ps-4 py-3">Timestamp</th>
+                    <th class="py-3">User & Role</th>
+                    <th class="py-3">Performed Action</th>
+                    <th class="py-3">Controller Route</th>
+                    <th class="pe-4 py-3 text-end">IP Address</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var log in Model.LogsList)
+                {
+                    <tr>
+                        <td class="ps-4 text-muted">
+                            <i class="bi bi-clock me-1 text-danger"></i>@log.Timestamp.ToString("MMM dd, yyyy - hh:mm tt")
+                        </td>
+                        <td>
+                            <div class="fw-bold text-dark">@log.UserName</div>
+                            <span class="badge bg-light text-dark border fs-8">@log.Role</span>
+                        </td>
+                        <td class="fw-medium text-dark">
+                            @log.ActionType
+                        </td>
+                        <td>
+                            <code class="text-primary">@log.ControllerRoute</code>
+                        </td>
+                        <td class="pe-4 text-end text-muted font-monospace">
+                            @log.IpAddress
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

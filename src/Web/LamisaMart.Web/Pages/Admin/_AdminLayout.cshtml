@@ -51,9 +51,35 @@
                     </a>
                 </li>
 
-                <!-- Business Main Menu with Submenus -->
+                <!-- User & Access Main Menu with Submenus -->
                 @{
                     var currentPage = ViewContext.RouteData.Values["page"]?.ToString() ?? "";
+                    var isUsersActive = currentPage.StartsWith("/Admin/Users");
+                }
+                <li class="nav-item">
+                    <a class="nav-link d-flex align-items-center justify-content-between cursor-pointer @(isUsersActive ? "active" : "")" 
+                       data-bs-toggle="collapse" href="#usersSubmenu" role="button" aria-expanded="@(isUsersActive ? "true" : "false")">
+                        <span><i class="bi bi-person-badge"></i> User & Access</span>
+                        <i class="bi bi-chevron-down fs-7"></i>
+                    </a>
+                    <div class="collapse @(isUsersActive ? "show" : "")" id="usersSubmenu">
+                        <a href="/Admin/Users" class="submenu-link @(currentPage == "/Admin/Users" ? "active" : "")">
+                            <i class="bi bi-people me-1"></i> All Users & Staff
+                        </a>
+                        <a href="/Admin/Users/Roles" class="submenu-link @(currentPage == "/Admin/Users/Roles" ? "active" : "")">
+                            <i class="bi bi-shield-check me-1"></i> Role & Access Controls
+                        </a>
+                        <a href="/Admin/Users/VendorTeam" class="submenu-link @(currentPage == "/Admin/Users/VendorTeam" ? "active" : "")">
+                            <i class="bi bi-person-gear me-1"></i> Vendor Team Members
+                        </a>
+                        <a href="/Admin/Users/AccessLogs" class="submenu-link @(currentPage == "/Admin/Users/AccessLogs" ? "active" : "")">
+                            <i class="bi bi-clock-history me-1"></i> Access Logs & Audit
+                        </a>
+                    </div>
+                </li>
+
+                <!-- Business Main Menu with Submenus -->
+                @{
                     var isBusinessActive = currentPage.StartsWith("/Admin/Business") || currentPage == "/Admin/Orders";
                 }
                 <li class="nav-item">

@@ -1,0 +1,208 @@
+@page "/Admin/Users/VendorTeam"
+@model LamisaMart.Web.Pages.Admin.Users.VendorTeamModel
+@{
+    ViewData["Title"] = "Vendor Team & Staff Delegation - LamisaMart Admin";
+    Layout = "_AdminLayout";
+}
+
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+    <div>
+        <h3 class="fw-bold text-dark m-0">Vendor Store Staff & Team Members</h3>
+        <p class="text-muted small mb-0">Vendors can add Managers and Sales Persons to manage products, process orders, and run store business.</p>
+    </div>
+    <div>
+        <button type="button" class="btn btn-danger btn-sm rounded-pill px-4 py-2 fw-bold shadow-sm" data-bs-toggle="modal" data-bs-target="#addVendorUserModal">
+            <i class="bi bi-person-plus-fill me-1"></i> Add Team Member
+        </button>
+    </div>
+</div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show rounded-4 p-3 shadow-sm mb-4" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i> @TempData["SuccessMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show rounded-4 p-3 shadow-sm mb-4" role="alert">
+        <i class="bi bi-exclamation-triangle-fill me-2"></i> @TempData["ErrorMessage"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="card border-0 shadow-sm rounded-4 overflow-hidden mb-5">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead class="bg-light text-muted small border-bottom">
+                <tr>
+                    <th class="ps-4 py-3">Staff Profile</th>
+                    <th class="py-3">Contact Info</th>
+                    <th class="py-3">Assigned Vendor Store</th>
+                    <th class="py-3">Assigned Role</th>
+                    <th class="py-3">Access Permissions</th>
+                    <th class="py-3 text-center">Status</th>
+                    <th class="pe-4 py-3 text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var staff in Model.StaffList)
+                {
+                    <tr>
+                        <td class="ps-4">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="rounded-circle bg-danger-subtle text-danger fw-bold d-flex align-items-center justify-content-center" style="width: 42px; height: 42px;">
+                                    @staff.FullName.Substring(0, 1)
+                                </div>
+                                <div>
+                                    <h6 class="fw-bold text-dark mb-0 fs-7">@staff.FullName</h6>
+                                    <span class="text-muted fs-8">Added: @staff.AddedAt.ToString("MMM dd, yyyy")</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="fw-medium text-dark fs-7"><i class="bi bi-envelope me-1 text-muted"></i>@staff.Email</div>
+                            <span class="text-muted fs-7"><i class="bi bi-telephone me-1 text-primary"></i>@staff.Phone</span>
+                        </td>
+                        <td>
+                            <span class="fw-bold text-dark fs-7"><i class="bi bi-shop me-1 text-danger"></i>@staff.VendorName</span>
+                        </td>
+                        <td>
+                            @if (staff.Role == "Manager")
+                            {
+                                <span class="badge bg-warning text-dark shadow-sm rounded-pill px-3 py-1 fs-7">
+                                    <i class="bi bi-briefcase-fill me-1"></i> Store Manager
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-success shadow-sm rounded-pill px-3 py-1 fs-7">
+                                    <i class="bi bi-cart-check-fill me-1"></i> Sales Person
+                                </span>
+                            }
+                        </td>
+                        <td>
+                            <div class="d-flex flex-wrap gap-1">
+                                @if (staff.CanManageProducts)
+                                {
+                                    <span class="badge bg-light text-dark border fs-8"><i class="bi bi-box-seam me-1 text-primary"></i>Products</span>
+                                }
+                                @if (staff.CanProcessOrders)
+                                {
+                                    <span class="badge bg-light text-dark border fs-8"><i class="bi bi-bag-check me-1 text-success"></i>Orders</span>
+                                }
+                                @if (staff.CanViewFinance)
+                                {
+                                    <span class="badge bg-light text-dark border fs-8"><i class="bi bi-cash me-1 text-warning"></i>Finance</span>
+                                }
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            @if (staff.IsActive)
+                            {
+                                <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill px-3 py-1 fs-7">Active</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-secondary-subtle text-secondary border rounded-pill px-3 py-1 fs-7">Disabled</span>
+                            }
+                        </td>
+                        <td class="pe-4 text-end">
+                            <div class="d-flex justify-content-end gap-1">
+                                <form method="post" asp-page-handler="ToggleStatus" class="d-inline">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="staffId" value="@staff.Id" />
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary rounded-pill px-2 fs-7" title="Toggle Access">
+                                        Toggle
+                                    </button>
+                                </form>
+                                <form method="post" asp-page-handler="DeleteStaff" class="d-inline" onsubmit="return confirm('Revoke staff access?');">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="staffId" value="@staff.Id" />
+                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-circle p-0 d-inline-flex align-items-center justify-content-center" style="width: 32px; height: 32px;" title="Revoke Account">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal: Add Vendor Team Member -->
+<div class="modal fade" id="addVendorUserModal" tabindex="-1" aria-labelledby="addVendorUserModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 border-0 shadow">
+            <div class="modal-header border-bottom-0 pb-0">
+                <h5 class="modal-title fw-bold text-dark" id="addVendorUserModalLabel">Add Vendor Team Member</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-4">
+                <form method="post" asp-page-handler="CreateStaffUser">
+                    @Html.AntiForgeryToken()
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-dark">Associated Vendor Store <span class="text-danger">*</span></label>
+                        <select name="vendorName" class="form-select rounded-3" required>
+                            @foreach (var vendor in Model.VendorsList)
+                            {
+                                <option value="@vendor">@vendor</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-dark">Full Name <span class="text-danger">*</span></label>
+                        <input type="text" name="fullName" class="form-control rounded-3" placeholder="e.g. Kamrul Hasan" required />
+                    </div>
+
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <label class="form-label fw-semibold small text-dark">Email Address <span class="text-danger">*</span></label>
+                            <input type="email" name="email" class="form-control rounded-3" placeholder="kamrul@store.com" required />
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label fw-semibold small text-dark">Phone Number</label>
+                            <input type="text" name="phone" class="form-control rounded-3" placeholder="01711002233" />
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-dark">Assigned Staff Role <span class="text-danger">*</span></label>
+                        <select name="role" class="form-select rounded-3" required>
+                            <option value="Manager" selected>Store Manager (Full Store Access)</option>
+                            <option value="SalesPerson">Sales Person (Order Processing & POS Only)</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3 p-3 bg-light rounded-3 border">
+                        <label class="form-label fw-semibold small text-dark mb-2">Operational Permissions</label>
+                        <div class="form-check mb-1">
+                            <input class="form-check-input" type="checkbox" name="canManageProducts" value="true" id="p1" checked />
+                            <label class="form-check-label small fw-semibold text-dark" for="p1">Manage Products & Inventory Catalog</label>
+                        </div>
+                        <div class="form-check mb-1">
+                            <input class="form-check-input" type="checkbox" name="canProcessOrders" value="true" id="p2" checked />
+                            <label class="form-check-label small fw-semibold text-dark" for="p2">Process Orders & Print Commercial Invoices</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="canViewFinance" value="true" id="p3" />
+                            <label class="form-check-label small fw-semibold text-dark" for="p3">View Store Financial & Revenue Reports</label>
+                        </div>
+                    </div>
+
+                    <div class="pt-3">
+                        <button type="submit" class="btn btn-danger w-100 rounded-pill py-2 fw-bold shadow-sm">
+                            <i class="bi bi-person-check-fill me-1"></i> Authorize Staff Account
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
