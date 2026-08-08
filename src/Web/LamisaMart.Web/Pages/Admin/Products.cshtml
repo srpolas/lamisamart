@@ -74,9 +74,8 @@
             <thead class="bg-light text-muted small border-bottom">
                 <tr>
                     <th class="ps-4 py-3">Product Info</th>
-                    <th class="py-3">Category</th>
-                    <th class="py-3">Vendor</th>
-                    <th class="py-3 text-center">Rating</th>
+                    <th class="py-3">Category & Subcategory</th>
+                    <th class="py-3">Brand & Vendor</th>
                     <th class="py-3 text-center">Featured</th>
                     <th class="py-3 text-end">Price</th>
                     <th class="pe-4 py-3 text-end">Actions</th>
@@ -87,6 +86,9 @@
                 {
                     foreach (var product in Model.ProductsList)
                     {
+                        var tagsJoined = string.Join(",", product.SelectedTags);
+                        var attrJson = System.Text.Json.JsonSerializer.Serialize(product.SelectedAttributes);
+
                         <tr>
                             <td class="ps-4">
                                 <div class="d-flex align-items-center gap-3">
@@ -99,14 +101,16 @@
                             </td>
                             <td>
                                 <span class="badge bg-light text-dark border fs-7">@product.CategoryName</span>
+                                @if (!string.IsNullOrEmpty(product.SubCategoryName))
+                                {
+                                    <span class="badge bg-info-subtle text-info border border-info-subtle fs-7 ms-1">
+                                        <i class="bi bi-diagram-2 me-1"></i>@product.SubCategoryName
+                                    </span>
+                                }
                             </td>
                             <td>
-                                <span class="fw-medium text-dark fs-7"><i class="bi bi-shop me-1 text-primary"></i> @product.VendorName</span>
-                            </td>
-                            <td class="text-center fs-7">
-                                <span class="text-warning me-1"><i class="bi bi-star-fill"></i></span>
-                                <span class="fw-bold text-dark">@product.Rating.ToString("0.0")</span>
-                                <span class="text-muted">(@product.ReviewCount)</span>
+                                <span class="fw-bold text-danger fs-7 d-block">@product.BrandName</span>
+                                <span class="text-muted fs-7"><i class="bi bi-shop me-1 text-primary"></i> @product.VendorName</span>
                             </td>
                             <td class="text-center">
                                 <form method="post" asp-page-handler="ToggleFeatured" class="d-inline">
@@ -141,11 +145,16 @@
                                             data-name="@product.Name"
                                             data-slug="@product.Slug"
                                             data-category="@product.CategoryName"
+                                            data-subcategory="@(product.SubCategoryName ?? "")"
+                                            data-brand="@product.BrandName"
                                             data-price="@product.BasePrice"
                                             data-compareprice="@product.CompareAtPrice"
                                             data-image="@product.ImageUrl"
                                             data-description="@product.Description"
                                             data-featured="@(product.IsFeatured ? "true" : "false")"
+                                            data-enableattr="@(product.EnableAttributes ? "true" : "false")"
+                                            data-tags="@tagsJoined"
+                                            data-attributes='@attrJson'
                                             onclick="openEditProductModalFromData(this)">
                                         <i class="bi bi-pencil"></i>
                                     </button>
@@ -169,7 +178,7 @@
                 else
                 {
                     <tr>
-                        <td colspan="7" class="text-center py-5 text-muted">
+                        <td colspan="6" class="text-center py-5 text-muted">
                             <i class="bi bi-box-seam display-4 mb-2 d-block text-muted"></i>
                             <h6 class="fw-bold">No Products Found</h6>
                             <p class="small mb-0">Try clearing your filters or search terms.</p>
@@ -198,21 +207,33 @@
                             <input type="text" name="productName" class="form-control rounded-3" placeholder="e.g. Handwoven Tangail Soft Cotton Saree" required />
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label fw-semibold small text-dark">Category <span class="text-danger">*</span></label>
-                            <select name="categoryName" class="form-select rounded-3" required>
-                                <option value="Saree" selected>Saree</option>
-                                <option value="Three Piece">Three Piece</option>
-                                <option value="Kurti">Kurti</option>
-                                <option value="Lehenga & Gown">Lehenga & Gown</option>
-                                <option value="Men's Panjabi">Men's Panjabi</option>
-                                <option value="Men's Apparel">Men's Apparel</option>
-                                <option value="Kids Wear">Kids Wear</option>
-                                <option value="Footwear">Footwear</option>
-                                <option value="Bags & Purses">Bags & Purses</option>
-                                <option value="Jewelry">Jewelry</option>
-                                <option value="Innerwear">Innerwear</option>
-                                <option value="Cosmetics & Skincare">Cosmetics & Skincare</option>
-                                <option value="Home & Handicraft">Home & Handicraft</option>
+                            <label class="form-label fw-semibold small text-dark">Brand <span class="text-danger">*</span></label>
+                            <select name="brandName" class="form-select rounded-3" required>
+                                @foreach (var brand in Model.AvailableBrands)
+                                {
+                                    <option value="@brand.Name">@brand.Name</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small text-dark">Main Category <span class="text-danger">*</span></label>
+                            <select name="categoryName" id="addCategorySelect" class="form-select rounded-3" required onchange="filterAddSubcategories(this.value)">
+                                @foreach (var cat in Model.AvailableCategories.Where(c => !c.IsSubCategory))
+                                {
+                                    <option value="@cat.Name">@cat.Name</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small text-dark">Subcategory (Optional)</label>
+                            <select name="subCategoryName" id="addSubCategorySelect" class="form-select rounded-3">
+                                <option value="">-- None (Main Category Only) --</option>
+                                @foreach (var subcat in Model.AvailableCategories.Where(c => c.IsSubCategory))
+                                {
+                                    <option value="@subcat.Name" data-parent="@subcat.ParentCategoryName">@subcat.Name (@subcat.ParentCategoryName)</option>
+                                }
                             </select>
                         </div>
 
@@ -224,7 +245,7 @@
                             </div>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label fw-semibold small text-dark">Compare-At / Original Price (BDT)</label>
+                            <label class="form-label fw-semibold small text-dark">Compare-At Price (BDT)</label>
                             <div class="input-group">
                                 <span class="input-group-text bg-light border-end-0">৳</span>
                                 <input type="number" name="comparePrice" value="4500" step="50" class="form-control rounded-end-3" />
@@ -235,6 +256,49 @@
                             <label class="form-label fw-semibold small text-dark">Primary Image URL <span class="text-danger">*</span></label>
                             <input type="text" name="imageUrl" class="form-control rounded-3" placeholder="https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=800&q=80" value="https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=800&q=80" required />
                             <div class="form-text fs-7">Enter direct HTTPS image URL or Unsplash CDN image link.</div>
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label fw-semibold small text-dark">Product Tags Selection</label>
+                            <div class="d-flex flex-wrap gap-2 p-2 bg-light rounded-3 border">
+                                @foreach (var tag in Model.AvailableTags)
+                                {
+                                    <div class="form-check form-check-inline m-0">
+                                        <input class="form-check-input" type="checkbox" name="selectedTags" value="@tag.Name" id="add_tag_@tag.Id" />
+                                        <label class="form-check-label small fw-semibold" for="add_tag_@tag.Id">#@tag.Name</label>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Dynamic Attributes Toggle & Options -->
+                        <div class="col-12 border-top pt-3">
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" name="enableAttributes" value="true" id="addEnableAttributesCheck" onchange="toggleAddAttributesBox(this.checked)" checked />
+                                <label class="form-check-label fw-bold text-dark" for="addEnableAttributesCheck">Enable Product Variations & Dynamic Attributes</label>
+                            </div>
+
+                            <div id="addAttributesContainer" class="p-3 bg-light rounded-4 border">
+                                <h6 class="fw-bold text-dark fs-7 mb-2"><i class="bi bi-sliders me-1 text-danger"></i> System Product Attributes Values</h6>
+                                <p class="text-muted fs-7 mb-3">Select attribute values. Any new attribute created in the admin panel automatically appears below.</p>
+
+                                <div class="row g-3">
+                                    @foreach (var attr in Model.AvailableAttributes)
+                                    {
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold fs-7 text-dark">@attr.Name (@attr.Code)</label>
+                                            <input type="hidden" name="attributeKeys" value="@attr.Code" />
+                                            <select name="attributeValues" class="form-select form-select-sm rounded-3">
+                                                <option value="">-- None Selected --</option>
+                                                @foreach (var val in attr.Values)
+                                                {
+                                                    <option value="@val">@val</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
                         </div>
 
                         <div class="col-12">
@@ -267,7 +331,7 @@
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content rounded-4 border-0 shadow">
             <div class="modal-header border-bottom-0 pb-0">
-                <h5 class="modal-title fw-bold text-dark" id="editProductModalLabel">Edit Product Details</h5>
+                <h5 class="modal-title fw-bold text-dark" id="editProductModalLabel">Edit Product Details & Attributes</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-4">
@@ -281,21 +345,33 @@
                             <input type="text" name="productName" id="editProductName" class="form-control rounded-3" required />
                         </div>
                         <div class="col-md-4">
-                            <label class="form-label fw-semibold small text-dark">Category <span class="text-danger">*</span></label>
+                            <label class="form-label fw-semibold small text-dark">Brand <span class="text-danger">*</span></label>
+                            <select name="brandName" id="editProductBrand" class="form-select rounded-3" required>
+                                @foreach (var brand in Model.AvailableBrands)
+                                {
+                                    <option value="@brand.Name">@brand.Name</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small text-dark">Main Category <span class="text-danger">*</span></label>
                             <select name="categoryName" id="editProductCategory" class="form-select rounded-3" required>
-                                <option value="Saree">Saree</option>
-                                <option value="Three Piece">Three Piece</option>
-                                <option value="Kurti">Kurti</option>
-                                <option value="Lehenga & Gown">Lehenga & Gown</option>
-                                <option value="Men's Panjabi">Men's Panjabi</option>
-                                <option value="Men's Apparel">Men's Apparel</option>
-                                <option value="Kids Wear">Kids Wear</option>
-                                <option value="Footwear">Footwear</option>
-                                <option value="Bags & Purses">Bags & Purses</option>
-                                <option value="Jewelry">Jewelry</option>
-                                <option value="Innerwear">Innerwear</option>
-                                <option value="Cosmetics & Skincare">Cosmetics & Skincare</option>
-                                <option value="Home & Handicraft">Home & Handicraft</option>
+                                @foreach (var cat in Model.AvailableCategories.Where(c => !c.IsSubCategory))
+                                {
+                                    <option value="@cat.Name">@cat.Name</option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small text-dark">Subcategory (Optional)</label>
+                            <select name="subCategoryName" id="editProductSubCategory" class="form-select rounded-3">
+                                <option value="">-- None (Main Category Only) --</option>
+                                @foreach (var subcat in Model.AvailableCategories.Where(c => c.IsSubCategory))
+                                {
+                                    <option value="@subcat.Name">@subcat.Name (@subcat.ParentCategoryName)</option>
+                                }
                             </select>
                         </div>
 
@@ -328,6 +404,49 @@
                         </div>
 
                         <div class="col-12">
+                            <label class="form-label fw-semibold small text-dark">Product Tags Selection</label>
+                            <div class="d-flex flex-wrap gap-2 p-2 bg-light rounded-3 border" id="editTagsContainer">
+                                @foreach (var tag in Model.AvailableTags)
+                                {
+                                    <div class="form-check form-check-inline m-0">
+                                        <input class="form-check-input edit-tag-check" type="checkbox" name="selectedTags" value="@tag.Name" id="edit_tag_@tag.Id" />
+                                        <label class="form-check-label small fw-semibold" for="edit_tag_@tag.Id">#@tag.Name</label>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+
+                        <!-- Dynamic Attributes Toggle & Options -->
+                        <div class="col-12 border-top pt-3">
+                            <div class="form-check form-switch mb-3">
+                                <input class="form-check-input" type="checkbox" name="enableAttributes" value="true" id="editProductEnableAttributes" onchange="toggleEditAttributesBox(this.checked)" />
+                                <label class="form-check-label fw-bold text-dark" for="editProductEnableAttributes">Enable Product Variations & Dynamic Attributes</label>
+                            </div>
+
+                            <div id="editAttributesContainer" class="p-3 bg-light rounded-4 border">
+                                <h6 class="fw-bold text-dark fs-7 mb-2"><i class="bi bi-sliders me-1 text-danger"></i> System Product Attributes Values</h6>
+                                <p class="text-muted fs-7 mb-3">Select attribute values. Any new attribute created in the admin panel automatically appears below.</p>
+
+                                <div class="row g-3">
+                                    @foreach (var attr in Model.AvailableAttributes)
+                                    {
+                                        <div class="col-md-6">
+                                            <label class="form-label fw-semibold fs-7 text-dark">@attr.Name (@attr.Code)</label>
+                                            <input type="hidden" name="attributeKeys" value="@attr.Code" />
+                                            <select name="attributeValues" id="edit_attr_@attr.Code" class="form-select form-select-sm rounded-3 edit-attr-select">
+                                                <option value="">-- None Selected --</option>
+                                                @foreach (var val in attr.Values)
+                                                {
+                                                    <option value="@val">@val</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12">
                             <label class="form-label fw-semibold small text-dark">Product Description & Specs</label>
                             <textarea name="description" id="editProductDescription" class="form-control rounded-3" rows="3"></textarea>
                         </div>
@@ -354,26 +473,71 @@
 
 @section Scripts {
     <script>
+        function toggleAddAttributesBox(enabled) {
+            const container = document.getElementById('addAttributesContainer');
+            if (container) {
+                container.style.display = enabled ? 'block' : 'none';
+            }
+        }
+
+        function toggleEditAttributesBox(enabled) {
+            const container = document.getElementById('editAttributesContainer');
+            if (container) {
+                container.style.display = enabled ? 'block' : 'none';
+            }
+        }
+
         function openEditProductModalFromData(btn) {
             const id = btn.getAttribute('data-id') || '';
             const name = btn.getAttribute('data-name') || '';
             const slug = btn.getAttribute('data-slug') || '';
             const category = btn.getAttribute('data-category') || 'Saree';
+            const subcategory = btn.getAttribute('data-subcategory') || '';
+            const brand = btn.getAttribute('data-brand') || 'Lamisa Heritage';
             const price = btn.getAttribute('data-price') || '0';
             const comparePrice = btn.getAttribute('data-compareprice') || '0';
             const image = btn.getAttribute('data-image') || '';
             const description = btn.getAttribute('data-description') || '';
             const isFeatured = btn.getAttribute('data-featured') === 'true';
+            const enableAttr = btn.getAttribute('data-enableattr') === 'true';
+            const tagsStr = btn.getAttribute('data-tags') || '';
+            const attrJson = btn.getAttribute('data-attributes') || '{}';
 
             document.getElementById('editProductId').value = id;
             document.getElementById('editProductName').value = name;
             document.getElementById('editProductSlug').value = slug;
             document.getElementById('editProductCategory').value = category;
+            document.getElementById('editProductSubCategory').value = subcategory;
+            document.getElementById('editProductBrand').value = brand;
             document.getElementById('editProductPrice').value = price;
             document.getElementById('editProductComparePrice').value = comparePrice;
             document.getElementById('editProductImageUrl').value = image;
             document.getElementById('editProductDescription').value = description;
             document.getElementById('editProductIsFeatured').checked = isFeatured;
+
+            // Enable Attributes Switch & Container
+            const enableCheck = document.getElementById('editProductEnableAttributes');
+            enableCheck.checked = enableAttr;
+            toggleEditAttributesBox(enableAttr);
+
+            // Tags Checkboxes
+            const tagArray = tagsStr.split(',').map(t => t.trim());
+            document.querySelectorAll('.edit-tag-check').forEach(chk => {
+                chk.checked = tagArray.includes(chk.value);
+            });
+
+            // Attributes Selects
+            try {
+                const attrObj = JSON.parse(attrJson);
+                document.querySelectorAll('.edit-attr-select').forEach(select => {
+                    const code = select.id.replace('edit_attr_', '');
+                    if (attrObj && attrObj[code]) {
+                        select.value = attrObj[code];
+                    } else {
+                        select.value = '';
+                    }
+                });
+            } catch (e) {}
 
             previewEditProductImg(image);
 
