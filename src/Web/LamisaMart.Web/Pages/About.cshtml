@@ -1,0 +1,156 @@
+@page "/about"
+@model AboutModel
+@{
+    ViewData["Title"] = "About Us - লমিসা মার্ট | LamisaMart";
+}
+
+<!-- Hero Section -->
+<div class="position-relative bg-dark text-white overflow-hidden" style="min-height: 320px; background: linear-gradient(135deg, #2b0f19 0%, #63172e 50%, #9e2a4a 100%);">
+    <div class="position-absolute top-0 start-0 w-100 h-100 opacity-25" style="background-image: url('https://images.unsplash.com/photo-1441984904996-e0b6ba687e04?w=1600&q=80'); background-size: cover; background-position: center;"></div>
+    
+    <div class="container position-relative py-5 z-1">
+        <!-- Breadcrumbs -->
+        <nav aria-label="breadcrumb" class="mb-3">
+            <ol class="breadcrumb small text-white-50 mb-0">
+                <li class="breadcrumb-item"><a href="/" class="text-white-50 text-decoration-none"><i class="bi bi-house-door me-1"></i> Home</a></li>
+                <li class="breadcrumb-item active text-white fw-bold" aria-current="page">About Us</li>
+            </ol>
+        </nav>
+
+        <div class="row align-items-center py-3">
+            <div class="col-lg-8">
+                <span class="badge rounded-pill bg-danger px-3 py-2 text-uppercase fw-semibold mb-3" style="letter-spacing: 1px;">
+                    <i class="bi bi-heart-fill me-1"></i> About LamisaMart
+                </span>
+                <h1 class="display-5 fw-bold text-white mb-3">Empowering Bangladeshi Women's Fashion & Independent Artisans</h1>
+                <p class="lead text-white-50 fs-5 max-w-75">
+                    LamisaMart (লমিসা মার্ট) is Bangladesh's premier multi-vendor marketplace connecting authentic master weavers, independent boutique owners, and fashion lovers across the country.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main Content Container -->
+<div class="container py-5">
+    <!-- Our Story Section -->
+    <div class="row g-4 align-items-center mb-5 pb-lg-4">
+        <div class="col-lg-6">
+            <div class="pe-lg-4">
+                <span class="text-danger fw-bold text-uppercase small" style="letter-spacing: 1px;">Our Journey</span>
+                <h2 class="fw-bold display-6 text-dark mt-1 mb-3">Redefining Women's Fashion Shopping in Bangladesh</h2>
+                <p class="text-muted leading-relaxed mb-3">
+                    Founded with a passion for preserving Bangladesh's rich textile heritage, LamisaMart was created to bridge the gap between traditional craftspeople and modern shoppers. From the legendary Jamdani looms of Narayanganj and Rajshahi's Mulberry silk farms to boutique studios in Dhanmondi and Uttara, we bring curated, high-quality ethnic and modern wear into one seamless digital experience.
+                </p>
+                <p class="text-muted leading-relaxed mb-4">
+                    We empower boutique vendors with digital storefronts, transparent bookkeeping, integrated bKash/Nagad/BanglaQR payments, and reliable logistics, ensuring every customer receives 100% original products delivered with care.
+                </p>
+                <div class="d-flex align-items-center gap-3">
+                    <a href="/category/saree" class="btn btn-danger rounded-pill px-4 py-3 fw-bold shadow-sm">
+                        Explore Collections <i class="bi bi-arrow-right ms-1"></i>
+                    </a>
+                    <a href="/Vendor" class="btn btn-outline-dark rounded-pill px-4 py-3 fw-bold">
+                        Become a Seller <i class="bi bi-shop ms-1"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="position-relative">
+                <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=800&q=80" alt="Bangladeshi Handloom Weaver" class="img-fluid rounded-4 shadow-lg w-100" style="height: 420px; object-fit: cover;" />
+                <div class="position-absolute bottom-0 start-0 m-4 p-3 bg-white rounded-4 shadow-sm border border-light" style="max-width: 260px;">
+                    <div class="d-flex align-items-center gap-2 mb-1">
+                        <i class="bi bi-patch-check-fill text-danger fs-4"></i>
+                        <h6 class="fw-bold mb-0">Direct from Weavers</h6>
+                    </div>
+                    <p class="small text-muted mb-0">Fair prices for artisans, genuine handloom for shoppers.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Impact Stats Grid -->
+    <div class="card border-0 rounded-4 bg-light p-4 p-lg-5 mb-5 shadow-sm">
+        <div class="row row-cols-2 row-cols-md-4 g-4 text-center">
+            <div class="col">
+                <div class="display-5 fw-extrabold text-danger mb-1">500+</div>
+                <div class="fw-bold text-dark mb-1">Verified Boutique Vendors</div>
+                <span class="text-muted fs-7">Across 64 districts</span>
+            </div>
+            <div class="col">
+                <div class="display-5 fw-extrabold text-danger mb-1">10k+</div>
+                <div class="fw-bold text-dark mb-1">Curated Fashion Items</div>
+                <span class="text-muted fs-7">Sarees, 3-Pieces & Jewelry</span>
+            </div>
+            <div class="col">
+                <div class="display-5 fw-extrabold text-danger mb-1">50k+</div>
+                <div class="fw-bold text-dark mb-1">Happy Customers</div>
+                <span class="text-muted fs-7">98% Satisfaction rate</span>
+            </div>
+            <div class="col">
+                <div class="display-5 fw-extrabold text-danger mb-1">100%</div>
+                <div class="fw-bold text-dark mb-1">Authentic Quality</div>
+                <span class="text-muted fs-7">Strict quality checks</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Core Values Section -->
+    <div class="mb-5">
+        <div class="text-center max-w-50 mx-auto mb-5">
+            <span class="text-danger fw-bold text-uppercase small" style="letter-spacing: 1px;">Why Choose Us</span>
+            <h2 class="fw-bold text-dark mt-1">Our Core Promises to You</h2>
+            <p class="text-muted">We build trust through quality craftsmanship, transparent pricing, and shopper satisfaction.</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm rounded-4 p-4 hover-shadow-lg transition-all">
+                    <div class="rounded-circle bg-danger-subtle text-danger p-3 d-inline-flex align-items-center justify-content-center mb-3" style="width: 56px; height: 56px;">
+                        <i class="bi bi-gem fs-3"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-2">Authentic Craftsmanship</h5>
+                    <p class="text-muted small mb-0">Every saree, 3-piece suit, and piece of jewelry is verified for fabric purity, thread count, and authentic handwork before delivery.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm rounded-4 p-4 hover-shadow-lg transition-all">
+                    <div class="rounded-circle bg-warning-subtle text-warning p-3 d-inline-flex align-items-center justify-content-center mb-3" style="width: 56px; height: 56px;">
+                        <i class="bi bi-shield-check fs-3"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-2">Secure BD Payments</h5>
+                    <p class="text-muted small mb-0">Seamless checkout via bKash, Nagad, BanglaQR, VISA/Mastercard, and Cash on Delivery with full buyer protection.</p>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm rounded-4 p-4 hover-shadow-lg transition-all">
+                    <div class="rounded-circle bg-info-subtle text-info p-3 d-inline-flex align-items-center justify-content-center mb-3" style="width: 56px; height: 56px;">
+                        <i class="bi bi-truck fs-3"></i>
+                    </div>
+                    <h5 class="fw-bold text-dark mb-2">Fast Doorstep Delivery</h5>
+                    <p class="text-muted small mb-0">Express delivery within 24-48 hours inside Dhaka and 72 hours across all divisions in Bangladesh, with easy 7-day returns.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vendor Partner Spotlight CTA -->
+    <div class="position-relative rounded-4 p-4 p-md-5 text-white overflow-hidden shadow-lg" style="background: linear-gradient(135deg, #1a080d 0%, #451221 100%);">
+        <div class="row align-items-center position-relative z-1">
+            <div class="col-lg-8">
+                <span class="badge bg-warning text-dark fw-bold mb-2">Join Our Marketplace</span>
+                <h3 class="fw-bold display-6 mb-2">Are you a Boutique Owner or Artisan?</h3>
+                <p class="text-white-50 lead fs-6 mb-3 mb-lg-0">
+                    Open your online storefront on LamisaMart today. Reach thousands of active shoppers with zero hassle, instant payouts, and integrated accounting tools.
+                </p>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                <a href="/Vendor" class="btn btn-light text-danger rounded-pill px-4 py-3 fw-bold shadow">
+                    <i class="bi bi-shop me-1"></i> Register as a Vendor
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
