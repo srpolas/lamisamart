@@ -24,6 +24,7 @@ public class CategoriesModel : PageModel
     public string? SearchQuery { get; set; }
 
     public List<CategoryItemViewModel> CategoriesList { get; set; } = new();
+    public List<CategoryItemViewModel> MainCategoriesList => CategoriesList.Where(c => !c.IsSubCategory).ToList();
 
     public class CategoryItemViewModel
     {
@@ -35,6 +36,9 @@ public class CategoriesModel : PageModel
         public bool IsActive { get; set; }
         public bool IsFeatured { get; set; }
         public int DisplayOrder { get; set; }
+        public Guid? ParentCategoryId { get; set; }
+        public string? ParentCategoryName { get; set; }
+        public bool IsSubCategory => ParentCategoryId.HasValue && ParentCategoryId.Value != Guid.Empty;
     }
 
     public async Task OnGetAsync()
@@ -45,6 +49,7 @@ public class CategoriesModel : PageModel
 
             var query = _catalogContext.Categories
                 .AsNoTracking()
+                .Include(c => c.ParentCategory)
                 .Include(c => c.Products)
                 .AsQueryable();
 
@@ -67,13 +72,15 @@ public class CategoriesModel : PageModel
                     ProductCount = c.Products != null && c.Products.Count > 0 ? c.Products.Count : GetSampleProductCount(c.Slug),
                     IsActive = c.IsActive,
                     IsFeatured = c.IsFeatured,
-                    DisplayOrder = c.DisplayOrder
+                    DisplayOrder = c.DisplayOrder,
+                    ParentCategoryId = c.ParentCategoryId,
+                    ParentCategoryName = c.ParentCategory != null ? c.ParentCategory.Name : null
                 }).ToList();
             }
         }
         catch (Exception ex)
         {
-            _logger.LogWarning(ex, "Failed loading categories from DbContext. Serving 13 storefront categories.");
+            _logger.LogWarning(ex, "Failed loading categories from DbContext. Serving storefront categories.");
         }
 
         if (!CategoriesList.Any())
@@ -82,7 +89,7 @@ public class CategoriesModel : PageModel
         }
     }
 
-    public async Task<IActionResult> OnPostCreateCategoryAsync(string categoryName, string imageUrl, bool isFeatured)
+    public async Task<IActionResult> OnPostCreateCategoryAsync(string categoryName, string imageUrl, bool isFeatured, Guid? parentCategoryId)
     {
         try
         {
@@ -93,6 +100,8 @@ public class CategoriesModel : PageModel
             }
 
             var slug = GenerateSlug(categoryName);
+            Guid? finalParentId = (parentCategoryId.HasValue && parentCategoryId.Value != Guid.Empty) ? parentCategoryId.Value : null;
+
             var category = new Category
             {
                 Id = Guid.NewGuid(),
@@ -101,6 +110,7 @@ public class CategoriesModel : PageModel
                 ImageUrl = string.IsNullOrWhiteSpace(imageUrl) ? GetDefaultCategoryImage(slug) : imageUrl.Trim(),
                 IsActive = true,
                 IsFeatured = isFeatured,
+                ParentCategoryId = finalParentId,
                 DisplayOrder = CategoriesList.Count + 1
             };
 
@@ -118,7 +128,7 @@ public class CategoriesModel : PageModel
         return RedirectToPage();
     }
 
-    public async Task<IActionResult> OnPostEditCategoryAsync(Guid categoryId, string categoryName, string slug, string imageUrl, bool isFeatured)
+    public async Task<IActionResult> OnPostEditCategoryAsync(Guid categoryId, string categoryName, string slug, string imageUrl, bool isFeatured, Guid? parentCategoryId)
     {
         try
         {
@@ -130,8 +140,8 @@ public class CategoriesModel : PageModel
 
             var targetSlug = !string.IsNullOrWhiteSpace(slug) ? GenerateSlug(slug) : GenerateSlug(categoryName);
             var targetName = categoryName.Trim();
+            Guid? finalParentId = (parentCategoryId.HasValue && parentCategoryId.Value != Guid.Empty && parentCategoryId.Value != categoryId) ? parentCategoryId.Value : null;
 
-            // Find category by ID, slug, or name
             var cat = await _catalogContext.Categories
                 .FirstOrDefaultAsync(c => c.Id == categoryId || c.Slug.ToLower() == targetSlug.ToLower() || c.Name.ToLower() == targetName.ToLower());
 
@@ -145,6 +155,7 @@ public class CategoriesModel : PageModel
                     ImageUrl = string.IsNullOrWhiteSpace(imageUrl) ? GetDefaultCategoryImage(targetSlug) : imageUrl.Trim(),
                     IsActive = true,
                     IsFeatured = isFeatured,
+                    ParentCategoryId = finalParentId,
                     DisplayOrder = CategoriesList.Count + 1
                 };
                 _catalogContext.Categories.Add(cat);
@@ -155,6 +166,7 @@ public class CategoriesModel : PageModel
                 cat.Slug = targetSlug;
                 cat.ImageUrl = string.IsNullOrWhiteSpace(imageUrl) ? GetDefaultCategoryImage(targetSlug) : imageUrl.Trim();
                 cat.IsFeatured = isFeatured;
+                cat.ParentCategoryId = finalParentId;
             }
 
             await _catalogContext.SaveChangesAsync();
@@ -282,21 +294,25 @@ public class CategoriesModel : PageModel
 
     private List<CategoryItemViewModel> GetSampleCategories(string? search)
     {
+        var sareeId = Guid.NewGuid();
+        var threePieceId = Guid.NewGuid();
+
         var list = new List<CategoryItemViewModel>
         {
-            new() { Id = Guid.NewGuid(), Name = "Saree", Slug = "saree", ImageUrl = "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=300&q=80", ProductCount = 240, IsActive = true, IsFeatured = true, DisplayOrder = 1 },
-            new() { Id = Guid.NewGuid(), Name = "Three Piece", Slug = "three-piece", ImageUrl = "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=300&q=80", ProductCount = 180, IsActive = true, IsFeatured = true, DisplayOrder = 2 },
-            new() { Id = Guid.NewGuid(), Name = "Kurti", Slug = "kurti", ImageUrl = "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=300&q=80", ProductCount = 120, IsActive = true, IsFeatured = true, DisplayOrder = 3 },
-            new() { Id = Guid.NewGuid(), Name = "Lehenga & Gown", Slug = "lehenga-gown", ImageUrl = "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=300&q=80", ProductCount = 90, IsActive = true, IsFeatured = true, DisplayOrder = 4 },
-            new() { Id = Guid.NewGuid(), Name = "Men's Panjabi", Slug = "mens-panjabi", ImageUrl = "https://images.unsplash.com/photo-1621786062579-6125bf25208a?w=300&q=80", ProductCount = 110, IsActive = true, IsFeatured = true, DisplayOrder = 5 },
-            new() { Id = Guid.NewGuid(), Name = "Men's Apparel", Slug = "mens-apparel", ImageUrl = "https://images.unsplash.com/photo-1617137968427-85924c800a22?w=300&q=80", ProductCount = 135, IsActive = true, IsFeatured = true, DisplayOrder = 6 },
-            new() { Id = Guid.NewGuid(), Name = "Kids Wear", Slug = "kids-wear", ImageUrl = "https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?w=300&q=80", ProductCount = 75, IsActive = true, IsFeatured = true, DisplayOrder = 7 },
-            new() { Id = Guid.NewGuid(), Name = "Footwear", Slug = "footwear", ImageUrl = "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=300&q=80", ProductCount = 65, IsActive = true, IsFeatured = true, DisplayOrder = 8 },
-            new() { Id = Guid.NewGuid(), Name = "Bags & Purses", Slug = "bags", ImageUrl = "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=300&q=80", ProductCount = 85, IsActive = true, IsFeatured = true, DisplayOrder = 9 },
-            new() { Id = Guid.NewGuid(), Name = "Jewelry", Slug = "jewelry", ImageUrl = "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=300&q=80", ProductCount = 95, IsActive = true, IsFeatured = true, DisplayOrder = 10 },
-            new() { Id = Guid.NewGuid(), Name = "Innerwear", Slug = "innerwear", ImageUrl = "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=300&q=80", ProductCount = 60, IsActive = true, IsFeatured = true, DisplayOrder = 11 },
-            new() { Id = Guid.NewGuid(), Name = "Cosmetics & Skincare", Slug = "cosmetics", ImageUrl = "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=300&q=80", ProductCount = 70, IsActive = true, IsFeatured = true, DisplayOrder = 12 },
-            new() { Id = Guid.NewGuid(), Name = "Home & Handicraft", Slug = "home-handicraft", ImageUrl = "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=300&q=80", ProductCount = 45, IsActive = true, IsFeatured = true, DisplayOrder = 13 }
+            new() { Id = sareeId, Name = "Saree", Slug = "saree", ImageUrl = "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=300&q=80", ProductCount = 240, IsActive = true, IsFeatured = true, DisplayOrder = 1 },
+            new() { Id = Guid.NewGuid(), Name = "Jamdani Saree", Slug = "jamdani-saree", ImageUrl = "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=300&q=80", ProductCount = 85, IsActive = true, IsFeatured = false, DisplayOrder = 2, ParentCategoryId = sareeId, ParentCategoryName = "Saree" },
+            new() { Id = threePieceId, Name = "Three Piece", Slug = "three-piece", ImageUrl = "https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=300&q=80", ProductCount = 180, IsActive = true, IsFeatured = true, DisplayOrder = 3 },
+            new() { Id = Guid.NewGuid(), Name = "Kurti", Slug = "kurti", ImageUrl = "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=300&q=80", ProductCount = 120, IsActive = true, IsFeatured = true, DisplayOrder = 4 },
+            new() { Id = Guid.NewGuid(), Name = "Lehenga & Gown", Slug = "lehenga-gown", ImageUrl = "https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?w=300&q=80", ProductCount = 90, IsActive = true, IsFeatured = true, DisplayOrder = 5 },
+            new() { Id = Guid.NewGuid(), Name = "Men's Panjabi", Slug = "mens-panjabi", ImageUrl = "https://images.unsplash.com/photo-1621786062579-6125bf25208a?w=300&q=80", ProductCount = 110, IsActive = true, IsFeatured = true, DisplayOrder = 6 },
+            new() { Id = Guid.NewGuid(), Name = "Men's Apparel", Slug = "mens-apparel", ImageUrl = "https://images.unsplash.com/photo-1617137968427-85924c800a22?w=300&q=80", ProductCount = 135, IsActive = true, IsFeatured = true, DisplayOrder = 7 },
+            new() { Id = Guid.NewGuid(), Name = "Kids Wear", Slug = "kids-wear", ImageUrl = "https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?w=300&q=80", ProductCount = 75, IsActive = true, IsFeatured = true, DisplayOrder = 8 },
+            new() { Id = Guid.NewGuid(), Name = "Footwear", Slug = "footwear", ImageUrl = "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=300&q=80", ProductCount = 65, IsActive = true, IsFeatured = true, DisplayOrder = 9 },
+            new() { Id = Guid.NewGuid(), Name = "Bags & Purses", Slug = "bags", ImageUrl = "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=300&q=80", ProductCount = 85, IsActive = true, IsFeatured = true, DisplayOrder = 10 },
+            new() { Id = Guid.NewGuid(), Name = "Jewelry", Slug = "jewelry", ImageUrl = "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=300&q=80", ProductCount = 95, IsActive = true, IsFeatured = true, DisplayOrder = 11 },
+            new() { Id = Guid.NewGuid(), Name = "Innerwear", Slug = "innerwear", ImageUrl = "https://images.unsplash.com/photo-1596755094514-f87e34085b2c?w=300&q=80", ProductCount = 60, IsActive = true, IsFeatured = true, DisplayOrder = 12 },
+            new() { Id = Guid.NewGuid(), Name = "Cosmetics & Skincare", Slug = "cosmetics", ImageUrl = "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=300&q=80", ProductCount = 70, IsActive = true, IsFeatured = true, DisplayOrder = 13 },
+            new() { Id = Guid.NewGuid(), Name = "Home & Handicraft", Slug = "home-handicraft", ImageUrl = "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=300&q=80", ProductCount = 45, IsActive = true, IsFeatured = true, DisplayOrder = 14 }
         };
 
         if (!string.IsNullOrWhiteSpace(search))
