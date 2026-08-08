@@ -1,0 +1,20 @@
+@page "/account/accessdenied"
+@{
+    ViewData["Title"] = "Access Denied - LamisaMart";
+}
+
+<div class="container py-5 text-center my-5">
+    <div class="mb-3">
+        <i class="bi bi-shield-x text-danger display-1"></i>
+    </div>
+    <h2 class="fw-bold text-dark mb-2">Access Denied</h2>
+    <p class="text-muted max-w-50 mx-auto">You do not have permission to access the SuperAdmin panel. Please log in with a SuperAdmin or Admin account.</p>
+    <div class="mt-4 gap-2 d-flex justify-content-center">
+        <a href="/account/login?returnUrl=/Admin" class="btn btn-danger rounded-pill px-4 py-2 fw-semibold">
+            <i class="bi bi-box-arrow-in-right me-1"></i> Log In as SuperAdmin
+        </a>
+        <a href="/" class="btn btn-outline-dark rounded-pill px-4 py-2 fw-semibold">
+            <i class="bi bi-house me-1"></i> Return Home
+        </a>
+    </div>
+</div>

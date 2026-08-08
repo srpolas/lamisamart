@@ -49,6 +49,16 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 .AddEntityFrameworkStores<IdentityDbContext>()
 .AddDefaultTokenProviders();
 
+// Configure Application Cookie
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/account/login";
+    options.LogoutPath = "/account/logout";
+    options.AccessDeniedPath = "/account/accessdenied";
+    options.ExpireTimeSpan = TimeSpan.FromDays(30);
+    options.SlidingExpiration = true;
+});
+
 // Bind Interfaces
 builder.Services.AddScoped<LamisaMart.Catalog.Application.Common.Interfaces.ICatalogDbContext>(provider => provider.GetRequiredService<CatalogDbContext>());
 builder.Services.AddScoped<LamisaMart.Ordering.Application.Common.Interfaces.IOrderingDbContext>(provider => provider.GetRequiredService<OrderingDbContext>());
@@ -57,9 +67,18 @@ builder.Services.AddScoped<LamisaMart.Vendors.Application.Common.Interfaces.IVen
 builder.Services.AddScoped<LamisaMart.Accounting.Application.Common.Interfaces.IAccountingDbContext>(provider => provider.GetRequiredService<AccountingDbContext>());
 builder.Services.AddScoped<LamisaMart.PageBuilder.Application.Common.Interfaces.IPageBuilderDbContext>(provider => provider.GetRequiredService<PageBuilderDbContext>());
 
-// 2. Add Services to Container
-builder.Services.AddRazorPages();
+// 2. Add Services & Authorization Policies
+builder.Services.AddRazorPages(options =>
+{
+    options.Conventions.AuthorizeFolder("/Admin", "RequireAdminOrSuperAdmin");
+});
 builder.Services.AddControllers();
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("RequireAdminOrSuperAdmin", policy =>
+        policy.RequireRole("SuperAdmin", "SuperUser", "Admin"));
+});
 
 // Add MediatR
 builder.Services.AddMediatR(cfg => {
@@ -103,4 +122,3 @@ app.MapRazorPages();
 app.MapControllers();
 
 app.Run();
-

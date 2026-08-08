@@ -14,7 +14,8 @@ public static class IdentitySeeder
     public const string CustomerRole = "Customer";
 
     public const string SuperUserEmail = "srpolas.bd@gmail.com";
-    public const string SuperUserPassword = "@Admin123";
+    public const string AdminEmail = "admin@lamisamart.bd";
+    public const string DefaultPassword = "@Admin123";
 
     public static async Task SeedAsync(IServiceProvider serviceProvider, ILogger logger)
     {
@@ -36,51 +37,57 @@ public static class IdentitySeeder
             }
         }
 
-        // 2. Seed / Update Superuser
-        var superUser = await userManager.FindByEmailAsync(SuperUserEmail);
-        if (superUser == null)
+        // 2. Seed / Update Superusers
+        var accountsToSeed = new[]
         {
-            superUser = new ApplicationUser
-            {
-                UserName = SuperUserEmail,
-                Email = SuperUserEmail,
-                FullName = "Super User",
-                EmailConfirmed = true,
-                IsActive = true,
-                CreatedAt = DateTime.UtcNow
-            };
+            (Username: "srpolas.bd@gmail.com", Email: SuperUserEmail, Name: "Super User"),
+            (Username: "admin", Email: AdminEmail, Name: "System Admin")
+        };
 
-            var createResult = await userManager.CreateAsync(superUser, SuperUserPassword);
-            if (createResult.Succeeded)
+        string[] superRoles = [SuperAdminRole, SuperUserRole, AdminRole];
+
+        foreach (var acc in accountsToSeed)
+        {
+            var user = await userManager.FindByEmailAsync(acc.Email) ?? await userManager.FindByNameAsync(acc.Username);
+            if (user == null)
             {
-                logger.LogInformation("Super user '{Email}' created successfully.", SuperUserEmail);
+                user = new ApplicationUser
+                {
+                    UserName = acc.Username,
+                    Email = acc.Email,
+                    FullName = acc.Name,
+                    EmailConfirmed = true,
+                    IsActive = true,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                var createResult = await userManager.CreateAsync(user, DefaultPassword);
+                if (createResult.Succeeded)
+                {
+                    logger.LogInformation("Super user '{Username}' ({Email}) created successfully.", acc.Username, acc.Email);
+                }
+                else
+                {
+                    var errors = string.Join(", ", createResult.Errors.Select(e => e.Description));
+                    logger.LogError("Failed to create user {Username}: {Errors}", acc.Username, errors);
+                }
             }
             else
             {
-                var errors = string.Join(", ", createResult.Errors.Select(e => e.Description));
-                logger.LogError("Failed to create super user: {Errors}", errors);
-                throw new Exception($"Failed to create super user: {errors}");
+                // Reset password to default if needed
+                var token = await userManager.GeneratePasswordResetTokenAsync(user);
+                await userManager.ResetPasswordAsync(user, token, DefaultPassword);
             }
-        }
-        else
-        {
-            // Ensure password is set to @Admin123 if changed
-            var token = await userManager.GeneratePasswordResetTokenAsync(superUser);
-            var resetResult = await userManager.ResetPasswordAsync(superUser, token, SuperUserPassword);
-            if (resetResult.Succeeded)
-            {
-                logger.LogInformation("Password for super user '{Email}' updated successfully.", SuperUserEmail);
-            }
-        }
 
-        // 3. Ensure Superuser roles
-        string[] userRoles = [SuperAdminRole, SuperUserRole, AdminRole];
-        foreach (var role in userRoles)
-        {
-            if (!await userManager.IsInRoleAsync(superUser, role))
+            if (user != null)
             {
-                await userManager.AddToRoleAsync(superUser, role);
-                logger.LogInformation("Assigned role '{Role}' to super user '{Email}'.", role, SuperUserEmail);
+                foreach (var role in superRoles)
+                {
+                    if (!await userManager.IsInRoleAsync(user, role))
+                    {
+                        await userManager.AddToRoleAsync(user, role);
+                    }
+                }
             }
         }
     }
